@@ -666,8 +666,6 @@ void CMario::SetState(int State)
 		vy = -0.4;
 		break;
 	}
-	if (1 == 1)
-		return;
 	//DebugOut(L"gia tri vx %d \n", state);
 }
 
