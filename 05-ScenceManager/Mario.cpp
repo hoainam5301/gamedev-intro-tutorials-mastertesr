@@ -90,6 +90,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				isJumping = false;
 				is_grounded = true;
+				isFlying = false;
 				//isFalling = false;
 			}
 			vy = 0;
@@ -658,6 +659,11 @@ void CMario::SetState(int State)
   		ResetAni();
 		isWaitingForAni = true;
 		vy -= (MARIO_GRAVITY + 0.008)*dt;
+		break;
+	case MARIO_RACCON_ANI_FLYING_RIGHT:
+	case MARIO_RACCON_ANI_FLYING_LEFT:
+		ResetAni();
+		vy = -0.4;
 		break;
 	}
 	//DebugOut(L"gia tri vx %d \n", state);

@@ -391,6 +391,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
+		
 		if (mario->isFalling && mario->level == MARIO_RACCON && mario->isJumping)
 		{
  			if (mario->nx > 0)
@@ -398,41 +399,49 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			else
 				mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
 		}
-		else if(mario->level==MARIO_RACCON && mario->isRunning)
+		if (mario->level == MARIO_RACCON && mario->isRunning)
+		{
+			if(mario->vx>0.175)
+				mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
+			else if(mario->vx<-0.175)
+				mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
+			mario->isFlying = true;
+		}
 		if (mario->isJumping)
 			return;
 		mario->is_grounded = false;
 		mario->isJumping = true;
-		//mario->isFalling = false;			
-		if (mario->level == MARIO_LEVEL_BIG)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_BIG_JUMP_RIGHT);
-			else
-				mario->SetState(MARIO_ANI_BIG_JUMP_LEFT);
+		//mario->isFalling = false;	
+		if (!mario->isFlying) {
+			if (mario->level == MARIO_LEVEL_BIG)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_ANI_BIG_JUMP_RIGHT);
+				else
+					mario->SetState(MARIO_ANI_BIG_JUMP_LEFT);
+			}
+			else if (mario->level == MARIO_LEVEL_SMALL)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_ANI_SMALL_JUMP_RIGHT);
+				else
+					mario->SetState(MARIO_ANI_SMALL_JUMP_LEFT);
+			}
+			else if (mario->level == MARIO_RACCON)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_RACCON_ANI_JUMP_RIGHT);
+				else
+					mario->SetState(MARIO_RACCON_ANI_JUMP_LEFT);
+			}
+			else if (mario->level == MARIO_FIRE)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_FIRE_ANI_JUMP_RIGHT);
+				else
+					mario->SetState(MARIO_FIRE_ANI_JUMP_LEFT);
+			}
 		}
-		else if (mario->level == MARIO_LEVEL_SMALL)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_SMALL_JUMP_RIGHT);
-			else
-				mario->SetState(MARIO_ANI_SMALL_JUMP_LEFT);
-		}
-		else if(mario->level==MARIO_RACCON)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_RACCON_ANI_JUMP_RIGHT);
-			else
-				mario->SetState(MARIO_RACCON_ANI_JUMP_LEFT);
-		}
-		else if (mario->level == MARIO_FIRE)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_FIRE_ANI_JUMP_RIGHT);
-			else
-				mario->SetState(MARIO_FIRE_ANI_JUMP_LEFT);
-		}
-		
 		//DebugOut(L"gia tri is high jump %d \n", mario->isHigh_Jumping);
 		break;
 	case DIK_A: 
@@ -479,6 +488,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	
 	if (mario->GetState() == MARIO_STATE_DIE) return;
 	if (mario->isWaitingForAni)
+		return;
+	if(mario->isFlying)
 		return;
 	if (game->IsKeyDown(DIK_Z))
 	{
