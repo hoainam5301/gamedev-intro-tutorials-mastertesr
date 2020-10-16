@@ -52,7 +52,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isWaitingForAni = false;
 	}
 	if (vy > 0.04)
+	{
 		isFalling = true;
+	}
+	/*else
+	{
+		isFalling = false;
+	}*/
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
@@ -73,7 +79,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			x += nx*abs(rdx); */
 		// block every object first!
 		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.4f;
+		y += min_ty * dy + ny * 0.1f;
 
 
 
@@ -83,6 +89,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (ny < 0)
 			{
 				isJumping = false;
+				is_grounded = true;
+				//isFalling = false;
 			}
 			vy = 0;
 		}
@@ -147,6 +155,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					Brick->bottom_coll = 1;
 					//item_animation_set = 5;
 				}
+				//else if(e->ny<0 && is_grounded)
 				/*else if (e->ny < 0 && this->GetState()==MARIO_STATE_JUMP)
 					isJumping = false;*/
 			} //if NAm
@@ -168,6 +177,7 @@ void CMario::Render()
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	animation_set->at(state)->Render(x, y, alpha);
+	DebugOut(L"stataaaaaa %d\n", state);
 	//RenderBoundingBox();
 }
 
@@ -215,10 +225,15 @@ void CMario::SetState(int State)
 		{
 			SetState(MARIO_ANI_BIG_STOP_RIGHT);
 		}
-		if (isJumping && isFalling)
+		if(isJumping)
+			state=MARIO_ANI_BIG_JUMP_RIGHT;
+		/*if (!is_grounded)
 		{
-			state = MARIO_ANI_BIG_JUMP_RIGHT;
-		}
+			if (isJumping)
+  				state = MARIO_ANI_BIG_JUMP_RIGHT;
+			else 
+				state = MARIO_ANI_BIG_FALLING_RIGHT;
+		}*/
 		vx += MARIO_WALKING_ACC * dt;
 		if (isRunning)
 		{
@@ -445,12 +460,13 @@ void CMario::SetState(int State)
 	case MARIO_ANI_SMALL_JUMP_RIGHT:		
 		if(isJumping)
 		{
-			vy = -0.5;
-		}
+			vy = -0.275;
+		}		
 		/*else
 			vy += MARIO_GRAVITY * dt;*/
 		break;
 	case MARIO_STATE_IDLE:
+		isRunning = false;
 		isSitting = false;
 		if (level == MARIO_LEVEL_BIG)
 		{
@@ -636,6 +652,12 @@ void CMario::SetState(int State)
 		isRunning = true;
 		if (vx == 0)
 			state = MARIO_FIRE_ANI_IDLE_LEFT;
+		break;
+	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT:
+	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT:
+  		ResetAni();
+		isWaitingForAni = true;
+		vy -= (MARIO_GRAVITY + 0.008)*dt;
 		break;
 	}
 	//DebugOut(L"gia tri vx %d \n", state);

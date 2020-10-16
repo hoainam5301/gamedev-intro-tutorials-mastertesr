@@ -274,10 +274,21 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		objects[i]->Update(dt, &coObjects);
+		LPGAMEOBJECT a = objects[i];
+
+		if (dynamic_cast<CBrick*>(a) && a->id_brick_items == 2)
+		{
+			CBrick* gach = dynamic_cast<CBrick*>(a);
+			if (gach->bottom_coll == 1 && gach->created_item == 0 && gach->bouncing == 1)
+			{
+				gach->created_item = 1;
+				listitems.push_back(taonam(gach->x, gach->y));
+			}
+		}
 
 	}
 
-	for (int i = 0; i < objects.size(); i++)
+	/*for (int i = 0; i < objects.size(); i++)
 	{
 		LPGAMEOBJECT a = objects[i];
 
@@ -290,7 +301,7 @@ void CPlayScene::Update(DWORD dt)
 				listitems.push_back(taonam(gach->x, gach->y));				
 			}
 		}
-	}
+	}*/
 	if (player->use_Weapon && player->isdone==false)
 	{
 		if (player->nx > 0)
@@ -362,7 +373,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			mario->isJumping = false;
 			
 		}
-		mario->vy = 0.06;
+		mario->vy=mario->vy+ MARIO_GRAVITY*15*mario->dt;
 		DebugOut(L"vy = %f \n", mario->vy);
 		break; 
 	case DIK_Z:
@@ -380,15 +391,19 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		if (mario->isJumping && mario->isFalling)
+		if (mario->isFalling && mario->level == MARIO_RACCON && mario->isJumping)
+		{
+ 			if (mario->nx > 0)
+				mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
+			else
+				mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+		}
+		else if(mario->level==MARIO_RACCON && mario->isRunning)
+		if (mario->isJumping)
 			return;
-		mario->isHand_onkey = true;
-		//mario->Start_on_Key = GetTickCount();
 		mario->is_grounded = false;
 		mario->isJumping = true;
-		/*if (mario->isHand_onkey)
-			mario->startOnKey();*/
-			
+		//mario->isFalling = false;			
 		if (mario->level == MARIO_LEVEL_BIG)
 		{
 			if (mario->nx > 0)
@@ -465,6 +480,37 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	if (mario->GetState() == MARIO_STATE_DIE) return;
 	if (mario->isWaitingForAni)
 		return;
+	if (game->IsKeyDown(DIK_Z))
+	{
+		if (mario->level == MARIO_LEVEL_BIG)
+		{
+			if (mario->nx > 0)
+				mario->SetState(MARIO_ANI_BIG_RUNNING_RIGHT);
+			else
+				mario->SetState(MARIO_ANI_BIG_RUNNING_LEFT);
+		}
+		else if (mario->level == MARIO_LEVEL_SMALL)
+		{
+			if (mario->nx > 0)
+				mario->SetState(MARIO_ANI_SMALL_RUNNING_RIGHT);
+			else
+				mario->SetState(MARIO_ANI_SMALL_RUNNING_LEFT);
+		}
+		else if (mario->level == MARIO_RACCON)
+		{
+			if (mario->nx > 0)
+				mario->SetState(MARIO_RACCON_ANI_RUNNING_RIGHT);
+			else
+				mario->SetState(MARIO_RACCON_ANI_RUNNING_LEFT);
+		}
+		else if (mario->level == MARIO_FIRE)
+		{
+			if (mario->nx > 0)
+				mario->SetState(MARIO_FIRE_ANI_RUNNING_RIGHT);
+			else
+				mario->SetState(MARIO_FIRE_ANI_RUNNING_LEFT);
+		}
+	}
 	if (game->IsKeyDown(DIK_RIGHT))
 	{		
 		if (mario->level == MARIO_LEVEL_BIG)
@@ -544,37 +590,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 				mario->SetState(MARIO_FIRE_ANI_SITTING_RIGHT);
 			else
 				mario->SetState(MARIO_FIRE_ANI_SITTING_LEFT);
-		}
-	}
-	else if (game->IsKeyDown(DIK_Z) ) 
-	{
-		if (mario->level == MARIO_LEVEL_BIG)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_BIG_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_ANI_BIG_RUNNING_LEFT);
-		}
-		else if (mario->level == MARIO_LEVEL_SMALL)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_SMALL_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_ANI_SMALL_RUNNING_LEFT);
-		}
-		else if (mario->level == MARIO_RACCON)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_RACCON_ANI_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_RACCON_ANI_RUNNING_LEFT);
-		}
-		else if (mario->level == MARIO_FIRE)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_FIRE_ANI_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_FIRE_ANI_RUNNING_LEFT);
 		}
 	}
 	else
