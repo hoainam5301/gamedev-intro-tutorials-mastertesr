@@ -13,7 +13,7 @@
 
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_LEVEL_SMALL;
+	level = MARIO_FIRE;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	isJumping = false;
@@ -228,9 +228,9 @@ void CMario::SetState(int State)
 		if (isRunning)
 		{
 
-			if (vx < 0.2)
+			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_WALKING_RIGHT;
-			else if (vx >= 0.2)
+			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_RUNNING_RIGHT;
 
 		}			
@@ -243,8 +243,8 @@ void CMario::SetState(int State)
 			state = MARIO_ANI_BIG_JUMP_RIGHT;
 		}
 		vx += MARIO_WALKING_ACC * dt;
-		if (vx > 0.2f)
-			vx = 0.2f;
+		if (vx > MARIO_RUNNING_SPEED)
+			vx = MARIO_RUNNING_SPEED;
 		last_vx = vx;
 		nx = 1;
 		//DebugOut(L"gia tri vx=== %f \n", vx);
@@ -252,9 +252,9 @@ void CMario::SetState(int State)
 	case MARIO_ANI_BIG_WALKING_LEFT:
 		if (isRunning)
 		{
-			if (vx > -0.2)
+			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_WALKING_LEFT;
-			else if (vx <= -0.2)
+			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_RUNNING_LEFT;
 		}
 		if (lastnx == 1 && vx >= 0.06f)
@@ -266,8 +266,8 @@ void CMario::SetState(int State)
 			state = MARIO_ANI_BIG_JUMP_LEFT;
 		}
 		vx -= MARIO_WALKING_ACC * dt;	
-		if (vx < -0.2f)
-			vx = -0.2f;
+		if (vx < -MARIO_RUNNING_SPEED)
+			vx = -MARIO_RUNNING_SPEED;
 		last_vx = vx;
 		nx = -1;
 		break;
@@ -275,9 +275,9 @@ void CMario::SetState(int State)
 		if (isRunning)
 		{
 
-			if (vx < 0.2)
+			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_WALKING_RIGHT;
-			else if (vx >= 0.2)
+			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_RUNNING_RIGHT;
 		}
 		if (lastnx == -1 && vx <= -0.06f)
@@ -289,8 +289,8 @@ void CMario::SetState(int State)
 			state = MARIO_ANI_SMALL_JUMP_RIGHT;
 		}
 		vx += MARIO_WALKING_ACC * dt;		
-		if (vx > 0.2f)
-			vx = 0.2f;
+		if (vx > MARIO_RUNNING_SPEED)
+			vx = MARIO_RUNNING_SPEED;
 		//vx = MARIO_WALKING_SPEED;
 		last_vx = vx;
 		nx = 1;
@@ -299,9 +299,9 @@ void CMario::SetState(int State)
 		if (isRunning)
 		{
 
-			if (vx > -0.2)
+			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_WALKING_LEFT;
-			else if (vx <= -0.2)
+			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_RUNNING_LEFT;
 		}
 		if (lastnx == 1 && vx >= 0.06f)
@@ -314,17 +314,17 @@ void CMario::SetState(int State)
 		}
 		vx -= MARIO_WALKING_ACC * dt;
 		last_vx = vx;
-		if (vx < -0.2f)
-			vx = -0.2f;
+		if (vx < -MARIO_RUNNING_SPEED)
+			vx = -MARIO_RUNNING_SPEED;
 		nx = -1;
 		break;
 	case MARIO_RACCON_ANI_WALK_RIGHT:
 		if (isRunning)
 		{
 
-			if (vx < 0.2)
+			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_WALK_RIGHT;
-			else if (vx >= 0.2)
+			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_RUNNING_RIGHT;
 		}
 		if (lastnx == -1 && vx <= -0.06)
@@ -336,8 +336,8 @@ void CMario::SetState(int State)
 			state = MARIO_RACCON_ANI_JUMP_RIGHT;
 		}
 		vx += MARIO_WALKING_ACC * dt;
-		if (vx > 0.2f)
-			vx = 0.2f;		
+		if (vx > MARIO_RUNNING_SPEED)
+			vx = MARIO_RUNNING_SPEED;
 		//vx = MARIO_WALKING_SPEED;
 		last_vx = vx;
 		nx = 1;
@@ -346,9 +346,9 @@ void CMario::SetState(int State)
 		if (isRunning)
 		{
 
-			if (vx > -0.2)
+			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_WALK_LEFT;
-			else if (vx <= -0.2)
+			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_RUNNING_LEFT;
 		}
 		if (lastnx == 1 && vx >= 0.06)
@@ -360,8 +360,8 @@ void CMario::SetState(int State)
 			state = MARIO_RACCON_ANI_JUMP_LEFT;
 		}
 		vx -= MARIO_WALKING_ACC * dt;
-		if (vx < -0.2f)
-			vx = -0.2f;
+		if (vx < -MARIO_RUNNING_SPEED)
+			vx = -MARIO_RUNNING_SPEED;
 		last_vx = vx;
 		nx = -1;
 		break;
@@ -369,9 +369,9 @@ void CMario::SetState(int State)
 		if (isRunning)
 		{
 
-			if (vx < 0.2)
+			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_WALK_RIGHT;
-			else if (vx >= 0.2)
+			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_RUNNING_RIGHT;
 		}
 		if (lastnx == -1 && vx <= -0.06)
@@ -383,8 +383,8 @@ void CMario::SetState(int State)
 			state = MARIO_FIRE_ANI_JUMP_RIGHT;
 		}
 		vx += MARIO_WALKING_ACC * dt;
-		if (vx > 0.2f)
-			vx = 0.2f;
+		if (vx > MARIO_RUNNING_SPEED)
+			vx = MARIO_RUNNING_SPEED;
 		last_vx = vx;
 		nx = 1;
 		break;
@@ -392,9 +392,9 @@ void CMario::SetState(int State)
 		if (isRunning)
 		{
 
-			if (vx > -0.2)
+			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_WALK_LEFT;
-			else if (vx <= -0.2)
+			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_RUNNING_LEFT;
 		}
 		if (lastnx == 1 && vx >= 0.06)
@@ -406,8 +406,8 @@ void CMario::SetState(int State)
 			state = MARIO_FIRE_ANI_JUMP_LEFT;
 		}
 		vx -= MARIO_WALKING_ACC * dt;		
-		if (vx < -0.2f)
-			vx = -0.2f;
+		if (vx < -MARIO_RUNNING_SPEED)
+			vx = -MARIO_RUNNING_SPEED;
 		last_vx = vx;
 		nx = -1;
 		break;
@@ -636,12 +636,12 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT:
   		ResetAni();
 		isWaitingForAni = true;
-		vy -= (MARIO_GRAVITY + 0.008)*dt;
+		vy -= (MARIO_GRAVITY + 0.007)*dt;
 		break;
 	case MARIO_RACCON_ANI_FLYING_RIGHT:
 	case MARIO_RACCON_ANI_FLYING_LEFT:
 		ResetAni();
-		vy = -0.4;
+		vy = -MARIO_FLY_SPEED_Y;
 		break;
 	}
 	//DebugOut(L"gia tri vx %d \n", state);
@@ -657,6 +657,11 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		top = y;
 		right = x + MARIO_BIG_BBOX_WIDTH;
 		bottom = y + MARIO_BIG_BBOX_HEIGHT;
+		if (isSitting == true)
+		{
+			top = y+MARIO_SIT_BBOX;
+			bottom = top + MARIO_BIG_SIT_BBOX_HEIGHT;
+		}
 	}
 	else if(level==MARIO_LEVEL_SMALL)
 	{
@@ -669,16 +674,16 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	{
 		left = x;
 		top = y;
-		right = left + MARIO_RACCON_BBOX_WIDTH;		
+		right = left + MARIO_RACCON_BBOX_WIDTH;	
 		bottom = top + MARIO_RACCON_BBOX_HEIGHT;
-		if (isSitting == true)
+		if (isSitting)
 		{
 			top = y+9;
 			bottom = top + MARIO_RACCON_SIT_BBOX_HEIGHT;
 		}
 		if (nx > 0)
 		{
-			left = x + 9;
+			left = x + MARIO_SIT_BBOX;
 			right = left + 14;
 		}
 		else
@@ -693,11 +698,11 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		top = y;
 		right = left + MARIO_FIRE_BBOX_WIDTH;
 		bottom = top + MARIO_FIRE_BBOX_HEIGHT;
-		/*if (isSitting == true)
+		if (isSitting)
 		{
-			top = y + 9;
-			bottom = top + MARIO_RACCON_SIT_BBOX_HEIGHT;
-		}*/
+			top = y + MARIO_SIT_BBOX;
+			bottom = top + MARIO_FIRE_SIT_BBOX_HEIGHT;
+		}
 	}
 }
 

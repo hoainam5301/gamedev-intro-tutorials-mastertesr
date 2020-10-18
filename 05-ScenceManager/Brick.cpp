@@ -4,13 +4,14 @@
 #define BRICK_AFTER 1
 #define QUESTION_BRICK 0
 #define GRAVITY 0.3f
+#define	ID_GACH_RA_ITEMS	2
 #define BRICK_MOVE_UP 80 //do cao cuc gay nay len
 #define BRICK_MOVE_DOWN 72//vi tri cuc gach sau khi roi xuong lai
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
-	if (id_brick_items == 2 && bottom_coll == 1)
+	if (id_brick_items == ID_GACH_RA_ITEMS && bottom_coll == 1)
 	{
 		this->y += dy;
 		

@@ -305,7 +305,7 @@ void CPlayScene::Update(DWORD dt)
 	if (player->use_Weapon && player->isdone==false)
 	{
 		if (player->nx > 0)
-			listweapon.push_back(tao_weapon(player->x + MARIO_FIRE_BBOX_WIDTH, player->y + 6,player));
+			listweapon.push_back(tao_weapon(player->x + 10, player->y + 6,player));
 		else
 			listweapon.push_back(tao_weapon(player->x-6, player->y + 6,player));
 		player->isdone = true;

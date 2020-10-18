@@ -19,15 +19,12 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (a->GetState() == MARIO_FIRE_ANI_FIGHT_LEFT)
 		vx = -0.1;*/
 	if (nx> 0)
-		vx = 0.1;
+		vx = MOVING_SPEED;
 	else
-		vx = -0.1;
+		vx = -MOVING_SPEED;
 
-	//if (this->y == start_y)
-	//	vy = 0.15;
-	vy += MARIO_GRAVITY * dt;
-	//vy = 0.8 * sin(x);
-	//else if(this->y)
+	vy += (MARIO_GRAVITY * dt);
+
 	CGameObject::Update(dt);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -54,7 +51,7 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x += min_tx * dx + nx * 0.5f;
 		if (ny< 0)
 		{
-			vy = -0.15;
+			vy = -MOVING_SPEED;
 		}
 
 

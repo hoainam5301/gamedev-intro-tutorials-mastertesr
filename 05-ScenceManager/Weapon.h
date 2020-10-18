@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Mario.h"
+#define MOVING_SPEED 0.15
 class CWeapon: public CGameObject
 {
 	bool spawn = true;
