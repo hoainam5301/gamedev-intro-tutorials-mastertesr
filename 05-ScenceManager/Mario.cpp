@@ -13,7 +13,7 @@
 
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_FIRE;
+	level = MARIO_RACCON;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	isJumping = false;
@@ -30,7 +30,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	vy += MARIO_GRAVITY * dt;
+	if (gravity_raccon)
+	{
+		DebugOut(L"Im here\n");
+		vy += 0.0003 * dt;
+
+	}
+	else
+	{
+		vy += MARIO_GRAVITY * dt;
+	}
+
 	//DebugOut(L"vy = %f\n", vy);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -94,6 +104,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				isJumping = false;
 				is_grounded = true;
 				isFlying = false;
+				gravity_raccon = false;
 				//isFalling = false;
 			}
 			vy = 0;
@@ -172,7 +183,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	//DebugOut(L"isWaitingForAni = %d\n", isWaitingForAni);
 	// clean up collision events
-	//DebugOut(L"vy = %f\n", vy);
+	//DebugOut(L"vx = %f\n", vx);
+	DebugOut(L"gia tri x %f\n", vy);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
@@ -181,7 +193,7 @@ void CMario::Render()
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	animation_set->at(state)->Render(x, y, alpha);
-	DebugOut(L"stataaaaaa %d\n", state);
+	//DebugOut(L"stataaaaaa %d\n", state);
 	RenderBoundingBox();
 }
 
@@ -562,7 +574,7 @@ void CMario::SetState(int State)
 			if (vx > 0)
 				vx = 0;
 		}
-		DebugOut(L"gia tri vx=== %f \n", vx);
+		//DebugOut(L"gia tri vx=== %f \n", vx);
 		//vy = 0;
 		break;
 	case MARIO_ANI_BIG_STOP_LEFT:
@@ -634,9 +646,12 @@ void CMario::SetState(int State)
 		break;
 	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT:
 	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT:
-  		ResetAni();
-		isWaitingForAni = true;
-		vy -= (MARIO_GRAVITY + 0.007)*dt;
+		//state = MARIO_ANI_BIG_JUMP_RIGHT;
+		ResetAni();
+		isWaitingForAni = true;		
+		gravity_raccon = true;
+		vy = -MARIO_GRAVITY*dt*0.12;
+ 		
 		break;
 	case MARIO_RACCON_ANI_FLYING_RIGHT:
 	case MARIO_RACCON_ANI_FLYING_LEFT:

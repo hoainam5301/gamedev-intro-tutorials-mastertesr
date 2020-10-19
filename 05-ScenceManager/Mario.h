@@ -8,7 +8,7 @@
 //0.1f
 #define MARIO_JUMP_SPEED_Y		0.275f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
-#define MARIO_GRAVITY			0.0005f
+#define MARIO_GRAVITY			0.0006f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
 #define MARIO_FLY_SPEED_Y		0.4
 
@@ -135,6 +135,7 @@ class CMario : public CGameObject
 public: 
 	DWORD Start_on_Key;
 	bool is_grounded;
+	bool gravity_raccon;
 	int level;
 	bool isJumping,isSitting,isFalling;
 	bool isFlying,isRunning;

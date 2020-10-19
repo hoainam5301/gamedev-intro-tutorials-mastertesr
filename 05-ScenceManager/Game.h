@@ -15,6 +15,8 @@
 using namespace std;
 
 #define KEYBOARD_BUFFER_SIZE 1024
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 400
 
 class CGame
 {
@@ -46,6 +48,7 @@ class CGame
 
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
+	
 
 public:
 	void InitKeyboard();

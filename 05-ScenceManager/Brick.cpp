@@ -5,7 +5,7 @@
 #define QUESTION_BRICK 0
 #define GRAVITY 0.3f
 #define	ID_GACH_RA_ITEMS	2
-#define BRICK_MOVE_UP 80 //do cao cuc gay nay len
+#define BRICK_MOVE_UP 8 //do cao cuc gay nay len
 #define BRICK_MOVE_DOWN 72//vi tri cuc gach sau khi roi xuong lai
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -15,17 +15,17 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		this->y += dy;
 		
-		if (this->y == BRICK_MOVE_UP && move==false)
+		if (this->y == height && move==false)
 			vy = -0.05;
-		else if (this->y <= BRICK_MOVE_DOWN && move==false)
+		else if (this->y <= height-BRICK_MOVE_UP && move==false)
 		{
 			
 			vy = GRAVITY;
 			move = true;
 		}	
-		else if (this->y >= BRICK_MOVE_UP && move == true)
+		else if (this->y >= height && move == true)
 		{			
-			this->y = BRICK_MOVE_UP;	
+			this->y = height;	
 			vy = 0;
 			bouncing = 1;
 		}

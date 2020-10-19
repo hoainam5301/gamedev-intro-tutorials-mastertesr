@@ -61,7 +61,7 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 			//doihuong *= -1;
-		if (nx != 0) vx = 0;
+		if (nx != 0) this->isdone=true;
 
 		/*if (ny==0 && nx!=0)
 		{
@@ -91,7 +91,7 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CWeapon::Render()
 {
 	//DebugOut(L"state %d\n", state);
-	//if (!isdone)
+	if (!isdone)
 		animation_set->at(0)->Render(x, y);
 	//RenderBoundingBox();
 }

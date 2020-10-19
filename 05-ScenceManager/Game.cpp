@@ -342,6 +342,7 @@ void CGame::_ParseSection_SCENES(string line)
 	scenes[id] = scene;
 }
 
+
 /*
 	Load game campaign file and load/initiate first scene
 */

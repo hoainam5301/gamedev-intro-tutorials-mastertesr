@@ -8,19 +8,6 @@ TileMap::TileMap()
 	this->tile_height = TILE_HEIGHT;
 
 }
-int TileMap::getwidthmap()
-{
-	if (id == map3)
-		return ((num_col * tile_width) - 48);
-	else if (id == map2)
-		return ((num_col * tile_width) - 32);
-	else if (id == map4)
-		return ((num_col * tile_width) - 48);
-	else if (id == map6)
-		return ((num_col * tile_width) + 16);
-	else
-		return num_col * tile_width;
-}
 
 void TileMap::Load()
 {
@@ -40,9 +27,9 @@ void TileMap::Load()
 	}
 
 
-	for (UINT i = 0; i < num_row; i++)
+	for (UINT i = 0; i < 27; i++)
 	{
-		for (UINT j = 0; j < num_col; j++)
+		for (UINT j = 0; j < 176; j++)
 		{
 			f >> tilemap[i][j];
 		}
@@ -61,10 +48,10 @@ void TileMap::LoadMap(int id, LPCWSTR file_pic, LPCWSTR filePath_data, int num_r
 	DebugOut(L"[INFO] IDMAP\n", id);
 	//this->mappic = file_pic;
 	this->mapFilePath = filePath_data;
-	this->num_row = num_row;
-	this->num_col = num_col;
-	this->tile_width = tile_width;
-	this->tile_height = tile_height;
+	this->num_row = 27;
+	this->num_col = 176;
+	this->tile_width = 16;
+	this->tile_height = 16;
 
 	texture->Add(id, file_pic, D3DCOLOR_XRGB(r, g, b));
 
@@ -77,7 +64,7 @@ void TileMap::LoadMap(int id, LPCWSTR file_pic, LPCWSTR filePath_data, int num_r
 		for (UINT j = 0; j < num_col_read; j++)
 		{
 			int id_SPRITE = id + idsprite;
-			sprites->Add(id_SPRITE, tile_width * j, tile_height * i, tile_width * (j + 1), tile_height * (i + 1), texTileMap);
+			sprites->Add(id_SPRITE, 16 * j, 16 * i, 16 * (j + 1), 16 * (i + 1), texTileMap);
 			idsprite++;
 		}
 	}
@@ -88,21 +75,21 @@ void TileMap::LoadMap(int id, LPCWSTR file_pic, LPCWSTR filePath_data, int num_r
 void TileMap::Draw()
 {
 
-	int firstcol = (int)CGame::GetInstance()->GetCamPosX() / tile_width;
-	/*int lastcol = firstcol + (SCREEN_WIDTH / tile_width);
+	int firstcol = (int)CGame::GetInstance()->GetCamPosX() / 16;
+	int lastcol = firstcol + (SCREEN_WIDTH / 16);
 
-	for (UINT i = 0; i < num_row; i++)
+	for (UINT i = 0; i < 27; i++)
 	{
 		for (UINT j = firstcol; j <= lastcol; j++)
 		{
-			float x = tile_width * (j - firstcol) + CGame::GetInstance()->GetCamPosX() - (int)(CGame::GetInstance()->GetCamPosX()) % tile_width;
-			float y = tile_height * i + 80;
+			float x = 16 * (j - firstcol) + CGame::GetInstance()->GetCamPosX() - (int)(CGame::GetInstance()->GetCamPosX()) % 16;
+			float y = 16 * i + 80;
 
 
 			sprites->Get(tilemap[i][j] + id)->Draw(-1, x, y);
 
 		}
-	}*/
+	}
 
 
 }

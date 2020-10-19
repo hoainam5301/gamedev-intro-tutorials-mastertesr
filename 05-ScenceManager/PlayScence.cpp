@@ -302,7 +302,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}*/
-	if (player->use_Weapon && player->isdone==false)
+	if (player->use_Weapon && !player->isdone)
 	{
 		if (player->nx > 0)
 			listweapon.push_back(tao_weapon(player->x + 10, player->y + 6,player));
@@ -324,16 +324,17 @@ void CPlayScene::Update(DWORD dt)
 	player->GetPosition(cx, cy);
 
 	CGame *game = CGame::GetInstance();
-	cx -= game->GetScreenWidth() / 2;
-	cy -= game->GetScreenHeight() / 2;
+	cx -= game->GetScreenWidth() / 3;
+	cy -= game->GetScreenHeight() / 3;
 
 	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
 	//DebugOut(L"Gia tri cua listweapon %d \n", listweapon.size());
+	//DebugOut(L"Gia tri cua listitems %d \n", listitems.size());
 }
 
 void CPlayScene::Render()
 {
-	//map->DrawMap();
+	//map->Draw();
 	for (int i = 0; i < listweapon.size(); i++)
 		listweapon[i]->Render();
 
@@ -353,7 +354,7 @@ void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
-
+	
 	objects.clear();
 	player = NULL;
 
@@ -373,11 +374,24 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		mario->vy=mario->vy+ MARIO_GRAVITY*15*mario->dt;
 		//DebugOut(L"vy = %f \n", mario->vy);
 		break; 
-	case DIK_Z:
+	case DIK_A:
 		mario->isRunning = false;
-	case DIK_Q:
-		mario->use_Weapon = false;
-		mario->isdone = false;
+		if (mario->level == MARIO_FIRE)
+		{
+
+			mario->use_Weapon = false;
+			mario->isdone = false;
+		}
+		break;
+	//case DIK_Q:
+	//	mario->use_Weapon = false;
+	//	mario->isdone = false;
+	//	break;
+	case DIK_RIGHT:
+	case DIK_LEFT:
+		if (mario->isFlying)
+			mario->isFlying = false;
+
 	}
 }
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
@@ -388,15 +402,34 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		if (mario->level == MARIO_RACCON && mario->isRunning)
+		if (mario->level == MARIO_RACCON /*&& mario->isRunning*/)
 		{
-			if (mario->vx > 0.2)
+			/*if (mario->vx > 0.2)
 				mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
 			else if (mario->vx < -0.2)
 				mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
-			mario->isFlying = true;
+			mario->isFlying = true;*/
+			if (!mario->isFlying)
+			{
+				if (mario->isRunning)
+				{
+					if (mario->vx>0.2)
+						mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
+					else if (mario->vx<-0.2)
+						mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
+					mario->isFlying = true;
+				}
+				
+			}
+			else
+			{
+				if (mario->vx >0.2)
+					mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
+				else if (mario->vx < -0.2)
+					mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
+			}
 		}
-		else if (mario->isFalling && mario->level == MARIO_RACCON && mario->isJumping)
+		if (mario->isFalling && mario->level == MARIO_RACCON && mario->isJumping&& !mario->isFlying)
 		{
 			if (!mario->isSitting)
 			{
@@ -404,6 +437,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
 				else
 					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+				//mario->vy = (-0.0006 * 1.2 *mario-> dt);
 			}
 		}
 		
@@ -446,7 +480,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 		//DebugOut(L"gia tri is high jump %d \n", mario->isHigh_Jumping);
 		break;
-	case DIK_A: 
+	case DIK_Z: 
 		mario->Reset();
 		break;
 	case DIK_S:
@@ -458,9 +492,10 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 				mario->SetState(MARIO_RACCON_ANI_FIGHT_IDLE_LEFT);
 		}
 		break;
-	case DIK_Q:
+	case DIK_A:
 		if (mario->level == MARIO_FIRE)
 		{
+			DebugOut(L"A key down");
 			mario->use_Weapon = true;
 			if (mario->isJumping)
 			{
@@ -493,7 +528,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		return;
 	if(mario->isFlying)
 		return;
-	if (game->IsKeyDown(DIK_Z))
+	if (game->IsKeyDown(DIK_A))
 	{
 		if (mario->level == MARIO_LEVEL_BIG)
 		{
