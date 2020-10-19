@@ -61,7 +61,7 @@ public:
 
 	int id_brick_items;				//id cua gach co items(idgachranam)
 
-	bool isdone,Isdone;
+	bool isdone;
 	
 
 	int state;

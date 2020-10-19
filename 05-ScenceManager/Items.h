@@ -16,6 +16,7 @@ public:
 	int change_direction = 1;
 	float Start_y;
 	float Start_x;
+	bool move;
 	//bool chamsan;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

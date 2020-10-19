@@ -18,8 +18,7 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (this->y == height && move==false)
 			vy = -0.05;
 		else if (this->y <= height-BRICK_MOVE_UP && move==false)
-		{
-			
+		{			
 			vy = GRAVITY;
 			move = true;
 		}	

@@ -33,7 +33,7 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	
 	if(spawn){
 		//DebugOut(L"vy %f \n", vy);
-		if (y > Item_move)
+		if (this->y >= Start_x-20)
 			vy = -0.05;
 		else spawn = false;
 
@@ -45,6 +45,8 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy = GRAVITY;
 
 	}
+	DebugOut(L"gia tri start y %f \n", Start_y);
+	DebugOut(L"gia tri y %f \n", y);
 	CGameObject::Update(dt);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;

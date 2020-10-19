@@ -97,7 +97,6 @@ void CWeapon::Render()
 }
 void CWeapon::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-
 	if (!isdone)
 	{
 		left = x;

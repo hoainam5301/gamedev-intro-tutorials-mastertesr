@@ -93,7 +93,7 @@
 //#define MARIO_RUNNING_RIGHT					4
 //#define MARIO_RUNNING_LEFT					31
 
-#define MARIO_ANI_DIE				52
+//#define MARIO_ANI_DIE				52
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -137,7 +137,7 @@ public:
 	bool is_grounded;
 	bool gravity_raccon;
 	int level;
-	bool isJumping,isSitting,isFalling;
+	bool isJumping, isSitting;// isFalling;
 	bool isFlying,isRunning;
 	bool use_Weapon;
 	int lastnx;
