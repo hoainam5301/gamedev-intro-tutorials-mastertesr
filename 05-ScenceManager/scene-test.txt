@@ -220,7 +220,7 @@
 #sitting BIG right
 104	10008	100
 #STOP right
-105	10007	150
+105	10007	300
 #falling right big
 106	10002	100
 
@@ -235,7 +235,7 @@
 #sitting left BIG
 124	10028	100
 #STOP LEFT
-125	10027	150
+125	10027	300
 #falling left big
 126	10021	100
 
@@ -249,7 +249,7 @@
 #jump right 
 143	10045	100
 #stop right
-144	10046	100
+144	10046	300
 
 #idle small left
 160	10060	100
@@ -260,7 +260,7 @@
 #jump left
 163	10065	100
 #stop left
-164	10066	100
+164	10066	300
 
 #die 
 #199	10099	100
@@ -275,7 +275,7 @@
 #jump right
 203	10106	100
 #stop right
-204	10107	150
+204	10107	300
 #fight idle right
 205	10108	75	10109	75	10110	75	10111	75	10108	75
 #sitting right
@@ -296,7 +296,7 @@
 #jump left
 223	10126	100
 #stop left
-224	10127	150
+224	10127	300
 #fight idle left
 225	10128	75	10129	75	10130	75	10131	75	10128	75
 #sitting left
@@ -322,7 +322,7 @@
 #jump right
 303	10206	100
 #stop right
-304	10207	150
+304	10207	300
 #fight right
 305	10208	100	10209	100	10200	100
 #fight while jumping right
@@ -341,7 +341,7 @@
 #jump left
 323	10226	100
 #stop left
-324	10227	150
+324	10227	300
 #fight left
 325	10228	100	10229	100	10220	100
 #fight while jumping left

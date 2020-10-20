@@ -27,7 +27,7 @@ protected:
 	vector<LPGAMEOBJECT> listitems;
 	vector<LPGAMEOBJECT> listweapon;
 
-	CItems* taonam(float x, float y)
+	CItems* MadeItems(float x, float y)
 	{
 		CItems* a = new CItems(y,x);
 		a->SetPosition(x, y);
@@ -35,7 +35,7 @@ protected:
 		a->SetState(a->id_items);
 		return a;	
 	}
-	CWeapon* tao_weapon(float x, float y,CMario* mario)
+	CWeapon* MadeWeapon(float x, float y,CMario* mario)
 	{
 		CWeapon* a = new CWeapon(x, y,player);
 		a->SetPosition(x, y);

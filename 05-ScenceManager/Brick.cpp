@@ -1,12 +1,7 @@
 #include "Brick.h"
 #include "Items.h"
 #include "Utils.h"
-#define BRICK_AFTER 1
-#define QUESTION_BRICK 0
-#define GRAVITY 0.3f
-#define	ID_GACH_RA_ITEMS	2
-#define BRICK_MOVE_UP 8 //do cao cuc gay nay len
-#define BRICK_MOVE_DOWN 72//vi tri cuc gach sau khi roi xuong lai
+
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

@@ -45,8 +45,8 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy = GRAVITY;
 
 	}
-	DebugOut(L"gia tri start y %f \n", Start_y);
-	DebugOut(L"gia tri y %f \n", y);
+	//DebugOut(L"gia tri start y %f \n", Start_y);
+	//DebugOut(L"gia tri y %f \n", y);
 	CGameObject::Update(dt);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -123,9 +123,11 @@ void CItems::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case CUC_NAM:
+	case Mushroom:
 		break;
-	case CHIEC_LA:
+	case Tree_Leaf:
+		break;
+	case FIRE_FLOWER:
 		break;
 	}
 }

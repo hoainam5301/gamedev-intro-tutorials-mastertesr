@@ -1,8 +1,8 @@
 #pragma once
 #include "GameObject.h"
 #include "Mario.h"
-#define CUC_NAM		0
-#define	CHIEC_LA	1
+#define Mushroom	0
+#define	Tree_Leaf	1
 #define FIRE_FLOWER	2
 
 #define NAM_DUNG_YEN 0

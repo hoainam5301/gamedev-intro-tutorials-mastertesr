@@ -2,10 +2,14 @@
 #include "GameObject.h"
 #include "Utils.h"
 
-#define MARIO_WALKING_SPEED		0.075f 
+#define MARIO_WALKING_SPEED		0.2f 
+#define MARIO_RUNNING_ACC		0.00015f
 #define MARIO_WALKING_ACC		0.0002f
-#define MARIO_RUNNING_SPEED		0.2f
-//0.1f
+#define MARIO_RUNNING_SPEED		0.35f
+#define MARIO_SUB_WALKING_ACC	0.0005f
+#define MARIO_SUB_RUNNING_ACC	0.012f
+#define MARIO_MIN_SPEED_TO_STOP 0.06f
+
 #define MARIO_JUMP_SPEED_Y		0.275f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
 #define MARIO_GRAVITY			0.0006f
@@ -101,13 +105,18 @@
 #define MARIO_FIRE			4
 
 #define MARIO_BIG_BBOX_WIDTH  15
+#define MARIO_BIG_BBOX_WIDTH_RIGHT	20
 #define MARIO_BIG_BBOX_HEIGHT 27
+#define MARIO_BIG_BBOX_LEFT 5
 
 #define MARIO_SMALL_BBOX_WIDTH  15
 #define MARIO_SMALL_BBOX_HEIGHT 15
 
 #define MARIO_RACCON_BBOX_WIDTH 15
 #define MARIO_RACCON_BBOX_HEIGHT 28
+#define MARIO_RACCON_BBOX_SIT	9
+#define MARIO_BIG_BBOX_WIDTH_RIGHT	14
+#define MARIO_RACCON_BBOX_LEFT 7
 
 #define MARIO_FIRE_BBOX_WIDTH 15
 #define MARIO_FIRE_BBOX_HEIGHT 27
@@ -148,7 +157,7 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	void Render();
 
-	virtual void vachamvoiitems(vector<LPGAMEOBJECT>* listitem);
+	virtual void Collision_items(vector<LPGAMEOBJECT>* listitem);
 
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
@@ -156,6 +165,7 @@ public:
 	void startOnKey() {Start_on_Key = GetTickCount(); }
 	bool Istimeout() { return GetTickCount() - Start_on_Key >= 100; }
 	void Reset();
+	void SubRunningAcc();
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 };

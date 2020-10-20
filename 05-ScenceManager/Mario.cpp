@@ -29,17 +29,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 
-	// Simple fall down
-	if (gravity_raccon)
+	 //Simple fall down
+	/*if (gravity_raccon)
 	{
 		DebugOut(L"Im here\n");
 		vy += 0.0003 * dt;
 
 	}
 	else
-	{
+	{*/
 		vy += MARIO_GRAVITY * dt;
-	}
+	//}
 
 	//DebugOut(L"vy = %f\n", vy);
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -161,7 +161,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<CBrick*>(e->obj))
 			{
 				CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
-				if (e->ny > 0 && Brick->id_brick_items == 2)
+				if (e->ny > 0 && Brick->id_brick_items == ID_GACH_RA_ITEMS)
 				{
 					Brick->bottom_coll = 1;
 					//item_animation_set = 5;
@@ -194,7 +194,7 @@ void CMario::Render()
 }
 
 
-void CMario::vachamvoiitems(vector<LPGAMEOBJECT>* coObjects)
+void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 {
 	float l, t, r, b, ln, tn, rn, btn;
 	GetBoundingBox(l, t, r, b);
@@ -205,13 +205,13 @@ void CMario::vachamvoiitems(vector<LPGAMEOBJECT>* coObjects)
 		if (CGameObject::CheckAABB(l, t, r, b, ln, tn, rn, btn))
 		{
 
-			if (e->id_items == CUC_NAM)
+			if (e->id_items == Mushroom)
 			{
 				e->isdone = true;
 				y -= 20;
 				level = MARIO_LEVEL_BIG;
 			}
-			else if (e->id_items == CHIEC_LA)
+			else if (e->id_items == Tree_Leaf)
 			{
 				y -= 5;
 				e->isdone = true;
@@ -235,14 +235,16 @@ void CMario::SetState(int State)
 	case MARIO_ANI_BIG_WALKING_RIGHT:
 		if (isRunning)
 		{
-
+			vx += MARIO_RUNNING_ACC * dt;
+			if (vx > MARIO_RUNNING_SPEED)
+				vx = MARIO_RUNNING_SPEED;
 			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_WALKING_RIGHT;
 			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_RUNNING_RIGHT;
 
 		}
-		if (lastnx == -1 && vx <= -0.06)
+		if (lastnx == -1 && vx <= -MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_ANI_BIG_STOP_RIGHT);
 		}
@@ -253,9 +255,12 @@ void CMario::SetState(int State)
 			else
 				state = MARIO_ANI_BIG_FALLING_RIGHT;
 		}
-		vx += MARIO_WALKING_ACC * dt;
-		if (vx > MARIO_RUNNING_SPEED)
-			vx = MARIO_RUNNING_SPEED;
+		if (!isRunning)
+		{
+			vx += MARIO_WALKING_ACC * dt;
+			if (vx > MARIO_WALKING_SPEED)
+				vx = MARIO_WALKING_SPEED;
+		}
 		last_vx = vx;
 		nx = 1;
 		//DebugOut(L"gia tri vx=== %f \n", vx);
@@ -263,12 +268,15 @@ void CMario::SetState(int State)
 	case MARIO_ANI_BIG_WALKING_LEFT:
 		if (isRunning)
 		{
+			vx -= MARIO_RUNNING_ACC * dt;
+			if (vx < -MARIO_RUNNING_SPEED)
+				vx = -MARIO_RUNNING_SPEED;
 			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_WALKING_LEFT;
 			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_BIG_RUNNING_LEFT;
 		}
-		if (lastnx == 1 && vx >= 0.06f)
+		if (lastnx == 1 && vx >= MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_ANI_BIG_STOP_LEFT);
 		}
@@ -279,22 +287,27 @@ void CMario::SetState(int State)
 			else
 				state = MARIO_ANI_BIG_FALLING_LEFT;
 		}
-		vx -= MARIO_WALKING_ACC * dt;
-		if (vx < -MARIO_RUNNING_SPEED)
-			vx = -MARIO_RUNNING_SPEED;
+		if (!isRunning) 
+		{
+			vx -= MARIO_WALKING_ACC * dt;
+			if (vx < -MARIO_WALKING_SPEED)
+				vx = -MARIO_WALKING_SPEED;
+		}
 		last_vx = vx;
 		nx = -1;
 		break;
 	case MARIO_ANI_SMALL_WALKING_RIGHT:
 		if (isRunning)
 		{
-
+			vx += MARIO_RUNNING_ACC * dt;
+			if (vx > MARIO_RUNNING_SPEED)
+				vx = MARIO_RUNNING_SPEED;
 			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_WALKING_RIGHT;
 			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_RUNNING_RIGHT;
 		}
-		if (lastnx == -1 && vx <= -0.06f)
+		if (lastnx == -1 && vx <= -MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_ANI_SMALL_STOP_LEFT);
 		}
@@ -302,9 +315,12 @@ void CMario::SetState(int State)
 		{
 			state = MARIO_ANI_SMALL_JUMP_RIGHT;
 		}
-		vx += MARIO_WALKING_ACC * dt;
-		if (vx > MARIO_RUNNING_SPEED)
-			vx = MARIO_RUNNING_SPEED;
+		if (!isRunning) 
+		{
+			vx += MARIO_WALKING_ACC * dt;
+			if (vx > MARIO_WALKING_SPEED)
+				vx = MARIO_WALKING_SPEED;
+		}
 		//vx = MARIO_WALKING_SPEED;
 		last_vx = vx;
 		nx = 1;
@@ -312,36 +328,42 @@ void CMario::SetState(int State)
 	case MARIO_ANI_SMALL_WALKING_LEFT:
 		if (isRunning)
 		{
-
+			vx -= MARIO_RUNNING_ACC * dt;
+			if (vx < -MARIO_RUNNING_SPEED)
+				vx = -MARIO_RUNNING_SPEED;
 			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_WALKING_LEFT;
 			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_ANI_SMALL_RUNNING_LEFT;
 		}
-		if (lastnx == 1 && vx >= 0.06f)
+		if (lastnx == 1 && vx >= MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_ANI_SMALL_STOP_LEFT);
 		}
 		if (isJumping)
 		{
 			state = MARIO_ANI_SMALL_JUMP_LEFT;
+		}		
+		if (!isRunning) {
+			vx -= MARIO_WALKING_ACC * dt;
+			if (vx < -MARIO_WALKING_SPEED)
+				vx = -MARIO_WALKING_SPEED;
 		}
-		vx -= MARIO_WALKING_ACC * dt;
 		last_vx = vx;
-		if (vx < -MARIO_RUNNING_SPEED)
-			vx = -MARIO_RUNNING_SPEED;
 		nx = -1;
 		break;
 	case MARIO_RACCON_ANI_WALK_RIGHT:
 		if (isRunning)
 		{
-
+			vx += MARIO_RUNNING_ACC * dt;
+			if (vx > MARIO_RUNNING_SPEED)
+				vx = MARIO_RUNNING_SPEED;
 			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_WALK_RIGHT;
 			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_RUNNING_RIGHT;
 		}
-		if (lastnx == -1 && vx <= -0.06)
+		if (lastnx == -1 && vx <= -MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_RACCON_ANI_STOP_RIGHT);
 		}
@@ -352,9 +374,12 @@ void CMario::SetState(int State)
 			else
 				state = MARIO_RACCON_ANI_FALLING_RIGHT;
 		}
-		vx += MARIO_WALKING_ACC * dt;
-		if (vx > MARIO_RUNNING_SPEED)
-			vx = MARIO_RUNNING_SPEED;
+		if (!isRunning)
+		{
+			vx += MARIO_WALKING_ACC * dt;
+			if (vx > MARIO_WALKING_SPEED)
+				vx = MARIO_WALKING_SPEED;
+		}
 		//vx = MARIO_WALKING_SPEED;
 		last_vx = vx;
 		nx = 1;
@@ -362,13 +387,15 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_WALK_LEFT:
 		if (isRunning)
 		{
-
+			vx -= MARIO_RUNNING_ACC * dt;
+			if (vx < -MARIO_RUNNING_SPEED)
+				vx = -MARIO_RUNNING_SPEED;			
 			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_WALK_LEFT;
 			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_RUNNING_LEFT;
 		}
-		if (lastnx == 1 && vx >= 0.06)
+		if (lastnx == 1 && vx >= MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_RACCON_ANI_STOP_LEFT);
 		}
@@ -379,22 +406,27 @@ void CMario::SetState(int State)
 			else
 				state = MARIO_RACCON_ANI_FALLING_LEFT;
 		}
-		vx -= MARIO_WALKING_ACC * dt;
-		if (vx < -MARIO_RUNNING_SPEED)
-			vx = -MARIO_RUNNING_SPEED;
+		if (!isRunning)
+		{
+			vx -= MARIO_WALKING_ACC * dt;
+			if (vx <-MARIO_WALKING_SPEED)
+				vx = -MARIO_WALKING_SPEED;
+		}
 		last_vx = vx;
 		nx = -1;
 		break;
 	case MARIO_FIRE_ANI_WALK_RIGHT:
 		if (isRunning)
 		{
-
+			vx += MARIO_RUNNING_ACC * dt;
+			if (vx > MARIO_RUNNING_SPEED)
+				vx = MARIO_RUNNING_SPEED;
 			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_WALK_RIGHT;
 			else if (vx >= MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_RUNNING_RIGHT;
 		}
-		if (lastnx == -1 && vx <= -0.06)
+		if (lastnx == -1 && vx <= -MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_FIRE_ANI_STOP_RIGHT);
 		}
@@ -405,22 +437,28 @@ void CMario::SetState(int State)
 			else
 				state = MARIO_FIRE_ANI_FALLING_RIGHT;
 		}
-		vx += MARIO_WALKING_ACC * dt;
-		if (vx > MARIO_RUNNING_SPEED)
-			vx = MARIO_RUNNING_SPEED;
+		if (!isRunning) 
+		{
+			vx += MARIO_WALKING_ACC * dt;
+			if (vx > MARIO_WALKING_SPEED)
+				vx = MARIO_WALKING_SPEED;
+		}
 		last_vx = vx;
 		nx = 1;
 		break;
 	case MARIO_FIRE_ANI_WALK_LEFT:
 		if (isRunning)
 		{
-
+			vx -= MARIO_RUNNING_ACC * dt;
+			if (vx < -MARIO_RUNNING_SPEED)
+				vx = -MARIO_RUNNING_SPEED;
 			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_WALK_LEFT;
 			else if (vx <= -MARIO_RUNNING_SPEED)
 				state = MARIO_FIRE_ANI_RUNNING_LEFT;
+			//DebugOut(L"Gia tri vx khi running %f \n", vx);
 		}
-		if (lastnx == 1 && vx >= 0.06)
+		if (lastnx == 1 && vx >= MARIO_MIN_SPEED_TO_STOP)
 		{
 			SetState(MARIO_FIRE_ANI_STOP_LEFT);
 		}
@@ -431,9 +469,12 @@ void CMario::SetState(int State)
 			else
 				state = MARIO_FIRE_ANI_FALLING_LEFT;
 		}
-		vx -= MARIO_WALKING_ACC * dt;
-		if (vx < -MARIO_RUNNING_SPEED)
-			vx = -MARIO_RUNNING_SPEED;
+		if (!isRunning) {
+			vx -= MARIO_WALKING_ACC * dt;
+			if (vx < -MARIO_WALKING_SPEED)
+				vx = -MARIO_WALKING_SPEED;
+			//DebugOut(L"Gia tri vx khi walking %f\n", vx);
+		}
 		last_vx = vx;
 		nx = -1;
 		break;
@@ -474,14 +515,14 @@ void CMario::SetState(int State)
 		if (level == MARIO_LEVEL_BIG)
 		{
 			if (vx > 0) {
-				vx -= 0.0005 * dt;
+				vx -= MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx < 0)
 					vx = 0;
 				state = MARIO_ANI_BIG_WALKING_RIGHT;
 			}
 			if (vx < 0) {
-				vx += 0.0005 * dt;
+				vx += MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx > 0)
 					vx = 0;
@@ -495,14 +536,14 @@ void CMario::SetState(int State)
 		else if (level == MARIO_LEVEL_SMALL)
 		{
 			if (vx > 0) {
-				vx -= 0.0005 * dt;
+				vx -= MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx < 0)
 					vx = 0;
 				state = MARIO_ANI_SMALL_WALKING_RIGHT;
 			}
 			if (vx < 0) {
-				vx += 0.0005 * dt;
+				vx += MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx > 0)
 					vx = 0;
@@ -516,14 +557,14 @@ void CMario::SetState(int State)
 		else if (level == MARIO_RACCON)
 		{
 			if (vx > 0) {
-				vx -= 0.0005 * dt;
+				vx -= MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx < 0)
 					vx = 0;
 				state = MARIO_RACCON_ANI_WALK_RIGHT;
 			}
 			if (vx < 0) {
-				vx += 0.0005 * dt;
+				vx += MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx > 0)
 					vx = 0;
@@ -537,14 +578,14 @@ void CMario::SetState(int State)
 		else if (level == MARIO_FIRE)
 		{
 			if (vx > 0) {
-				vx -= 0.0005 * dt;
+				vx -= MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx < 0)
 					vx = 0;
 				state = MARIO_FIRE_ANI_WALK_RIGHT;
 			}
 			if (vx < 0) {
-				vx += 0.0005 * dt;
+				vx += MARIO_SUB_WALKING_ACC * dt;
 				last_vx = vx;
 				if (vx > 0)
 					vx = 0;
@@ -575,19 +616,20 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_SITTING_RIGHT:
 	case MARIO_RACCON_ANI_SITTING_LEFT:
 		isSitting = true;
-		if (vx > 0) {
-			vx -= 0.009 * dt;
-			last_vx = vx;
-			if (vx < 0)
-				vx = 0;
-			//state = MARIO_RACCON_ANI_SITTING_RIGHT;
-		}
-		if (vx < 0) {
-			vx += 0.009 * dt;
-			last_vx = vx;
-			if (vx > 0)
-				vx = 0;
-		}
+		SubRunningAcc();
+		//if (vx > 0) {
+		//	vx -= MARIO_SUB_RUNNING_ACC * dt;
+		//	last_vx = vx;
+		//	if (vx < 0)
+		//		vx = 0;
+		//	//state = MARIO_RACCON_ANI_SITTING_RIGHT;
+		//}
+		//if (vx < 0) {
+		//	vx += MARIO_SUB_RUNNING_ACC * dt;
+		//	last_vx = vx;
+		//	if (vx > 0)
+		//		vx = 0;
+		//}
 		//DebugOut(L"gia tri vx=== %f \n", vx);
 		//vy = 0;
 		break;
@@ -601,21 +643,21 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_STOP_RIGHT:
 		ResetAni();
 		isWaitingForAni = true;
-
-		if (vx > 0) {
-			vx -= 0.009 * dt;
-			last_vx = vx;
-			if (vx < 0)
-				vx = 0;
-			//state = MARIO_ANI_STOP_LEFT;
-		}
-		else if (vx < 0) {
-			vx += 0.009 * dt;
-			last_vx = vx;
-			if (vx > 0)
-				vx = 0;
-			//state = MARIO_ANI_STOP_RIGHT;
-		}
+		SubRunningAcc();
+		//if (vx > 0) {
+		//	vx -= MARIO_SUB_RUNNING_ACC * dt;
+		//	last_vx = vx;
+		//	if (vx < 0)
+		//		vx = 0;
+		//	//state = MARIO_ANI_STOP_LEFT;
+		//}
+		//else if (vx < 0) {
+		//	vx += MARIO_SUB_RUNNING_ACC * dt;
+		//	last_vx = vx;
+		//	if (vx > 0)
+		//		vx = 0;
+		//	//state = MARIO_ANI_STOP_RIGHT;
+		//}
 
 		break;
 	case MARIO_ANI_BIG_RUNNING_RIGHT:
@@ -659,23 +701,39 @@ void CMario::SetState(int State)
 			state = MARIO_FIRE_ANI_IDLE_LEFT;
 		break;
 	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT:
-	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT:
 		//state = MARIO_ANI_BIG_JUMP_RIGHT;
 		ResetAni();
 		isWaitingForAni = true;
 		gravity_raccon = true;
-		vy = -MARIO_GRAVITY * dt * 0.12;
-
+		vy = -MARIO_GRAVITY*dt;
 		break;
 	case MARIO_RACCON_ANI_FLYING_RIGHT:
 	case MARIO_RACCON_ANI_FLYING_LEFT:
 		ResetAni();
 		vy = -MARIO_FLY_SPEED_Y;
+	
+
 		break;
 	}
 	//DebugOut(L"gia tri vx %d \n", state);
 }
-
+void CMario::SubRunningAcc()
+{
+	if (vx > 0) {
+		vx -= MARIO_SUB_RUNNING_ACC * dt;
+		last_vx = vx;
+		if (vx < 0)
+			vx = 0;
+		//state = MARIO_ANI_STOP_LEFT;
+	}
+	else if (vx < 0) {
+		vx += MARIO_SUB_RUNNING_ACC * dt;
+		last_vx = vx;
+		if (vx > 0)
+			vx = 0;
+		//state = MARIO_ANI_STOP_RIGHT;
+	}
+}
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 
@@ -687,8 +745,8 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		bottom = y + MARIO_BIG_BBOX_HEIGHT;
 		if (nx > 0)
 		{
-			left = x + 5;
-			right = x + MARIO_BIG_BBOX_WIDTH+5;
+			left = x + MARIO_BIG_BBOX_LEFT;
+			right = x + MARIO_BIG_BBOX_WIDTH_RIGHT;
 
 		}
 		else
@@ -717,18 +775,18 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		right = left + MARIO_RACCON_BBOX_WIDTH;						
 		if (isSitting)
 		{
-			top = y + 9;
+			top = y + MARIO_RACCON_BBOX_SIT;
 			bottom = top + MARIO_RACCON_SIT_BBOX_HEIGHT;
 		}
 		if (nx > 0)
 		{
 			left = x + MARIO_SIT_BBOX;
-			right = left + 14;
+			right = left + MARIO_BIG_BBOX_WIDTH_RIGHT;
 		}
 		else
 		{
-			left = x + 7;
-			right = left + 14;
+			left = x + MARIO_RACCON_BBOX_LEFT;
+			right = left + MARIO_BIG_BBOX_WIDTH_RIGHT;
 		}
 	}
 	else if (level == MARIO_FIRE)
