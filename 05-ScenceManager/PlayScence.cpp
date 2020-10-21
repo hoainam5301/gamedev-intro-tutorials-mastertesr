@@ -337,7 +337,7 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	//map->Draw();
+	//map->DrawMap();
 	for (int i = 0; i < listweapon.size(); i++)
 		listweapon[i]->Render();
 
@@ -455,7 +455,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			return;
 		mario->is_grounded = false;
 		mario->isJumping = true;
-		if (!mario->isFlying) {
+		if (!mario->isFlying) 
+		{
 			if (mario->level == MARIO_LEVEL_BIG)
 			{
 				if (mario->nx > 0)
@@ -484,8 +485,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 				else
 					mario->SetState(MARIO_FIRE_ANI_JUMP_LEFT);
 			}
-  		mario->vy = -MARIO_JUMP_SPEED_Y;
-		
+  		mario->vy = -MARIO_JUMP_SPEED_Y;		
 		}
 		//DebugOut(L"gia tri is high jump %d \n", mario->isHigh_Jumping);
 		break;

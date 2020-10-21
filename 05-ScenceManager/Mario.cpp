@@ -13,7 +13,7 @@
 
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_RACCON;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	isJumping = false;
@@ -701,6 +701,7 @@ void CMario::SetState(int State)
 			state = MARIO_FIRE_ANI_IDLE_LEFT;
 		break;
 	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT:
+	case MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT:
 		//state = MARIO_ANI_BIG_JUMP_RIGHT;
 		ResetAni();
 		isWaitingForAni = true;
@@ -781,12 +782,12 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		if (nx > 0)
 		{
 			left = x + MARIO_SIT_BBOX;
-			right = left + MARIO_BIG_BBOX_WIDTH_RIGHT;
+			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
 		}
 		else
 		{
 			left = x + MARIO_RACCON_BBOX_LEFT;
-			right = left + MARIO_BIG_BBOX_WIDTH_RIGHT;
+			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
 		}
 	}
 	else if (level == MARIO_FIRE)
