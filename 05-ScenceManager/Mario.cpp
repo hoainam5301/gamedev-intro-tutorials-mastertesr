@@ -160,6 +160,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			} // if Goomba //aabb
 			else if (dynamic_cast<CBrick*>(e->obj))
 			{
+				isFalling = false;
 				CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
 				if (e->ny > 0 && Brick->id_brick_items == ID_GACH_RA_ITEMS)
 				{
@@ -706,7 +707,7 @@ void CMario::SetState(int State)
 		ResetAni();
 		isWaitingForAni = true;
 		gravity_raccon = true;
-		vy = -MARIO_GRAVITY*dt;
+		vy = -MARIO_GRAVITY*dt/2;
 		break;
 	case MARIO_RACCON_ANI_FLYING_RIGHT:
 	case MARIO_RACCON_ANI_FLYING_LEFT:

@@ -16,7 +16,7 @@ using namespace std;
 
 #define KEYBOARD_BUFFER_SIZE 1024
 #define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 400
+#define SCREEN_HEIGHT 800
 
 class CGame
 {
@@ -37,8 +37,7 @@ class CGame
 
 	LPKEYEVENTHANDLER keyHandler;
 
-	float cam_x = 0.0f;
-	float cam_y = 0.0f;
+	
 
 	int screen_width;
 	int screen_height; 
@@ -51,6 +50,8 @@ class CGame
 	
 
 public:
+	float cam_x = 0.0f;
+	float cam_y = 0.0f;
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
 	void Init(HWND hWnd);

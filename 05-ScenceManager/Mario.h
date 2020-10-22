@@ -152,7 +152,7 @@ public:
 	int lastnx;
 	float last_vx;
 	bool isWaitingForAni;
-
+	bool isFalling;
 	CMario(float x = 0.0f, float y = 0.0f);
 	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	void Render();

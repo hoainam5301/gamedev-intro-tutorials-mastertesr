@@ -26,6 +26,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_ANIMATIONS 4
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
+#define SCENE_SECTION_TILEMAP 7
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -37,7 +38,26 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 
 #define MAX_SCENE_LINE 1024
 
+void CPlayScene::_ParseSection_TileMap(string line)
+{
+	vector<string> tokens = split(line);
+	if (tokens.size() < 9) return;
+	int ID = atoi(tokens[0].c_str());
+	wstring file_texture = ToWSTR(tokens[1]);
+	wstring file_path = ToWSTR(tokens[2]);
+	
+	
 
+	int row_on_textures = atoi(tokens[3].c_str());
+	int col_on_textures = atoi(tokens[4].c_str());
+	int row_on_tile_map = atoi(tokens[5].c_str());
+	int col_on_tile_map = atoi(tokens[6].c_str());
+	int tile_width = atoi(tokens[7].c_str());
+	int tile_height = atoi(tokens[8].c_str());
+	//int texID = atoi(tokens[0].c_str());
+	map = new TileMap(ID, file_texture.c_str(), file_path.c_str(), row_on_textures, col_on_textures, row_on_tile_map, col_on_tile_map,  tile_width, tile_height);
+
+}
 void CPlayScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
@@ -242,6 +262,11 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
+		if (line == "[TILEMAP]")
+		{
+			section = SCENE_SECTION_TILEMAP;
+			continue;
+		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
 		//
@@ -254,6 +279,7 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+		case SCENE_SECTION_TILEMAP: _ParseSection_TileMap(line); break;
 		}
 	}
 
@@ -324,20 +350,26 @@ void CPlayScene::Update(DWORD dt)
 
 	// Update camera to follow mario
 	float cx, cy;
-	player->GetPosition(cx, cy);
+	//player->GetPosition(cx, cy);
 
-	CGame* game = CGame::GetInstance();
-	cx -= game->GetScreenWidth() / 3;
-	cy -= game->GetScreenHeight() / 3;
+	/*CGame* game = CGame::GetInstance();
+	cx -= game->GetScreenWidth() / 2;
+	cy -= game->GetScreenHeight() / 1.2;
 
-	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
-	//DebugOut(L"Gia tri cua listweapon %d \n", listweapon.size());
-	//DebugOut(L"Gia tri cua listitems %d \n", listitems.size());
+
+	CGame::GetInstance()->SetCamPos(cx,100);*/
+	CGame::GetInstance()->cam_y = 100;
+	if (player->x > (SCREEN_WIDTH / 4))
+	{
+		cx = player->x - (SCREEN_WIDTH / 4);
+		CGame::GetInstance()->cam_x = cx;
+	}
 }
 
 void CPlayScene::Render()
 {
-	//map->DrawMap();
+	
+	map->Draw();
 	for (int i = 0; i < listweapon.size(); i++)
 		listweapon[i]->Render();
 
@@ -374,19 +406,24 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			mario->isJumping = false;
 
 		}
-		if (mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
+		if (mario->isFalling)
 		{
-			//DebugOut(L"i'm here");
-			if (!mario->isSitting)
+			if (mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
 			{
-				if (mario->nx > 0)
-					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
-				else
-					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+				//DebugOut(L"i'm here");
+				if (!mario->isSitting)
+				{
+					if (mario->nx > 0)
+						mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
+					else
+						mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+				}
 			}
+			else
+				mario->vy = mario->vy + MARIO_GRAVITY * 15 * mario->dt;
 		}
-		else
-		mario->vy = mario->vy + MARIO_GRAVITY * 15 * mario->dt;
+		if (mario->isJumping)
+			mario->isFalling = true;
 		//DebugOut(L"vy = %f \n", mario->vy);
 		break;
 	case DIK_A:
@@ -429,7 +466,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 						mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
 					mario->isFlying = true;
 				}
-
+				
+				
 			}
 			else
 			{
@@ -437,6 +475,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 					mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
 				else if (mario->vx < -0.2)
 					mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
+
 			}
 		}
 		//if ( mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
@@ -491,6 +530,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_Z:
 		mario->Reset();
+		CGame::GetInstance()->cam_x = 0;
+
 		break;
 	case DIK_S:
 		if (mario->level == MARIO_RACCON)

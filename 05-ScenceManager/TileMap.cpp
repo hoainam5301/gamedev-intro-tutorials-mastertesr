@@ -1,39 +1,112 @@
-#include	 "TileMap.h"
-#include	"GameObject.h"
-#include "Utils.h"
+﻿#include "TileMap.h"
 
-TileMap::TileMap()
+TileMap::TileMap(int ID, LPCWSTR filePath_texture, LPCWSTR filePath_data, int num_row_on_texture, int num_col_on_textture, int num_row_on_tilemap, int num_col_on_tilemap, int tileset_width, int tileset_height)
 {
-	CTextures::GetInstance()->Add(300, L"textures\\map1.png", D3DCOLOR_XRGB(255, 255, 255));
-	ReadMap();
+	id = ID;
+
+	this->filePath_texture = filePath_texture;
+	this->filePath_data = filePath_data;
+
+	this->num_row_on_texture = num_row_on_texture;
+	this->num_col_on_textture = num_col_on_textture;
+	this->num_row_on_tilemap = num_row_on_tilemap;
+	this->num_col_on_tilemap = num_col_on_tilemap;
+	this->tileset_width = tileset_width;
+	this->tileset_height = tileset_height;
+
+	LoadMap();
+	Load();
 }
-void TileMap::ReadMap()
+
+
+void TileMap::LoadMap()
 {
-	ifstream ifs("textures\\out.txt", ios::in);
-	ifs >> row >> collum /*>> TileRow >> TiledCollum*/;
-	for (int i = 0; i < row; i++)
+	CTextures* texture = CTextures::GetInstance();
+
+	texture->Add(id, filePath_texture, D3DCOLOR_XRGB(255, 0, 255));
+
+	LPDIRECT3DTEXTURE9 texTileMap = texture->Get(id);
+
+
+	int id_sprite = 1;
+	for (UINT i = 0; i < num_row_on_texture; i++)
 	{
-		for (int j = 0; j < collum; j++)
+		for (UINT j = 0; j < num_col_on_textture; j++)
 		{
-			ifs >> TiledID[i][j];
+			int id_SPRITE = id + id_sprite;
+			sprites->Add(id_SPRITE, tileset_width * j, tileset_height * i, tileset_width * (j + 1), tileset_height * (i + 1), texTileMap);
+			id_sprite = id_sprite + 1;
 		}
 	}
-	ifs.close();
 }
-void TileMap::DrawMap()
+
+void TileMap::Load()
 {
-	for (int i = 0; i < row; i++)
-		for (int j = 0; j < collum; j++)
+	DebugOut(L"[INFO] Start loading map resources from : %s \n", filePath_data);
+
+	ifstream fs(filePath_data, ios::in);
+
+	if (fs.fail())
+	{
+		DebugOut(L"[ERROR] TileMap::Load_MapData failed: ID=%d", id);
+		fs.close();
+		return;
+	}
+
+	string line;
+
+	while (!fs.eof())
+	{
+		getline(fs, line);
+		// Lưu sprite tile vào vector tilemap
+		vector<LPSPRITE> spriteline;
+		stringstream ss(line);
+		int n;
+
+		while (ss >> n)
 		{
-			int Id = TiledID[i][j];
-			RECT r;
-			r.left = (Id - 1) % 11 * 16;
-			if (Id % 11 == 0)
-				r.top = (Id / 11 - 1) * 16;
-			else
-				r.top = Id / 11 * 16;
-			r.right = r.left + 16;
-			r.bottom = r.top + 16;
-			CGame::GetInstance()->Draw(j * 16 - 1, i * 16 - 1, CTextures::GetInstance()->Get(300), r.left, r.top, r.right, r.bottom);
+			int idTile = id + n;
+			spriteline.push_back(sprites->Get(idTile));
 		}
+
+		tilemap.push_back(spriteline);
+	}
+
+	fs.close();
+
+	DebugOut(L"[INFO] Done loading map resources %s\n", filePath_data);
+}
+
+
+void TileMap::Draw()
+{
+	int firstcol = (int)CGame::GetInstance()->GetCamPosX() / tileset_width;
+	int lastcol = firstcol + (SCREEN_WIDTH / tileset_width);
+
+	for (UINT i = 0; i < num_row_on_tilemap; i++)
+	{
+		for (UINT j = firstcol; j <= lastcol; j++)
+		{
+			float x = tileset_width * (j - firstcol) + CGame::GetInstance()->GetCamPosX()- (int)(CGame::GetInstance()->GetCamPosX()) % tileset_width;
+			float y = tileset_height * i;
+
+			tilemap[i][j]->Draw(x, y);
+		}
+	}
+}
+
+
+
+TileMap::~TileMap()
+{
+}
+
+int TileMap::GetWidthTileMap()
+{
+	if (id == 2000 || id == 4000 || id == 6000 || id == 8000 || id == 10000)
+		return num_col_on_tilemap * tileset_width + 16;
+	else
+		return num_col_on_tilemap * tileset_width;
+
+
 }
