@@ -10,10 +10,12 @@
 #include "Items.h"
 #include "Brick.h"
 #include "GiantPiranhaPlant.h"
+#include "Floor.h"
+#include "ColorBox.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_LEVEL_SMALL;
+	level = MARIO_RACCON;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	isJumping = false;
@@ -62,7 +64,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isWaitingForAni && animation_set->at(state)->IsOver())
 	{
 		isWaitingForAni = false;
-
 	}
 	/*if (vy > 0.01)
 	{
@@ -92,15 +93,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 
 
-		if (nx != 0) vx = last_vx;
+		if (nx != 0)
+		{
+			vx = last_vx;
+			if (isRunning)
+				vx = 0;			
+		}
+
 		if (ny != 0)
 		{
 			if (ny < 0)
 			{
 				isJumping = false;
-				is_grounded = true;
+				is_Grounded = true;
 				isFlying = false;
-				gravity_raccon = false;
+				//gravity_raccon = false;
 				//isFalling = false;
 			}
 			vy = 0;
@@ -176,12 +183,28 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				CPortal* p = dynamic_cast<CPortal*>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
 			}
+			else if (dynamic_cast<CFloor*>(e->obj))
+			{
+				isFalling = false;
+			}
+			else if (dynamic_cast<CColorBox*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					vy = 0;
+					isFalling = false;
+				}
+				if (e->nx != 0)
+				{
+					x += dx;
+				}
+			}
 		}
 	}
 	//DebugOut(L"isWaitingForAni = %d\n", isWaitingForAni);
 	// clean up collision events
 	//DebugOut(L"isfallinggggggggggggggggggg = %d\n", isFalling);
-	//DebugOut(L"gia tri x %f\n", vy);
+	//DebugOut(L"gia tri vx %f\n", vx);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
@@ -617,22 +640,9 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_SITTING_RIGHT:
 	case MARIO_RACCON_ANI_SITTING_LEFT:
 		isSitting = true;
-		SubRunningAcc();
-		//if (vx > 0) {
-		//	vx -= MARIO_SUB_RUNNING_ACC * dt;
-		//	last_vx = vx;
-		//	if (vx < 0)
-		//		vx = 0;
-		//	//state = MARIO_RACCON_ANI_SITTING_RIGHT;
-		//}
-		//if (vx < 0) {
-		//	vx += MARIO_SUB_RUNNING_ACC * dt;
-		//	last_vx = vx;
-		//	if (vx > 0)
-		//		vx = 0;
-		//}
-		//DebugOut(L"gia tri vx=== %f \n", vx);
-		//vy = 0;
+		//DebugOut(L"gia tri vx truoc khi tru %f \n", vx);
+		SubRunningAcc();		
+		//DebugOut(L"gia tri vx sau khi tru %f\n", vx);
 		break;
 	case MARIO_ANI_BIG_STOP_LEFT:
 	case MARIO_ANI_BIG_STOP_RIGHT:
@@ -645,21 +655,6 @@ void CMario::SetState(int State)
 		ResetAni();
 		isWaitingForAni = true;
 		SubRunningAcc();
-		//if (vx > 0) {
-		//	vx -= MARIO_SUB_RUNNING_ACC * dt;
-		//	last_vx = vx;
-		//	if (vx < 0)
-		//		vx = 0;
-		//	//state = MARIO_ANI_STOP_LEFT;
-		//}
-		//else if (vx < 0) {
-		//	vx += MARIO_SUB_RUNNING_ACC * dt;
-		//	last_vx = vx;
-		//	if (vx > 0)
-		//		vx = 0;
-		//	//state = MARIO_ANI_STOP_RIGHT;
-		//}
-
 		break;
 	case MARIO_ANI_BIG_RUNNING_RIGHT:
 		isRunning = true;
@@ -706,7 +701,7 @@ void CMario::SetState(int State)
 		//state = MARIO_ANI_BIG_JUMP_RIGHT;
 		ResetAni();
 		isWaitingForAni = true;
-		gravity_raccon = true;
+		//gravity_raccon = true;
 		vy = -MARIO_GRAVITY*dt/2;
 		break;
 	case MARIO_RACCON_ANI_FLYING_RIGHT:
@@ -726,14 +721,12 @@ void CMario::SubRunningAcc()
 		last_vx = vx;
 		if (vx < 0)
 			vx = 0;
-		//state = MARIO_ANI_STOP_LEFT;
 	}
 	else if (vx < 0) {
 		vx += MARIO_SUB_RUNNING_ACC * dt;
 		last_vx = vx;
 		if (vx > 0)
 			vx = 0;
-		//state = MARIO_ANI_STOP_RIGHT;
 	}
 }
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)

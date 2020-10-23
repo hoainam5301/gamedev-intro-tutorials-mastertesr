@@ -19,7 +19,6 @@ protected:
 	CItems	*items;
 	CWeapon* weapon;
 	TileMap* map;
-
 	// A play scene has to have player, right? 
 	// *gachthuong;
 	CBrick* gachthuong;

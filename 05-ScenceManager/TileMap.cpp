@@ -53,24 +53,30 @@ void TileMap::Load()
 		return;
 	}
 
-	string line;
-
-	while (!fs.eof())
+	for (int i = 0; i < num_row_on_tilemap; i++)
 	{
-		getline(fs, line);
-		// Lưu sprite tile vào vector tilemap
-		vector<LPSPRITE> spriteline;
-		stringstream ss(line);
-		int n;
-
-		while (ss >> n)
-		{
-			int idTile = id + n;
-			spriteline.push_back(sprites->Get(idTile));
-		}
-
-		tilemap.push_back(spriteline);
+		for (int j = 0; j < num_col_on_tilemap; j++)
+			fs >> tilemap[i][j];
 	}
+
+	//string line;
+
+	//while (!fs.eof())
+	//{
+	//	getline(fs, line);
+	//	// Lưu sprite tile vào vector tilemap
+	//	vector<LPSPRITE> spriteline;
+	//	stringstream ss(line);
+	//	int n;
+
+	//	while (ss >> n)
+	//	{
+	//		int idTile = id + n;
+	//		spriteline.push_back(sprites->Get(idTile));
+	//	}
+
+	//	tilemap.push_back(spriteline);
+	//}
 
 	fs.close();
 
@@ -87,10 +93,12 @@ void TileMap::Draw()
 	{
 		for (UINT j = firstcol; j <= lastcol; j++)
 		{
-			float x = tileset_width * (j - firstcol) + CGame::GetInstance()->GetCamPosX()- (int)(CGame::GetInstance()->GetCamPosX()) % tileset_width;
+			float x = tileset_width * (j - firstcol)+ CGame::GetInstance()->GetCamPosX()- (int)(CGame::GetInstance()->GetCamPosX()) % tileset_width;
 			float y = tileset_height * i;
 
-			tilemap[i][j]->Draw(x, y);
+
+			sprites->Get(tilemap[i][j] + id)->Draw(x, y);
+			//tilemap[i][j]->Draw(x, y);
 		}
 	}
 }
@@ -103,10 +111,8 @@ TileMap::~TileMap()
 
 int TileMap::GetWidthTileMap()
 {
-	if (id == 2000 || id == 4000 || id == 6000 || id == 8000 || id == 10000)
-		return num_col_on_tilemap * tileset_width + 16;
-	else
-		return num_col_on_tilemap * tileset_width;
+	
+		return (num_col_on_tilemap-32) * tileset_width;
 
 
 }

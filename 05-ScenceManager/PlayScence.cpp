@@ -6,6 +6,8 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "Portal.h"
+#include "Floor.h"
+#include "ColorBox.h"
 
 using namespace std;
 
@@ -35,6 +37,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_ITEMS	8
 #define OBJECT_TYPE_WEAPON  9
 #define OBJECT_TYPE_PORTAL	50
+#define OBJECT_TYPE_FLOOR   4
+#define OBJECT_TYPE_COLOR_BOX	5
 
 #define MAX_SCENE_LINE 1024
 
@@ -206,6 +210,20 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
 	break;
+	case OBJECT_TYPE_FLOOR:
+	{
+		float width = atof(tokens[4].c_str());
+		float height = atof(tokens[5].c_str());
+		obj = new CFloor(width, height);
+		break;
+	}
+	case OBJECT_TYPE_COLOR_BOX:
+	{
+		float width = atof(tokens[4].c_str());
+		float height = atof(tokens[5].c_str());
+		obj = new CColorBox(width, height);
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -358,8 +376,9 @@ void CPlayScene::Update(DWORD dt)
 
 
 	CGame::GetInstance()->SetCamPos(cx,100);*/
-	CGame::GetInstance()->cam_y = 100;
-	if (player->x > (SCREEN_WIDTH / 4))
+	CGame::GetInstance()->cam_y = 200;
+	//DebugOut(L"vi tri mario x= %d \n", map->GetWidthTileMap());
+	if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < map->GetWidthTileMap())
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
 		CGame::GetInstance()->cam_x = cx;
@@ -369,7 +388,7 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	
-	map->Draw();
+	map->Draw();	
 	for (int i = 0; i < listweapon.size(); i++)
 		listweapon[i]->Render();
 
@@ -401,7 +420,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		if (mario->is_grounded)
+		if (mario->is_Grounded)
 		{
 			mario->isJumping = false;
 
@@ -460,9 +479,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			{
 				if (mario->isRunning)
 				{
-					if (mario->vx > 0.2)
+					if (mario->vx >= MARIO_RUNNING_SPEED)
 						mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
-					else if (mario->vx < -0.2)
+					else if (mario->vx <= -MARIO_RUNNING_SPEED)
 						mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
 					mario->isFlying = true;
 				}
@@ -471,28 +490,28 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			}
 			else
 			{
-				if (mario->vx > 0.2)
+				if (mario->vx >= MARIO_RUNNING_SPEED)
 					mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
-				else if (mario->vx < -0.2)
+				else if (mario->vx <= -MARIO_RUNNING_SPEED)
 					mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
 
 			}
 		}
-		//if ( mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
-		//{
-		//	if (!mario->isSitting)
-		//	{
-		//		if (mario->nx > 0)
-		//			mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
-		//		else
-		//			mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
-		//		//mario->vy = (-0.0006 * 1.2 *mario-> dt);
-		//	}
-		//}
+		if ( mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
+		{
+			if (!mario->isSitting)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
+				else
+					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+				//mario->vy = (-0.0006 * 1.2 *mario-> dt);
+			}
+		}
 		
 		if (mario->isJumping)
 			return;
-		mario->is_grounded = false;
+		mario->is_Grounded = false;
 		mario->isJumping = true;
 		if (!mario->isFlying) 
 		{
@@ -531,7 +550,6 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_Z:
 		mario->Reset();
 		CGame::GetInstance()->cam_x = 0;
-
 		break;
 	case DIK_S:
 		if (mario->level == MARIO_RACCON)
@@ -610,7 +628,11 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->SetState(MARIO_FIRE_ANI_RUNNING_LEFT);
 		}
 	}
-	if (game->IsKeyDown(DIK_RIGHT))
+	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT))
+	{
+		mario->SetState(MARIO_STATE_IDLE);
+	}
+	else if (game->IsKeyDown(DIK_RIGHT))
 	{
 		if (mario->level == MARIO_LEVEL_BIG)
 			mario->SetState(MARIO_ANI_BIG_WALKING_RIGHT);

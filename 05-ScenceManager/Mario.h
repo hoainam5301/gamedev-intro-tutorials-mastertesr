@@ -2,10 +2,10 @@
 #include "GameObject.h"
 #include "Utils.h"
 
-#define MARIO_WALKING_SPEED		0.2f 
+#define MARIO_WALKING_SPEED		0.1f 
 #define MARIO_RUNNING_ACC		0.00015f
 #define MARIO_WALKING_ACC		0.0002f
-#define MARIO_RUNNING_SPEED		0.35f
+#define MARIO_RUNNING_SPEED		0.3f
 #define MARIO_SUB_WALKING_ACC	0.0005f
 #define MARIO_SUB_RUNNING_ACC	0.012f
 #define MARIO_MIN_SPEED_TO_STOP 0.06f
@@ -14,7 +14,7 @@
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
 #define MARIO_GRAVITY			0.0006f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
-#define MARIO_FLY_SPEED_Y		0.4
+#define MARIO_FLY_SPEED_Y		0.25f
 
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	1
@@ -142,9 +142,9 @@ class CMario : public CGameObject
 	float start_x;			// initial position of Mario at scene
 	float start_y; 
 public: 
-	DWORD Start_on_Key;
-	bool is_grounded;
-	bool gravity_raccon;
+	//DWORD Start_on_Key;
+	bool is_Grounded;
+	//bool gravity_raccon;
 	int level;
 	bool isJumping, isSitting;// isFalling;
 	bool isFlying,isRunning;
@@ -162,8 +162,8 @@ public:
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
-	void startOnKey() {Start_on_Key = GetTickCount(); }
-	bool Istimeout() { return GetTickCount() - Start_on_Key >= 100; }
+	//void startOnKey() {Start_on_Key = GetTickCount(); }
+	//bool Istimeout() { return GetTickCount() - Start_on_Key >= 100; }
 	void Reset();
 	void SubRunningAcc();
 

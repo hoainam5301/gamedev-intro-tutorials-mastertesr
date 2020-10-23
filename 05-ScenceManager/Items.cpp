@@ -40,7 +40,7 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else 
 	{
-		vx = 0.05 * change_direction;
+		vx = 0.1 * change_direction;
 		//x += 0.03 * dt;
 		vy = GRAVITY;
 
@@ -63,6 +63,7 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		float min_tx, min_ty, nx = 0, ny = 0;
 		float rdx = 0;
 		float rdy = 0;
+		//x += dx;
 		// TODO: This is a very ugly designed function!!!!
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 		
@@ -76,14 +77,14 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += min_ty * dy + ny * 0.5f;
 		x += min_tx * dx + nx * 0.5f;
 
-		
-		if (coEvents.size() <= 3)
+		// += dx;
+		/*if (coEvents.size() <= 2)
 		{
 			x += dx;
 		}
 		else
-			change_direction *= -1;
-		if (nx != 0) vx = 0;
+			change_direction *= -1;*/
+		if (nx != 0) change_direction *= -1;
 		
 		/*if (ny==0 && nx!=0)
 		{
