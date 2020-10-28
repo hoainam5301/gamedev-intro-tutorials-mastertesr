@@ -93,10 +93,8 @@ void TileMap::Draw()
 	{
 		for (UINT j = firstcol; j <= lastcol; j++)
 		{
-			float x = tileset_width * (j - firstcol)+ CGame::GetInstance()->GetCamPosX()- (int)(CGame::GetInstance()->GetCamPosX()) % tileset_width;
+			float x = tileset_width * (j - firstcol) + CGame::GetInstance()->GetCamPosX()- (int)(CGame::GetInstance()->GetCamPosX()) % tileset_width;
 			float y = tileset_height * i;
-
-
 			sprites->Get(tilemap[i][j] + id)->Draw(x, y);
 			//tilemap[i][j]->Draw(x, y);
 		}

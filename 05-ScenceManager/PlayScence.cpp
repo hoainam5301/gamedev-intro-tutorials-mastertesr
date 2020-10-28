@@ -39,6 +39,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_PORTAL	50
 #define OBJECT_TYPE_FLOOR   4
 #define OBJECT_TYPE_COLOR_BOX	5
+#define OBJECT_TYPE_PIRANHA_FLOWER_SHOOT 6
+
 
 #define MAX_SCENE_LINE 1024
 
@@ -49,9 +51,6 @@ void CPlayScene::_ParseSection_TileMap(string line)
 	int ID = atoi(tokens[0].c_str());
 	wstring file_texture = ToWSTR(tokens[1]);
 	wstring file_path = ToWSTR(tokens[2]);
-	
-	
-
 	int row_on_textures = atoi(tokens[3].c_str());
 	int col_on_textures = atoi(tokens[4].c_str());
 	int row_on_tile_map = atoi(tokens[5].c_str());
@@ -189,7 +188,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}break;
 	case OBJECT_TYPE_WEAPON:
 	{
-		obj = new CWeapon(x, y, player);
+		obj = new CWeapon(x, y, player->nx);
 		weapon = (CWeapon*)obj;
 	}
 	case OBJECT_TYPE_BRICK:
@@ -202,6 +201,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(); break;
+	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:obj = new CGiantPiranhaPlant(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -248,6 +248,8 @@ int CPlayScene::RandomItems()
 		return Tree_Leaf;
 	else if (a->level == MARIO_RACCON)
 		return FIRE_FLOWER;
+	else if (a->level == MARIO_FIRE)
+		return Tree_Leaf;
 	//DebugOut(L"radomitem %d \n", RandomItems());
 }
 void CPlayScene::Load()
@@ -333,6 +335,24 @@ void CPlayScene::Update(DWORD dt)
 				listitems.push_back(MadeItems(gach->x, gach->y));
 			}
 		}
+		//if (dynamic_cast<CGiantPiranhaPlant*>(a))
+		//{
+		//	CGiantPiranhaPlant* flower = dynamic_cast<CGiantPiranhaPlant*>(a);
+		//	if (flower->GetState() == GIANT_STATE_UP)
+		//	{
+		//		if (flower->y - player->y < 0)
+		//			flower->SetState(GIANT_STATE_45);
+		//		else if (flower->y - player->y >= 0)
+		//			flower->SetState(GIANT_STATE_45_MORE);
+		//	}
+		//	/*if()*/
+		//	/*if (player->nx > 0)
+		//		listweapon.push_back(MadeWeapon(flower->x, flower->y + 6, -player->nx));
+		//	else
+		//		listweapon.push_back(MadeWeapon(flower->x , flower->y + 6, -player->nx));*/
+
+		//}
+		
 
 	}
 
@@ -352,11 +372,12 @@ void CPlayScene::Update(DWORD dt)
 	if (player->use_Weapon && !player->isdone)
 	{
 		if (player->nx > 0)
-			listweapon.push_back(MadeWeapon(player->x + 10, player->y + 6, player));
+			listweapon.push_back(MadeWeapon(player->x + 10, player->y + 6, player->nx));
 		else
-			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player));
+			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player->nx));
 		player->isdone = true;
 	}
+	
 	player->Collision_items(&listitems);
 	for (int i = 0; i < listweapon.size(); i++)
 		listweapon[i]->Update(dt, &coObjects);
@@ -420,14 +441,28 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
+		
 		if (mario->is_Grounded)
 		{
 			mario->isJumping = false;
-
+		}
+		if (mario->level == MARIO_RACCON)
+		{
+			if (mario->isMaxSpeed)
+			{
+				//DebugOut(L"huong nx %d \n", mario->nx);
+				if (mario->nx > 0)
+					mario->SetState(MARIO_RACCON_ANI_KEEP_FLYING_RIGHT);
+				else
+					mario->SetState(MARIO_RACCON_ANI_KEEP_FLYING_LEFT);		
+				mario->isFlying = true;
+			}
+			return;
 		}
 		if (mario->isFalling)
 		{
-			if (mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
+			//DebugOut(L"Falling %d", mario->isFalling);
+			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying)
 			{
 				//DebugOut(L"i'm here");
 				if (!mario->isSitting)
@@ -460,8 +495,9 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		//	break;
 	case DIK_RIGHT:
 	case DIK_LEFT:
-		if (mario->isFlying)
-			mario->isFlying = false;
+	/*	if (mario->isFlying)
+			mario->isFlying = false;*/
+		break;
 
 	}
 }
@@ -473,30 +509,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		if (mario->level == MARIO_RACCON )
-		{
-			if (!mario->isFlying)
-			{
-				if (mario->isRunning)
-				{
-					if (mario->vx >= MARIO_RUNNING_SPEED)
-						mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
-					else if (mario->vx <= -MARIO_RUNNING_SPEED)
-						mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
-					mario->isFlying = true;
-				}
-				
-				
-			}
-			else
-			{
-				if (mario->vx >= MARIO_RUNNING_SPEED)
-					mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
-				else if (mario->vx <= -MARIO_RUNNING_SPEED)
-					mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
-
-			}
-		}
+		
 		if ( mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
 		{
 			if (!mario->isSitting)
@@ -531,10 +544,22 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			}
 			else if (mario->level == MARIO_RACCON)
 			{
-				if (mario->nx > 0)
-					mario->SetState(MARIO_RACCON_ANI_JUMP_RIGHT);
-				else
-					mario->SetState(MARIO_RACCON_ANI_JUMP_LEFT);
+				if (mario->isMaxSpeed && !mario->isFlying)
+				{
+					//DebugOut(L"huong nx %d \n", mario->nx);
+					if (mario->nx > 0)
+						mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
+					else
+						mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
+					mario->isFlying = true;
+				}
+				else 
+				{
+					if (mario->nx > 0)
+						mario->SetState(MARIO_RACCON_ANI_JUMP_RIGHT);
+					else
+						mario->SetState(MARIO_RACCON_ANI_JUMP_LEFT);
+				}
 			}
 			else if (mario->level == MARIO_FIRE)
 			{
@@ -594,38 +619,41 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	if (mario->GetState() == MARIO_STATE_DIE) return;
 	if (mario->isWaitingForAni)
 		return;
-	if (mario->isFlying)
-		return;
+	/*if (mario->isFlying)
+		return;*/
 	if (game->IsKeyDown(DIK_A))
 	{
-		if (mario->level == MARIO_LEVEL_BIG)
+		if (mario->is_Grounded)
 		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_BIG_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_ANI_BIG_RUNNING_LEFT);
-		}
-		else if (mario->level == MARIO_LEVEL_SMALL)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_SMALL_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_ANI_SMALL_RUNNING_LEFT);
-		}
-		else if (mario->level == MARIO_RACCON)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_RACCON_ANI_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_RACCON_ANI_RUNNING_LEFT);
-		}
-		else if (mario->level == MARIO_FIRE)
-		{
-			DebugOut(L"im here");
-			if (mario->nx > 0)
-				mario->SetState(MARIO_FIRE_ANI_RUNNING_RIGHT);
-			else
-				mario->SetState(MARIO_FIRE_ANI_RUNNING_LEFT);
+			if (mario->level == MARIO_LEVEL_BIG)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_ANI_BIG_RUNNING_RIGHT);
+				else
+					mario->SetState(MARIO_ANI_BIG_RUNNING_LEFT);
+			}
+			else if (mario->level == MARIO_LEVEL_SMALL)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_ANI_SMALL_RUNNING_RIGHT);
+				else
+					mario->SetState(MARIO_ANI_SMALL_RUNNING_LEFT);
+			}
+			else if (mario->level == MARIO_RACCON)
+			{
+				if (mario->nx > 0)
+					mario->SetState(MARIO_RACCON_ANI_RUNNING_RIGHT);
+				else
+					mario->SetState(MARIO_RACCON_ANI_RUNNING_LEFT);
+			}
+			else if (mario->level == MARIO_FIRE)
+			{
+				//DebugOut(L"im here");
+				if (mario->nx > 0)
+					mario->SetState(MARIO_FIRE_ANI_RUNNING_RIGHT);
+				else
+					mario->SetState(MARIO_FIRE_ANI_RUNNING_LEFT);
+			}
 		}
 	}
 	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT))
@@ -645,12 +673,12 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		mario->lastnx = 1;
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
-	{
+	{		
 		if (mario->level == MARIO_LEVEL_BIG)
 			mario->SetState(MARIO_ANI_BIG_WALKING_LEFT);
 		else if (mario->level == MARIO_LEVEL_SMALL)
 			mario->SetState(MARIO_ANI_SMALL_WALKING_LEFT);
-		else if (mario->level == MARIO_RACCON)
+		else if (mario->level == MARIO_RACCON)			
 			mario->SetState(MARIO_RACCON_ANI_WALK_LEFT);
 		else if (mario->level == MARIO_FIRE)
 			mario->SetState(MARIO_FIRE_ANI_WALK_LEFT);
@@ -682,6 +710,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	else
 	{
+		if (mario->isFlying)
+			return;
 		if (mario->isJumping)
 		{
 			if (mario->vy < 0)

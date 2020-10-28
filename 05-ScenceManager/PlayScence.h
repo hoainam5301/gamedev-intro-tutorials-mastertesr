@@ -19,9 +19,10 @@ protected:
 	CItems	*items;
 	CWeapon* weapon;
 	TileMap* map;
+	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
 	// *gachthuong;
-	CBrick* gachthuong;
+	//CBrick* gachthuong;
 	vector<LPGAMEOBJECT> objects;
 
 	vector<LPGAMEOBJECT> listitems;
@@ -35,9 +36,10 @@ protected:
 		a->SetState(a->id_items);
 		return a;	
 	}
-	CWeapon* MadeWeapon(float x, float y,CMario* mario)
+	CWeapon* MadeWeapon(float x, float y,int nx)
 	{
-		CWeapon* a = new CWeapon(x, y,player);
+		CWeapon* a = new CWeapon(x, y,nx);
+		//a->nx = player->nx;
 		a->SetPosition(x, y);
 		return a;
 	}
@@ -63,6 +65,7 @@ public:
 
 	CMario * GetPlayer() { return player; } 
 	CItems* GetItems()	 { return items; }
+	
 
 	//friend class CPlayScenceKeyHandler;
 };

@@ -15,7 +15,7 @@
 
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_RACCON;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	isJumping = false;
@@ -59,7 +59,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
-
+	if (is_Grounded && vx < MARIO_RUNNING_SPEED)
+		isMaxSpeed = false;
 
 	if (isWaitingForAni && animation_set->at(state)->IsOver())
 	{
@@ -91,7 +92,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.1f;
 
-
+		
 
 		if (nx != 0)
 		{
@@ -126,8 +127,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-
-			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
+			if (dynamic_cast<CColorBox*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					isFalling = false;
+				}
+				if (e->nx != 0)
+				{
+					vx = last_vx;
+					x += dx;
+				}
+			}
+			else if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
@@ -185,20 +197,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<CFloor*>(e->obj))
 			{
-				isFalling = false;
-			}
-			else if (dynamic_cast<CColorBox*>(e->obj))
-			{
 				if (e->ny < 0)
-				{
-					vy = 0;
 					isFalling = false;
-				}
-				if (e->nx != 0)
-				{
-					x += dx;
-				}
+				else if (e->nx != 0)
+					DebugOut(L"Aaaaaaa");
 			}
+			
 		}
 	}
 	//DebugOut(L"isWaitingForAni = %d\n", isWaitingForAni);
@@ -214,7 +218,7 @@ void CMario::Render()
 	if (untouchable) alpha = 128;
 	animation_set->at(state)->Render(x, y, alpha);
 	//DebugOut(L"stataaaaaa %d\n", state);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 
@@ -377,11 +381,23 @@ void CMario::SetState(int State)
 		nx = -1;
 		break;
 	case MARIO_RACCON_ANI_WALK_RIGHT:
+		if (isFlying)
+		{
+			vx += MARIO_WALKING_ACC * dt;
+			if (vx > 0.75)
+				vx = 0.75;
+			state = MARIO_RACCON_ANI_KEEP_FLYING_RIGHT;
+			nx = 1;
+			return;
+		}
 		if (isRunning)
 		{
 			vx += MARIO_RUNNING_ACC * dt;
 			if (vx > MARIO_RUNNING_SPEED)
+			{
 				vx = MARIO_RUNNING_SPEED;
+				isMaxSpeed = true;
+			}
 			if (vx < MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_WALK_RIGHT;
 			else if (vx >= MARIO_RUNNING_SPEED)
@@ -409,11 +425,23 @@ void CMario::SetState(int State)
 		nx = 1;
 		break;
 	case MARIO_RACCON_ANI_WALK_LEFT:
+		if (isFlying)
+		{
+			vx -= MARIO_WALKING_ACC * dt;
+			if (vx < -0.75)
+				vx = -0.75;
+			state = MARIO_RACCON_ANI_KEEP_FLYING_LEFT;
+			nx = -1;
+			return;
+		}
 		if (isRunning)
 		{
 			vx -= MARIO_RUNNING_ACC * dt;
 			if (vx < -MARIO_RUNNING_SPEED)
-				vx = -MARIO_RUNNING_SPEED;			
+			{
+				vx = -MARIO_RUNNING_SPEED;
+				isMaxSpeed = true;
+			}
 			if (vx > -MARIO_RUNNING_SPEED)
 				state = MARIO_RACCON_ANI_WALK_LEFT;
 			else if (vx <= -MARIO_RUNNING_SPEED)
@@ -704,12 +732,37 @@ void CMario::SetState(int State)
 		//gravity_raccon = true;
 		vy = -MARIO_GRAVITY*dt/2;
 		break;
+	case MARIO_RACCON_ANI_KEEP_FLYING_RIGHT:
+		ResetAni();
+		/*if (vx > 0.3)
+			vx -= MARIO_WALKING_ACC * dt;
+		if (vx <= MARIO_WALKING_SPEED)
+			vx = MARIO_WALKING_SPEED;*/
+		vx += MARIO_WALKING_ACC * dt;
+		if (vx > MARIO_WALKING_SPEED)
+			vx = MARIO_WALKING_SPEED;
+		vy = -(MARIO_GRAVITY + 0.002f * 4) * dt;
+		if (vy <= -0.1)
+		{
+			vy = -0.1;
+		}
+
+		break;
+	case MARIO_RACCON_ANI_KEEP_FLYING_LEFT:
+		ResetAni();
+		vx -= MARIO_WALKING_ACC * dt;
+		if (vx < -MARIO_WALKING_SPEED)
+			vx = -MARIO_WALKING_SPEED;
+		vy = -(MARIO_GRAVITY + 0.002f * 4) * dt;
+		if (vy <= -0.1)
+		{
+			vy = -0.1;
+		}
+		
+		break;
 	case MARIO_RACCON_ANI_FLYING_RIGHT:
 	case MARIO_RACCON_ANI_FLYING_LEFT:
-		ResetAni();
-		vy = -MARIO_FLY_SPEED_Y;
-	
-
+		vy = -MARIO_JUMP_SPEED_Y;
 		break;
 	}
 	//DebugOut(L"gia tri vx %d \n", state);
@@ -804,7 +857,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CMario::Reset()
 {
 	SetState(MARIO_STATE_IDLE);
-	SetLevel(MARIO_LEVEL_BIG);
+	SetLevel(MARIO_RACCON);
 	SetPosition(start_x, start_y);
 	SetSpeed(0, 0);
 }

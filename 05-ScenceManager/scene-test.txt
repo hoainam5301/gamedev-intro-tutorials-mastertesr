@@ -1,12 +1,13 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
 0	textures\mario.png	255	255	255
-20	textures\misc.png	176	224	248
+20	textures\misc.png	166	185	255
 999	textures\raccoon_3.png	255	255	255
 40	textures\raccoon_4.png	255	255	255
 41	textures\raccoon_5.png	255 	255	255
 42	textures\fireball_right.png	0	255	255
 43	textures\fireball_left.png	0	255	255
+44	textures\enemies_custom.png	255	255	255
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -179,10 +180,10 @@
 10233	16	678	30	706	0
 
 #QUESTION BRICK
-40001	300	117	316	133	20
-40002	318	117	334	133	20
-40003	336	117	352	133	20
-40004	354	117	370	133	20
+40001	157	188	173	204	20
+40002	176	188	192	204	20
+40003	196	188	212	204	20
+40004	215	188	231	204	20
 
 #GOOMBA
 30001	5	14	21	29	10
@@ -191,19 +192,25 @@
 30003	45	21	61	29	10
 
 #NAM
-1	299	188	317	206	20
+1	156	121	172	137	20
 #FIRE FLOWER
-3	336	189	352	205	20
+3	309	121	325	137	20
 
 #====LEAF TREE===
-30	300	208	316	222	20
+30	180	121	196	137	20
 #====FIRE BALL===
 31	17	4	25	12	42
 32	4	19	12	27	42
 33	4	4	12	12	42
 34	18	19	26	27	43
+#Giant_Piranha_shoot_fireball_45
+35	167	126	183	158	44
+36	150	126	166	158	44
+#Giant_Piranha_shot_fireball_45_more
+37	201	126	217	158	44
+38	184	126	200	158	44
 #QUESTION BRICK AFTER
-2	372	117	388	133	20
+2	235	188	251	204	20
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -281,11 +288,13 @@
 #sitting right
 206	10112	100
 #falling right 
-207	10102	100
+207	10113	100
 #Quay duoi right
 208	10114	50	10102	50	10113	50
 #flying right
 209	10115	50	10117	50	10116	50	10117	50	10115	50
+#flying
+210	10115	100
 
 #idle left
 220	10120	100
@@ -302,12 +311,13 @@
 #sitting left
 226	10132	100
 #falling left
-227	10122	100
+227	10133	100
 #quay duoi left
 228	10134	50	10122	50	10133	50
-#flying left
+#keep flying left
 229	10135	50	10137	50	10136	50	10137	50	10135	50
-
+#flying
+230	10135	100
 #MARIO DIE
 #die
 599	10099	100
@@ -370,15 +380,21 @@
 702	30001	100	30002	100
 # die
 703	30003	100
-
+#Giant_Piranha_shoot_fireball_45
+704	36	100
+#Giant_Piranha_shot_fireball_45_more
+705	38	100
+#Giant_Piranha_move_up_down
+706	35	100	36	100
 #QUESTION BRICK AFTER
 3	2	100
+
 #
 # id	ani1	ani2	ani3
 #
 [ANIMATION_SETS]
-# MARIO								7							14					19					24										34										44									53
-1	100	101	102	103	104	105	106	120	121	122	123	124	125	126	140	141	142	143	144	160	161	162	163	164	200	201	202	203	204	205	206	207	208	209	220	221	222	223	224	225	226	227	228	229	300	301	302	303	304	305	306	307	308	320	321	322	323	324	325	326	327	599
+# MARIO								7							14					19					24											35											46									55									64
+1	100	101	102	103	104	105	106	120	121	122	123	124	125	126	140	141	142	143	144	160	161	162	163	164	200	201	202	203	204	205	206	207	208	209	210	220	221	222	223	224	225	226	227	228	229	230	300	301	302	303	304	305	306	307	308	320	321	322	323	324	325	326	327	328	599
 # QUESTION BRICK 
 22	602	3
 # GOOMBA
@@ -386,15 +402,14 @@
 
 #Items
 8	888	700	701
-#GiantPiranhaPlant
-100	201	202
-
+#Giant_Piranha_Shot_fireball
+10	704	705	706	706
 #FIRE BALL
 9	890
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box,6=Piranha_flower_shot
 # MARIO
 0	17	300	1
 #GOOMBA
@@ -442,10 +457,12 @@
 5	1328	320	22	7	6
 5	2144	368	22	3	3
 5	2176	272	22	3	9
+#Piranha_Flower
+6	360	368	10
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
 #50	115	98	0	148	150	1
 [TILEMAP]
-10	textures\map1.png	textures\out.txt	11	11	27	208	16	16	
+10	textures\map1.png	textures\out.txt	11	11	27	208	16	16
 
 

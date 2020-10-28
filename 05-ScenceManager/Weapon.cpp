@@ -2,12 +2,12 @@
 #include "Math.h"
 #include "Mario.h"
 
-CWeapon::CWeapon(float start_x, float start_y,CMario* mario)
+CWeapon::CWeapon(float start_x, float start_y,int marionx)
 {
 	this->start_x = start_x;
 	this->start_y = start_y;
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(9));
-	this->nx = mario->nx;
+	this->nx = marionx;
 }
 
 void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
