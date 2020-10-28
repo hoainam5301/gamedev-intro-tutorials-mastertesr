@@ -147,6 +147,7 @@ public:
 	//DWORD Start_on_Key;
 	bool is_Grounded;
 	bool isMaxSpeed;
+	bool Firstspaceup;
 	//bool gravity_raccon;
 	int level;
 	bool isJumping, isSitting;// isFalling;

@@ -6,6 +6,7 @@
 #include "Game.h"
 
 #include "Goomba.h"
+#include "Koopas.h"
 #include "Portal.h"
 #include "Items.h"
 #include "Brick.h"
@@ -108,6 +109,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				isJumping = false;
 				is_Grounded = true;
 				isFlying = false;
+				Firstspaceup = true;
 				//gravity_raccon = false;
 				//isFalling = false;
 			}
@@ -160,7 +162,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							if (level > MARIO_LEVEL_SMALL)
 							{
-								level = MARIO_LEVEL_SMALL;
+								level = level - 1;
 								StartUntouchable();
 							}
 							else
@@ -177,6 +179,34 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			} // if Goomba //aabb
+			else if (dynamic_cast<CKoopas*>(e->obj))
+			{
+				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
+				if (e->ny < 0)
+				{
+					if (koopas->GetState() != KOOPAS_STATE_DIE)
+					{
+						koopas->SetState(KOOPAS_STATE_DIE);
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == 0)
+					{
+						if (koopas->GetState() != KOOPAS_STATE_DIE)
+						{
+							if (level > MARIO_LEVEL_SMALL)
+							{
+								level = level - 1;
+								StartUntouchable();
+							}
+							else
+								SetState(MARIO_STATE_DIE);
+						}
+					}
+				}
+			}
 			else if (dynamic_cast<CBrick*>(e->obj))
 			{
 				isFalling = false;
@@ -669,7 +699,7 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_SITTING_LEFT:
 		isSitting = true;
 		//DebugOut(L"gia tri vx truoc khi tru %f \n", vx);
-		SubRunningAcc();		
+		SubRunningAcc();	
 		//DebugOut(L"gia tri vx sau khi tru %f\n", vx);
 		break;
 	case MARIO_ANI_BIG_STOP_LEFT:
@@ -679,10 +709,10 @@ void CMario::SetState(int State)
 	case MARIO_FIRE_ANI_STOP_RIGHT:
 	case MARIO_FIRE_ANI_STOP_LEFT:
 	case MARIO_RACCON_ANI_STOP_LEFT:
-	case MARIO_RACCON_ANI_STOP_RIGHT:
+	case MARIO_RACCON_ANI_STOP_RIGHT:		
+		SubRunningAcc();
 		ResetAni();
 		isWaitingForAni = true;
-		SubRunningAcc();
 		break;
 	case MARIO_ANI_BIG_RUNNING_RIGHT:
 		isRunning = true;

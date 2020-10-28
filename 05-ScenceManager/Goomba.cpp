@@ -6,14 +6,13 @@ CGoomba::CGoomba()
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	left = x;
-	top = y;
-	right = x + GOOMBA_BBOX_WIDTH;
-
-	if (state == GOOMBA_STATE_DIE)
-		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
-	else 	
+	if (state != GOOMBA_STATE_DIE)
+	{
+		left = x;
+		top = y;
+		right = x + GOOMBA_BBOX_WIDTH;
 		bottom = y + GOOMBA_BBOX_HEIGHT;
+	}
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -26,11 +25,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	x += dx;
 	y += dy;
-
-	if (vx < 0 && x < 0) {
-		x = 0; vx = -vx;
-	}
-
 	if (vx > 0 && x > 290) {
 		x = 290; vx = -vx;
 	}
@@ -42,8 +36,15 @@ void CGoomba::Render()
 	if (state == GOOMBA_STATE_DIE) {
 		ani = GOOMBA_ANI_DIE;
 	}
-
-	animation_set->at(ani)->Render(x,y);
+	if(state==GOOMBA_STATE_WALKING)
+		animation_set->at(ani)->Render(x,y);
+	else if (state == GOOMBA_STATE_DIE)
+	{
+		if(timerenderanidie==0)
+			timerenderanidie = GetTickCount64();
+		if (GetTickCount64() - timerenderanidie < 200)
+			animation_set->at(ani)->Render(x, y);
+	}
 
 	//RenderBoundingBox();
 }

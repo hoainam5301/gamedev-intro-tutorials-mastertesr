@@ -456,15 +456,17 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 				else
 					mario->SetState(MARIO_RACCON_ANI_KEEP_FLYING_LEFT);		
 				mario->isFlying = true;
-			}
-			return;
+				return;
+			}			
+			
 		}
+		if (mario->isJumping)
+			mario->isFalling = true;
 		if (mario->isFalling)
 		{
-			//DebugOut(L"Falling %d", mario->isFalling);
-			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying)
-			{
-				//DebugOut(L"i'm here");
+			
+			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )
+			{				
 				if (!mario->isSitting)
 				{
 					if (mario->nx > 0)
@@ -474,11 +476,13 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 				}
 			}
 			else
-				mario->vy = mario->vy + MARIO_GRAVITY * 15 * mario->dt;
+			{
+				mario->vy = mario->vy + MARIO_GRAVITY * 10 * mario->dt;
+				mario->Firstspaceup = false;
+			}
 		}
-		if (mario->isJumping)
-			mario->isFalling = true;
-		//DebugOut(L"vy = %f \n", mario->vy);
+		
+		//mario->vy = mario->vy + MARIO_GRAVITY * 15 * mario->dt;
 		break;
 	case DIK_A:
 		mario->isRunning = false;
@@ -515,7 +519,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			if (!mario->isSitting)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
+ 					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
 				else
 					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
 				//mario->vy = (-0.0006 * 1.2 *mario-> dt);
@@ -526,6 +530,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			return;
 		mario->is_Grounded = false;
 		mario->isJumping = true;
+		//mario->firstspaceup = true;
 		if (!mario->isFlying) 
 		{
 			if (mario->level == MARIO_LEVEL_BIG)

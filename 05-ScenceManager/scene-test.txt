@@ -8,6 +8,8 @@
 42	textures\fireball_right.png	0	255	255
 43	textures\fireball_left.png	0	255	255
 44	textures\enemies_custom.png	255	255	255
+45	textures\enemies-5.png	0	255	255
+46	textures\enemies-5_1.png	0	255	255
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -186,10 +188,21 @@
 40004	215	188	231	204	20
 
 #GOOMBA
-30001	5	14	21	29	10
-30002	25	14	41	29	10
-#die
-30003	45	21	61	29	10
+#GOOMBA WAKLING
+30001	9	11	25	27	45
+30002	32	11	48	27	45
+#GOOMBA die
+30003	54	11	70	27	45
+
+#KOOPAS
+#KOOPAS WALKING LEFT
+30050	28	66	44	93	45
+30051	47	66	63	93	45
+#KOOPAS WALKING RIGHT
+30052	261	66	277	93	46
+30053	280	66	296	93	46	
+#KOOPAS DIE
+30054	29	97	45	113	45	
 
 #NAM
 1	156	121	172	137	20
@@ -380,6 +393,14 @@
 702	30001	100	30002	100
 # die
 703	30003	100
+#=====KOOPAS==
+#walking left
+710	30051	100	30050	100
+#walking right
+711	30052	100	30053	100
+#die
+712	30054	100
+
 #Giant_Piranha_shoot_fireball_45
 704	36	100
 #Giant_Piranha_shot_fireball_45_more
@@ -399,7 +420,8 @@
 22	602	3
 # GOOMBA
 3	702	703
-
+#KOOPAS
+4	710	711	712
 #Items
 8	888	700	701
 #Giant_Piranha_Shot_fireball
@@ -413,7 +435,9 @@
 # MARIO
 0	17	300	1
 #GOOMBA
-#2	60	135	3
+2	352	400	3
+#KOOPAS
+3	486	358	4
 # BRICK 
 1	192	352	22	2
 1	176	352	22	2

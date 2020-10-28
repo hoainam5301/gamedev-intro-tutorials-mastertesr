@@ -19,7 +19,8 @@ class CGoomba : public CGameObject
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 	CGoomba(float width, float height);
-public: 	
+public: 
+	DWORD timerenderanidie;
 	CGoomba();
 	virtual void SetState(int state);
 };
