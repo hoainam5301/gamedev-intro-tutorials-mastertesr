@@ -14,6 +14,7 @@
 #define KOOPAS_ANI_WALKING_LEFT 0
 #define KOOPAS_ANI_WALKING_RIGHT 1
 #define KOOPAS_ANI_DIE 2
+#define KOOPAS_ANI_DIE_AND_MOVE 3
 
 class CKoopas : public CGameObject
 {
@@ -22,6 +23,7 @@ class CKoopas : public CGameObject
 	virtual void Render();
 
 public:
+	int last_state;
 	CKoopas();
 	virtual void SetState(int state);
 };

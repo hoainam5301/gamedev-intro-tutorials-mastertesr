@@ -36,11 +36,20 @@ void CGoomba::Render()
 	if (state == GOOMBA_STATE_DIE) {
 		ani = GOOMBA_ANI_DIE;
 	}
+	else if (state == GOOMBA_STATE_DIE_FLY)
+		ani = GOOMBA_ANI_DIE_FLY;
 	if(state==GOOMBA_STATE_WALKING)
 		animation_set->at(ani)->Render(x,y);
 	else if (state == GOOMBA_STATE_DIE)
 	{
 		if(timerenderanidie==0)
+			timerenderanidie = GetTickCount64();
+		if (GetTickCount64() - timerenderanidie < 200)
+			animation_set->at(ani)->Render(x, y);
+	}
+	else if (state == GOOMBA_STATE_DIE_FLY)
+	{
+		if (timerenderanidie == 0)
 			timerenderanidie = GetTickCount64();
 		if (GetTickCount64() - timerenderanidie < 200)
 			animation_set->at(ani)->Render(x, y);
@@ -65,5 +74,10 @@ void CGoomba::SetState(int state)
 			break;
 		case GOOMBA_STATE_WALKING: 
 			vx = -GOOMBA_WALKING_SPEED;
+			break;
+		case GOOMBA_STATE_DIE_FLY:
+			vx = -GOOMBA_WALKING_SPEED;
+			vy = -0.1;
+			break;
 	}
 }

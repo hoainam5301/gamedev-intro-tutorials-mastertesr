@@ -335,23 +335,23 @@ void CPlayScene::Update(DWORD dt)
 				listitems.push_back(MadeItems(gach->x, gach->y));
 			}
 		}
-		//if (dynamic_cast<CGiantPiranhaPlant*>(a))
-		//{
-		//	CGiantPiranhaPlant* flower = dynamic_cast<CGiantPiranhaPlant*>(a);
-		//	if (flower->GetState() == GIANT_STATE_UP)
-		//	{
-		//		if (flower->y - player->y < 0)
-		//			flower->SetState(GIANT_STATE_45);
-		//		else if (flower->y - player->y >= 0)
-		//			flower->SetState(GIANT_STATE_45_MORE);
-		//	}
-		//	/*if()*/
-		//	/*if (player->nx > 0)
-		//		listweapon.push_back(MadeWeapon(flower->x, flower->y + 6, -player->nx));
-		//	else
-		//		listweapon.push_back(MadeWeapon(flower->x , flower->y + 6, -player->nx));*/
+		if (dynamic_cast<CGiantPiranhaPlant*>(a))
+		{
+			//CGiantPiranhaPlant* flower = dynamic_cast<CGiantPiranhaPlant*>(a);
+			//if (flower->GetState() == GIANT_STATE_MOVE_UP)
+			//{
+			//	if (flower->y - player->y < 0)
+			//		flower->SetState(GIANT_STATE_SHOOT_45);
+			//	else if (flower->y - player->y >= 0)
+			//		flower->SetState(GIANT_STATE_SHOOT_45_MORE);
+			//}
+			///*if()*/
+			//if (player->nx > 0)
+			//	listweapon.push_back(MadeWeapon(flower->x, flower->y + 6, -player->nx));
+			//else
+			//	listweapon.push_back(MadeWeapon(flower->x , flower->y + 6, -player->nx));
 
-		//}
+		}
 		
 
 	}
@@ -369,6 +369,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}*/
+	
 	if (player->use_Weapon && !player->isdone)
 	{
 		if (player->nx > 0)
@@ -379,14 +380,31 @@ void CPlayScene::Update(DWORD dt)
 	}
 	
 	player->Collision_items(&listitems);
-	for (int i = 0; i < listweapon.size(); i++)
-		listweapon[i]->Update(dt, &coObjects);
+	if (listweapon.size() != 0)
+	{
+		for (int i = 0; i < listweapon.size(); i++)
+		{
+			//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
+			listweapon[i]->Update(dt, &coObjects);
+		}
+	}
 	for (int i = 0; i < listitems.size(); i++)
 		listitems[i]->Update(dt, &coObjects);
-
+	if (listweapon.size() != 0)
+	{
+		//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
+		for (int i = 0; i < listweapon.size(); i++)
+		{
+			/*if (listweapon[i]->isExplode)
+			{
+				delete listweapon[i];					
+			}	*/		
+		}
+		
+	}
+	//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
-
 	// Update camera to follow mario
 	float cx, cy;
 	//player->GetPosition(cx, cy);
@@ -411,14 +429,22 @@ void CPlayScene::Render()
 	
 	map->Draw();	
 	for (int i = 0; i < listweapon.size(); i++)
-		listweapon[i]->Render();
+	{
+		if(!listweapon[i]->isExplode)
+			listweapon[i]->Render();
+	}
 
 	for (int i = 0; i < listitems.size(); i++)
 		listitems[i]->Render();
 
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
-
+	/*if (listweapon.size() > 2)
+	{
+		for (int i = 0; i < listweapon.size(); i++)
+			delete listweapon[3];
+		return;
+	}*/
 
 }
 
@@ -429,6 +455,11 @@ void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
+	/*for (int i = 0; i < listweapon.size(); i++)
+	{
+		if (listweapon[i]->GetState() == FIRE_BALL_EXPLODE)
+			delete listweapon[i];
+	}*/
 
 	objects.clear();
 	player = NULL;
@@ -465,7 +496,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		if (mario->isFalling)
 		{
 			
-			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )
+			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup ) // n?u ko là l?n th? phím ??u tiên thì s? ko qu?y ?uôi
 			{				
 				if (!mario->isSitting)
 				{
@@ -477,7 +508,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			}
 			else
 			{
-				mario->vy = mario->vy + MARIO_GRAVITY * 10 * mario->dt;
+				mario->vy = mario->vy + MARIO_GRAVITY * 10 * mario->dt; //lan thu phím uu tiên và là mario chon thì s? ko b? qu?y ?uôi, giúp chon nhay theo thoi gian giu phím
 				mario->Firstspaceup = false;
 			}
 		}
@@ -590,6 +621,38 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 				mario->SetState(MARIO_RACCON_ANI_FIGHT_IDLE_LEFT);
 		}
 		break;
+	case DIK_Q:
+		if (mario->level == MARIO_LEVEL_SMALL)
+			mario->SetState(MARIO_ANI_SMALL_KICK_RIGHT);
+		else if (mario->level == MARIO_LEVEL_BIG)
+			mario->SetState(MARIO_ANI_BIG_KICK_RIGHT);
+		else if (mario->level == MARIO_RACCON)
+			mario->SetState(MARIO_RACCON_ANI_KICK_RIGHT);
+		else if (mario->level == MARIO_FIRE)
+			mario->SetState(MARIO_FIRE_ANI_KICK_RIGHT);
+		break;
+	case DIK_W:
+		if (mario->level == MARIO_LEVEL_SMALL)
+			mario->SetState(MARIO_ANI_SMALL_KICK_LEFT);
+		else if (mario->level == MARIO_LEVEL_BIG)
+			mario->SetState(MARIO_ANI_BIG_KICK_LEFT);
+		else if (mario->level == MARIO_RACCON)
+			mario->SetState(MARIO_RACCON_ANI_KICK_LEFT);
+		else if (mario->level == MARIO_FIRE)
+			mario->SetState(MARIO_FIRE_ANI_KICK_LEFT);
+		break;
+	case DIK_1:
+		mario->level = MARIO_LEVEL_SMALL;
+		break;
+	case DIK_2:
+		mario->level = MARIO_LEVEL_BIG;
+		break;
+	case DIK_3:
+		mario->level = MARIO_RACCON;
+		break;
+	case DIK_4:
+		mario->level = MARIO_FIRE;
+		break;
 	case DIK_A:
 		if (mario->level == MARIO_FIRE)
 		{
@@ -621,7 +684,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 	// disable control key when Mario die 
 
-	if (mario->GetState() == MARIO_STATE_DIE) return;
+	if (mario->GetState() == MARIO_STATE_DIE)
+		return;
 	if (mario->isWaitingForAni)
 		return;
 	/*if (mario->isFlying)

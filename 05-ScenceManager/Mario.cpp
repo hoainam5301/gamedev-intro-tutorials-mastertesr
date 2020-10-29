@@ -90,10 +90,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		/*if (rdx != 0 && rdx!=dx)
 			x += nx*abs(rdx); */
 			// block every object first!
+		/*if (min_tx < min_ty)
+		{
+		x += min_tx * dx + nx * 0.4f;
+		LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
+		}
+		else
+		{
+			y += min_ty * dy + ny * 0.1f;
+			LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
+		}*/
+
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.1f;
-
-		
 
 		if (nx != 0)
 		{
@@ -156,9 +165,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (e->nx != 0)
 				{
-					if (untouchable == 0)
+					if (GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT || GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
+						{
+							goomba->SetState(GOOMBA_STATE_DIE_FLY);
+							goomba->vx = -goomba->vx;
+						}
+					}
+					else if (untouchable == 0)
+					{
+						if (goomba->GetState() != GOOMBA_STATE_DIE || goomba->GetState()!=GOOMBA_STATE_DIE_FLY)
 						{
 							if (level > MARIO_LEVEL_SMALL)
 							{
@@ -166,33 +183,71 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								StartUntouchable();
 							}
 							else
+							{
 								SetState(MARIO_STATE_DIE);
+								return;
+							}
 						}
+						
 					}
 				}
-				else if (state == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT && e->nx > 0)
-				{
-					if (goomba->GetState() != GOOMBA_STATE_DIE)
-					{
-						goomba->SetState(GOOMBA_STATE_DIE);
-						//vy = -MARIO_JUMP_DEFLECT_SPEED;
-					}
-				}
+				
 			} // if Goomba //aabb
 			else if (dynamic_cast<CKoopas*>(e->obj))
 			{
 				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 				if (e->ny < 0)
 				{
-					if (koopas->GetState() != KOOPAS_STATE_DIE)
+					if (koopas->GetState() == KOOPAS_STATE_WALKING)
+					{
+						koopas->SetState(KOOPAS_STATE_DIE);
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+					else if (koopas->GetState() == KOOPAS_ANI_DIE_AND_MOVE)
 					{
 						koopas->SetState(KOOPAS_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
+				else if (koopas->GetState() == KOOPAS_STATE_DIE)
+				{
+					if (e->nx > 0)
+					{
+						if (level == MARIO_LEVEL_SMALL)
+							SetState(MARIO_ANI_SMALL_KICK_LEFT);
+						else if (level == MARIO_LEVEL_BIG)
+							SetState(MARIO_ANI_BIG_KICK_LEFT);
+						else if (level == MARIO_RACCON)
+							SetState(MARIO_RACCON_ANI_KICK_LEFT);
+						else if (level == MARIO_FIRE)
+							SetState(MARIO_FIRE_ANI_KICK_LEFT);
+						koopas->SetState(KOOPAS_ANI_DIE_AND_MOVE);
+						koopas->nx = -1;
+					}
+					else
+					{						
+						if (level == MARIO_LEVEL_SMALL)
+							SetState(MARIO_ANI_SMALL_KICK_RIGHT);
+						else if (level == MARIO_LEVEL_BIG)
+							SetState(MARIO_ANI_BIG_KICK_RIGHT);
+						else if (level == MARIO_RACCON)
+							SetState(MARIO_RACCON_ANI_KICK_RIGHT);
+						else if (level == MARIO_FIRE)
+							SetState(MARIO_FIRE_ANI_KICK_RIGHT);
+						koopas->SetState(KOOPAS_ANI_DIE_AND_MOVE);
+						koopas->nx = 1;
+					}
+				}
 				else if (e->nx != 0)
 				{
-					if (untouchable == 0)
+					if (GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT || GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT)
+					{
+						if (koopas->GetState() != KOOPAS_STATE_DIE)
+						{
+							koopas->SetState(KOOPAS_STATE_DIE);
+						}
+					}
+					else if (untouchable == 0)
 					{
 						if (koopas->GetState() != KOOPAS_STATE_DIE)
 						{
@@ -202,10 +257,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								StartUntouchable();
 							}
 							else
+							{
 								SetState(MARIO_STATE_DIE);
+								return;
+							}
 						}
 					}
+					//DebugOut(L"stateeeee %d \n", koopas->GetState());
 				}
+				
 			}
 			else if (dynamic_cast<CBrick*>(e->obj))
 			{
@@ -229,8 +289,23 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0)
 					isFalling = false;
-				else if (e->nx != 0)
-					DebugOut(L"Aaaaaaa");
+				/*else if (e->nx != 0)*/
+					//DebugOut(L"Aaaaaaa");
+			}
+			else if (dynamic_cast<CGiantPiranhaPlant*>(e->obj))
+			{
+				if (untouchable == 0)
+				{
+					if (level == MARIO_LEVEL_SMALL)
+					{
+						SetState(MARIO_STATE_DIE);
+						return;
+					}
+					level -= 1;
+					vx = 0;
+					vy = 0;
+					
+				}
 			}
 			
 		}
@@ -689,6 +764,7 @@ void CMario::SetState(int State)
 		isWaitingForAni = true;
 		break;
 	case MARIO_STATE_DIE:
+		state = MARIO_ANI_DIE;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		break;
 	case MARIO_ANI_BIG_SITTING_RIGHT:
@@ -794,6 +870,17 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_FLYING_LEFT:
 		vy = -MARIO_JUMP_SPEED_Y;
 		break;
+	case MARIO_ANI_BIG_KICK_RIGHT:
+	case MARIO_ANI_BIG_KICK_LEFT:
+	case MARIO_ANI_SMALL_KICK_RIGHT:
+	case MARIO_ANI_SMALL_KICK_LEFT:
+	case MARIO_RACCON_ANI_KICK_RIGHT:
+	case MARIO_RACCON_ANI_KICK_LEFT:
+	case MARIO_FIRE_ANI_KICK_RIGHT:
+	case MARIO_FIRE_ANI_KICK_LEFT:
+		ResetAni();
+		isWaitingForAni = true;
+		break;
 	}
 	//DebugOut(L"gia tri vx %d \n", state);
 }
@@ -865,6 +952,19 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		{
 			left = x + MARIO_RACCON_BBOX_LEFT;
 			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
+		}
+		if ((state == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT || state == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT))
+		{
+			if (nx > 0)
+			{
+				left = x + 15;
+				right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
+			}
+			else
+			{
+				left = x - 5;
+				right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT+10;
+			}
 		}
 	}
 	else if (level == MARIO_FIRE)

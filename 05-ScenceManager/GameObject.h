@@ -58,7 +58,7 @@ public:
 	int id_items;
 	int nx;	
 	int ny;
-
+	bool isExplode;
 	int id_brick_items;				//id cua gach co items(idgachranam)
 
 	bool isdone;

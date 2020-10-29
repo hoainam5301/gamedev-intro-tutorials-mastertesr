@@ -21,12 +21,6 @@ void CItems::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		right = x + 18;
 		bottom = y + 18;
 	}
-	/*else
-	{
-		left = right;
-		top = bottom;
-	}*/
-
 }
 void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
