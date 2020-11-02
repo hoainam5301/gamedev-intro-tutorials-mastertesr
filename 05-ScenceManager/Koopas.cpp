@@ -79,7 +79,7 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_ANI_DIE_AND_MOVE:
 		last_state = KOOPAS_ANI_DIE_AND_MOVE;
-		vx = 0.1;
+		vx = 0.1*nx;
 		break;
 	}
 

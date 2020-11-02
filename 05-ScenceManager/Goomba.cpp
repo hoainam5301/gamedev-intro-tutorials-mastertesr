@@ -6,7 +6,7 @@ CGoomba::CGoomba()
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	if (state != GOOMBA_STATE_DIE)
+	if (state != GOOMBA_STATE_DIE /*|| state!=GOOMBA_STATE_DIE_FLY*/)
 	{
 		left = x;
 		top = y;
@@ -76,8 +76,8 @@ void CGoomba::SetState(int state)
 			vx = -GOOMBA_WALKING_SPEED;
 			break;
 		case GOOMBA_STATE_DIE_FLY:
-			vx = -GOOMBA_WALKING_SPEED;
-			vy = -0.1;
+			vx = -GOOMBA_WALKING_SPEED + 0.04f;
+			vy = -0.15;
 			break;
 	}
 }

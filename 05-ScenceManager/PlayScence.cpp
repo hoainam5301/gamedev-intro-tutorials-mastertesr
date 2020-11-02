@@ -184,12 +184,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_ITEMS:
 	{
 		obj = new CItems(x, y);
-		items = (CItems*)obj;
+		//items = (CItems*)obj;
 	}break;
 	case OBJECT_TYPE_WEAPON:
 	{
 		obj = new CWeapon(x, y, player->nx);
-		weapon = (CWeapon*)obj;
+		//weapon = (CWeapon*)obj;
 	}
 	case OBJECT_TYPE_BRICK:
 	{
@@ -382,6 +382,8 @@ void CPlayScene::Update(DWORD dt)
 	player->Collision_items(&listitems);
 	if (listweapon.size() != 0)
 	{
+		if (listweapon.size() >= 2)
+			player->loadFireball = true;
 		for (int i = 0; i < listweapon.size(); i++)
 		{
 			//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
@@ -392,16 +394,17 @@ void CPlayScene::Update(DWORD dt)
 		listitems[i]->Update(dt, &coObjects);
 	if (listweapon.size() != 0)
 	{
-		//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
 		for (int i = 0; i < listweapon.size(); i++)
 		{
-			/*if (listweapon[i]->isExplode)
+			if (listweapon[i]->isExplode)
 			{
-				delete listweapon[i];					
-			}	*/		
+				listweapon.erase(listweapon.begin() + i);
+			}
 		}
-		
+
 	}
+	else
+		player->loadFireball = false;
 	//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
@@ -416,7 +419,6 @@ void CPlayScene::Update(DWORD dt)
 
 	CGame::GetInstance()->SetCamPos(cx,100);*/
 	CGame::GetInstance()->cam_y = 200;
-	//DebugOut(L"vi tri mario x= %d \n", map->GetWidthTileMap());
 	if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < map->GetWidthTileMap())
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
@@ -656,8 +658,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_A:
 		if (mario->level == MARIO_FIRE)
 		{
-			//DebugOut(L"A key down");
-			mario->use_Weapon = true;
+			if (mario->loadFireball)
+				return;
+			mario->use_Weapon = true;			
 			if (mario->isJumping)
 			{
 				if (mario->nx > 0)
@@ -684,7 +687,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 	// disable control key when Mario die 
 
-	if (mario->GetState() == MARIO_STATE_DIE)
+	if (mario->GetState() == MARIO_ANI_DIE)
 		return;
 	if (mario->isWaitingForAni)
 		return;

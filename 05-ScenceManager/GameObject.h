@@ -45,7 +45,7 @@ class CGameObject
 {
 public:
 
-	int ani;
+	//int ani;
 
 	float x; 
 	float y;
@@ -62,7 +62,7 @@ public:
 	int id_brick_items;				//id cua gach co items(idgachranam)
 
 	bool isdone;
-	
+	bool loadFireball;
 
 	int state;
 

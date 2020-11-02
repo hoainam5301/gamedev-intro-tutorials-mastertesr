@@ -17,7 +17,7 @@ class CPlayScene: public CScene
 protected: 
 	CMario *player;	
 	CItems	*items;
-	CWeapon* weapon;
+	//CWeapon* weapon;
 	TileMap* map;
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 

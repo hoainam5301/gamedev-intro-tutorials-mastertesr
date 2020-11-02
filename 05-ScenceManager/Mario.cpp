@@ -51,7 +51,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	coEvents.clear();
 
 	// turn off collision when die 
-	if (state != MARIO_STATE_DIE)
+	if (state != MARIO_ANI_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
 
 	// reset untouchable timer if untouchable time has passed
@@ -90,16 +90,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		/*if (rdx != 0 && rdx!=dx)
 			x += nx*abs(rdx); */
 			// block every object first!
-		/*if (min_tx < min_ty)
-		{
-		x += min_tx * dx + nx * 0.4f;
-		LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
-		}
-		else
-		{
-			y += min_ty * dy + ny * 0.1f;
-			LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
-		}*/
+		//if (min_tx < min_ty)
+		//{
+		//x += min_tx * dx + nx * 0.4f;
+		////CGameObject:: SweptAABBEx(coObjects);
+		////LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
+		//}
+		//else
+		//{
+		//	y += min_ty * dy + ny * 0.1f;
+		//	//CGameObject::SweptAABBEx(coObjects);
+		//	//LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
+		//}
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.1f;
@@ -161,6 +163,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						goomba->SetState(GOOMBA_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						isJumping = true;
 					}
 				}
 				else if (e->nx != 0)
@@ -177,14 +180,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE || goomba->GetState()!=GOOMBA_STATE_DIE_FLY)
 						{
-							if (level > MARIO_LEVEL_SMALL)
+							if (level > MARIO_LEVEL_BIG)
 							{
-								level = level - 1;
+								level = MARIO_LEVEL_BIG;
+								StartUntouchable();
+							}
+							else if (level == MARIO_LEVEL_BIG)
+							{
+								level = MARIO_LEVEL_SMALL;
 								StartUntouchable();
 							}
 							else
 							{
-								SetState(MARIO_STATE_DIE);
+								SetState(MARIO_ANI_DIE);
 								return;
 							}
 						}
@@ -202,17 +210,33 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						koopas->SetState(KOOPAS_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						isJumping = true;
 					}
 					else if (koopas->GetState() == KOOPAS_ANI_DIE_AND_MOVE)
 					{
 						koopas->SetState(KOOPAS_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						isJumping = true;
+					}
+					else if (koopas->GetState() == KOOPAS_STATE_DIE)
+					{
+						//DebugOut(L"nx cua mario %d \n ", lastnx);
+						koopas->SetState(KOOPAS_ANI_DIE_AND_MOVE);
+						if (lastnx > 0)
+						{
+							koopas->nx = 1;							
+						}
+						else						
+							koopas->nx = -1;
+						y += dy;
+						
 					}
 				}
 				else if (koopas->GetState() == KOOPAS_STATE_DIE)
 				{
 					if (e->nx > 0)
 					{
+						DebugOut(L"asdasdasdasd");
 						if (level == MARIO_LEVEL_SMALL)
 							SetState(MARIO_ANI_SMALL_KICK_LEFT);
 						else if (level == MARIO_LEVEL_BIG)
@@ -225,7 +249,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						koopas->nx = -1;
 					}
 					else
-					{						
+					{
+						DebugOut(L"huhuhuhuhuhuhu");
 						if (level == MARIO_LEVEL_SMALL)
 							SetState(MARIO_ANI_SMALL_KICK_RIGHT);
 						else if (level == MARIO_LEVEL_BIG)
@@ -251,14 +276,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (koopas->GetState() != KOOPAS_STATE_DIE)
 						{
-							if (level > MARIO_LEVEL_SMALL)
+							if (level > MARIO_LEVEL_BIG)
 							{
-								level = level - 1;
+								level = MARIO_LEVEL_BIG;
+								StartUntouchable();
+							}
+							else if (level == MARIO_LEVEL_BIG)
+							{
+								level = MARIO_LEVEL_SMALL;
 								StartUntouchable();
 							}
 							else
 							{
-								SetState(MARIO_STATE_DIE);
+								SetState(MARIO_ANI_DIE);
 								return;
 							}
 						}
@@ -296,12 +326,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (untouchable == 0)
 				{
-					if (level == MARIO_LEVEL_SMALL)
+					if (level > MARIO_LEVEL_BIG)
 					{
-						SetState(MARIO_STATE_DIE);
-						return;
+						level = MARIO_LEVEL_BIG;
+						StartUntouchable();
 					}
-					level -= 1;
+					else if (level == MARIO_LEVEL_BIG)
+					{
+						level = MARIO_LEVEL_SMALL;
+						StartUntouchable();
+					}
 					vx = 0;
 					vy = 0;
 					
@@ -686,7 +720,7 @@ void CMario::SetState(int State)
 				state = MARIO_ANI_BIG_WALKING_LEFT;
 			}
 			if (nx > 0 && vx == 0)
-				ani = MARIO_ANI_BIG_IDLE_RIGHT;
+				state = MARIO_ANI_BIG_IDLE_RIGHT;
 			else if (nx < 0 && vx == 0)
 				state = MARIO_ANI_BIG_IDLE_LEFT;
 		}
@@ -763,8 +797,8 @@ void CMario::SetState(int State)
 		ResetAni();
 		isWaitingForAni = true;
 		break;
-	case MARIO_STATE_DIE:
-		state = MARIO_ANI_DIE;
+	case MARIO_ANI_DIE:
+		//state = MARIO_ANI_DIE;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		break;
 	case MARIO_ANI_BIG_SITTING_RIGHT:
