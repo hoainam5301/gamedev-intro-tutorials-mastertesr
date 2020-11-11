@@ -3,6 +3,8 @@
 #include "Math.h"
 #include "Koopas.h"
 #include "Goomba.h"
+#include "Brick.h"
+
 
 CWeapon::CWeapon(float start_x, float start_y,int marionx)
 {
@@ -112,6 +114,12 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				   SetState(FIRE_BALL_EXPLODE);
 			   }
 		   }
+		   else if (dynamic_cast<CBrick*>(e->obj))
+		   {
+			   if (e->nx != 0)
+				   SetState(FIRE_BALL_EXPLODE);
+		   }
+		  
 	   }
 	}
 
