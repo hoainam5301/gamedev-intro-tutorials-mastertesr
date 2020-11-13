@@ -17,17 +17,77 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	CGameObject::Update(dt, coObjects);
-
 	//
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!
-	// 
-
-	x += dx;
-	y += dy;
-	if (vx > 0 && x > 290) {
+	// 	
+	/*if (vx > 0 && x > 290) {
 		x = 290; vx = -vx;
+	}*/	
+	CGameObject::Update(dt);
+	vy += 0.00005 * dt;
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+	coEvents.clear();
+	CalcPotentialCollisions(coObjects, coEvents);
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
 	}
+	else
+	{
+		//chamsan = true;
+		float min_tx, min_ty, nx = 0, ny = 0;
+		float rdx = 0;
+		float rdy = 0;
+		// TODO: This is a very ugly designed function!!!!
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		// block every object first!
+
+
+		y += min_ty * dy + ny * 0.5f;
+		x += min_tx * dx + nx * 0.5f;
+		/*if (ny < 0)
+		{
+			vy = -MOVING_SPEED;
+		}*/
+
+		if (ny != 0)
+			vy = 0;
+		//if (coEvents.size() <= 3)
+		//{
+		//	x += dx;
+		//}
+		//else
+		//	//doihuong *= -1;
+		//	if (nx != 0) this->isdone = true;
+
+		/*if (ny==0 && nx!=0)
+		{
+			doihuong *= -1;
+			x += nx * 2;
+		}*/
+
+
+
+		//Collision logic with other objects
+
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+
+			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (dynamic_cast<CColorBox*>(e->obj))
+			{
+				if (e->nx != 0)
+					x += dx;
+			}
+			else if (e->nx != 0)
+				vx = -vx;
+		}
+	}
+
+	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
 void CGoomba::Render()

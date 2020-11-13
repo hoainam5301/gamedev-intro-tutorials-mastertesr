@@ -1,14 +1,13 @@
+#pragma once
 #include "GameObject.h"
-
-
-class CColorBox : public CGameObject
+//#include "Mario.h"
+class CRaccoonTail : public CGameObject
 {
 
 public:
-	int height;
-	int width;
-	CColorBox(int width, int height);
+	//CMario* Mario;
+	CRaccoonTail();
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
-
 };
+

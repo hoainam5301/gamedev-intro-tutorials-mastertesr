@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Mario.h"
 
 #define GOOMBA_WALKING_SPEED 0.05f;
 

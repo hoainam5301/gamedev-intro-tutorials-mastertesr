@@ -30,7 +30,7 @@
 #MARIO STOP RIGHT
 10007	175	283	191	311	0
 #sitting right
-10008	371	238	390	266	0
+10008	371	240	390	266	0
 #kick right
 10009	252	283	273	310	0
 #holding turtle right
@@ -52,7 +52,7 @@
 #MARIO STOP LEFT
 10027	215	283	231	311	0
 #sitting left
-#10028	16	238	30	266	0
+10028	16	240	30	266	0
 #kick left
 10029	133	283	154	310	0
 #hoding turtle left
@@ -192,7 +192,7 @@
 10211	294	803	312	830	0
 10212	253	803	272	830	0
 #sitting right
-10213	376	678	390	706	0
+10213	376	680	390	706	0
 #kick right
 10214	252	723	273	751	0
 #holding turtle right
@@ -221,7 +221,7 @@
 10231	94	803	112	830	0
 10232	134	803	153	830	0
 #sitting left
-10233	16	678	30	706	0
+10233	16	680	30	706	0
 #kick left
 10234	133	723	154	751	0
 #holding turtle left
@@ -256,6 +256,12 @@
 #KOOPAS DIE AND MOVE
 30055	50	96	66	113	45
 30056	71	96	87	113	45
+#KOOPAS DIE UP
+30057	279	255	295	271	48
+#KOOPAS REVIAL UP
+30058	235	277	253	293	48
+#KOOPAS REVIAL 
+30059	71	75	89	91	45	
 
 #NAM
 1	156	121	172	137	20
@@ -303,6 +309,10 @@
 108	10010	100	10011	100	10012	100
 #holding turtle idle right
 109	10010	100
+#holding turtle jump right
+110	10012	100
+#holding turtle running right
+111	10010	35	10011	35	10012	35
 
 #idle BIG left
 120	10020	100
@@ -324,6 +334,10 @@
 128	10030	100	10031	100	10032	100
 #hoding turtle idle left
 129	10030	100
+#holding turtle jump left
+130	10032	100
+#holding turtle running left
+131	10030	35	10031	35	10032	35
 
 #====MARIO SMALL===
 #idle small right
@@ -342,6 +356,10 @@
 146	10048	100	10049	100
 #holding turtle idle right
 147	10048	100
+#holding turtle jump right
+148	10049	100
+#holding turtle running right
+149	10048	35	10049	35
 
 #idle small left
 160	10060	100
@@ -359,6 +377,10 @@
 166	10068	100	10069	100
 #holding turtle idle left
 167	10068	100
+#holding turtle jump left
+168	10069	100
+#holding turtle running left
+169	10068	35	10069	35
 
 #die 
 #199	10099	100
@@ -392,6 +414,10 @@
 212	10160	100	10161	100	10162	100
 #holding turtle idle right
 213	10160	100
+#holding turtle jump and fly	right
+214	10162	100
+#holding turtle running right
+215	10160	35	10161	35	10162	35
 
 #idle left
 220	10120	100
@@ -421,6 +447,10 @@
 232	10139	100	10140	100	10141	100
 #holding turtle idle left
 233	10139	100
+#holding turtle jump and fly
+234	10141	100
+#holding turtle running 
+235	10139	35	10140	35	10141	35
 
 
 #MARIO DIE
@@ -452,6 +482,10 @@
 310	10215	100	10216	100	10217	100
 #holding turtle idle right
 311	10215	100
+#holding turtle jump right
+312	10217	100
+#holding turtle running right
+313	10215	35	10216	35	10217	35
 
 #idle left
 320	10220	100
@@ -477,6 +511,10 @@
 330	10235	100	10236	100	10237	100
 #holding turtle idle left
 331	10235	100
+#holding turtle jump left
+332	10237	100
+#holding turtle running left
+333	10235	35	10236	35	10237	35
 	
 # ==== QUESTION BRICK =========
 602	40001	1000	40001	100	40002	100	40003	100	40004	100
@@ -510,6 +548,12 @@
 712	30054	100
 #die and move
 713	30055	50	30056	50	30054	50
+#die up
+714	30057	100
+#revial up
+715	30058	100
+#revial 
+716	30059	100
 
 #Giant_Piranha_shoot_fireball_45
 704	36	100
@@ -524,14 +568,14 @@
 # id	ani1	ani2	ani3
 #
 [ANIMATION_SETS]
-# MARIO											10										20								28								36														50														64												76												88
-1	100	101	102	103	104	105	106	107	108	109	120	121	122	123	124	125	126	127	128	129	140	141	142	143	144	145	146	147	160	161	162	163	164	165	166	167	200	201	202	203	204	205	206	207	208	209	210	211	212	213	220	221	222	223	224	225	226	227	228	229	230	231	232	233	300	301	302	303	304	305	306	307	308	309	310	311	320	321	322	323	324	325	326	327	328	329	330	331	599
+# MARIO													12												24										34										44																60																76														90														104
+1	100	101	102	103	104	105	106	107	108	109	110	111	120	121	122	123	124	125	126	127	128	129	130	131	140	141	142	143	144	145	146	147	148	149	160	161	162	163	164	165	166	167	168	169	200	201	202	203	204	205	206	207	208	209	210	211	212	213	214	215	220	221	222	223	224	225	226	227	228	229	230	231	232	233	234	235	300	301	302	303	304	305	306	307	308	309	310	311	312	313	320	321	322	323	324	325	326	327	328	329	330	331	332	333	599
 # QUESTION BRICK 
 22	602	3
 # GOOMBA
 3	702	703	707
 #KOOPAS
-4	710	711	712	713
+4	710	711	712	713	714	715	716
 #Items
 8	888	700	701
 #Giant_Piranha_Shot_fireball
@@ -548,6 +592,9 @@
 2	352	400	3
 #KOOPAS
 3	100	300	4
+3	240	340	4
+3	272	305	4
+3	512	357	4
 # BRICK 
 1	192	352	22	2
 1	176	352	22	2
@@ -597,6 +644,6 @@
 # type	l	t	ani_set_id	r	b	scene_id
 #50	115	98	0	148	150	1
 [TILEMAP]
-10	textures\map1.png	textures\out.txt	11	11	27	208	16	16
+10	textures\map1_1.png	textures\out.txt	11	11	27	208	16	16
 
 

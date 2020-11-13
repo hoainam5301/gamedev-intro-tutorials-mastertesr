@@ -7,7 +7,7 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "Floor.h"
-#include "ColorBox.h"
+//#include "ColorBox.h"
 
 using namespace std;
 
@@ -355,20 +355,6 @@ void CPlayScene::Update(DWORD dt)
 		
 
 	}
-
-	/*for (int i = 0; i < objects.size(); i++)
-	{
-		LPGAMEOBJECT a = objects[i];
-		if (dynamic_cast<CBrick*>(a) && a->id_brick_items == 2)
-		{
-			CBrick* gach = dynamic_cast<CBrick*>(a);
-			if (gach->bottom_coll == 1 && gach->created_item == 0 && gach->bouncing ==1)
-			{
-				gach->created_item = 1;
-				listitems.push_back(taonam(gach->x, gach->y));
-			}
-		}
-	}*/
 	
 	if (player->use_Weapon && !player->isdone)
 	{
@@ -378,7 +364,11 @@ void CPlayScene::Update(DWORD dt)
 			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player->nx));
 		player->isdone = true;
 	}
-	
+	//if (player->level == MARIO_RACCON && (player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT))
+	//{
+	//	//DebugOut(L"asasd");
+	//	tail->SetPosition(player->x + 15, player->y + 18);
+	//}
 	player->Collision_items(&listitems);
 	if (listweapon.size() != 0)
 	{
@@ -386,7 +376,6 @@ void CPlayScene::Update(DWORD dt)
 			player->loadFireball = true;
 		for (int i = 0; i < listweapon.size(); i++)
 		{
-			//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
 			listweapon[i]->Update(dt, &coObjects);
 		}
 	}
@@ -429,7 +418,7 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	
-	map->Draw();	
+	map->Draw();
 	for (int i = 0; i < listweapon.size(); i++)
 	{
 		if(!listweapon[i]->isExplode)
@@ -439,8 +428,11 @@ void CPlayScene::Render()
 	for (int i = 0; i < listitems.size(); i++)
 		listitems[i]->Render();
 
-	for (int i = 0; i < objects.size(); i++)
+	for (int i = objects.size()-1; i>=0; i--)
 		objects[i]->Render();
+	/*if (tail != NULL)
+		tail->Render();*/
+	
 	/*if (listweapon.size() > 2)
 	{
 		for (int i = 0; i < listweapon.size(); i++)
@@ -481,7 +473,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		}
 		if (mario->level == MARIO_RACCON)
 		{
-			if (mario->isMaxSpeed)
+			if (mario->isMaxSpeed && !mario->Firstspaceup)
 			{
 				//DebugOut(L"huong nx %d \n", mario->nx);
 				if (mario->nx > 0)
@@ -489,6 +481,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 				else
 					mario->SetState(MARIO_RACCON_ANI_KEEP_FLYING_LEFT);		
 				mario->isFlying = true;
+				mario->Firstspaceup = false;
 				return;
 			}			
 			
@@ -497,8 +490,8 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			mario->isFalling = true;
 		if (mario->isFalling)
 		{
-			
-			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup ) // n?u ko là l?n th? phím ??u tiên thì s? ko qu?y ?uôi
+		
+			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )																			//neu khong phai la lan tha phim space dau tien thi ao trang thai quay duoi 
 			{				
 				if (!mario->isSitting)
 				{
@@ -510,7 +503,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			}
 			else
 			{
-				mario->vy = mario->vy + MARIO_GRAVITY * 10 * mario->dt; //lan thu phím uu tiên và là mario chon thì s? ko b? qu?y ?uôi, giúp chon nhay theo thoi gian giu phím
+				mario->vy = mario->vy + MARIO_GRAVITY * 10 * mario->dt; //nhan space toi dau thi nhay toi do
 				mario->Firstspaceup = false;
 			}
 		}
@@ -720,8 +713,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		return;
 	if (mario->isWaitingForAni)
 		return;
-	/*if (mario->isFlying)
-		return;*/
 	if (game->IsKeyDown(DIK_A))
 	{
 	
@@ -750,7 +741,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			}
 			else if (mario->level == MARIO_FIRE)
 			{
-				//DebugOut(L"im here");
 				if (mario->nx > 0)
 					mario->SetState(MARIO_FIRE_ANI_RUNNING_RIGHT);
 				else
@@ -786,7 +776,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->SetState(MARIO_FIRE_ANI_WALK_LEFT);
 		mario->lastnx = -1;
 	}
-	else if (game->IsKeyDown(DIK_DOWN) && !mario->isHolding)
+	else if (game->IsKeyDown(DIK_DOWN) && !mario->isHolding) // giu koopas ko ngoi dc
 	{
 		if (mario->level == MARIO_LEVEL_BIG)
 		{
@@ -839,7 +829,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			}
 		if (mario->isJumping)
 		{
-			if (mario->vy < 0)
+			if (mario->vy < 0) // de mario roi va nhay len co dang hang
 			{
 				if (mario->level == MARIO_LEVEL_BIG)
 				{
@@ -892,6 +882,38 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 						mario->state = MARIO_FIRE_ANI_FALLING_RIGHT;
 					else
 						mario->state = MARIO_FIRE_ANI_FALLING_LEFT;
+				}
+				
+			}
+			if (mario->isHolding)
+			{
+				if (mario->level == MARIO_LEVEL_BIG)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_JUMP_RIGHT;
+					else
+						mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_JUMP_LEFT;
+				}
+				else if (mario->level == MARIO_LEVEL_SMALL)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_ANI_SMALL_HOLDING_TURTLE_JUMP_RIGHT;
+					else
+						mario->state = MARIO_ANI_SMALL_HOLDING_TURTLE_JUMP_LEFT;
+				}
+				else if (mario->level == MARIO_RACCON)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_RACCON_ANI_HOLDING_TURTLE_JUMP_RIGHT;
+					else
+						mario->state = MARIO_RACCON_ANI_HOLDING_TURTLE_JUMP_LEFT;
+				}
+				else if (mario->level == MARIO_FIRE)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_FIRE_ANI_HOLDING_TURTLE_JUMP_RIGHT;
+					else
+						mario->state = MARIO_FIRE_ANI_HOLDING_TURTLE_JUMP_LEFT;
 				}
 			}
 			return;

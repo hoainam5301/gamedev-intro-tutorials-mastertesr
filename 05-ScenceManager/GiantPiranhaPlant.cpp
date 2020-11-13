@@ -110,7 +110,7 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (moveup && GetTickCount64() - timewaittoshoot>1000)
 	{
 		fight = false;
-		DebugOut(L"a");
+		//DebugOut(L"a");
 		SetState(GIANT_STATE_MOVE_UP);
 	}
 	else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
@@ -118,12 +118,12 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		
 		SetState( GIANT_STATE_SHOOT_45_MORE);	
 		fight = true;
-		DebugOut(L"b");
+		//DebugOut(L"b");
 		//timetomovedown=0;
 	}
 	else if (GetTickCount64() - timewaittoshoot > 3000/* && timewaittoshoot != 0*/ && !moveup)
 	{
-		DebugOut(L"c");
+		//DebugOut(L"c");
 		SetState(GIANT_STATE_MOVE_DOWN);
 		timewaittoshoot = GetTickCount64();
 	}

@@ -108,9 +108,9 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		   else if (dynamic_cast<CKoopas*>(e->obj))
 		   {
 			   CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
-			   if (koopas->GetState() != GOOMBA_STATE_DIE)
+			   if (koopas->GetState() != KOOPAS_STATE_DIE || koopas->GetState()!=KOOPAS_ANI_DIE_UP)
 			   {
-				   koopas->SetState(GOOMBA_STATE_DIE);
+				   koopas->SetState(KOOPAS_ANI_DIE_UP);
 				   SetState(FIRE_BALL_EXPLODE);
 			   }
 		   }

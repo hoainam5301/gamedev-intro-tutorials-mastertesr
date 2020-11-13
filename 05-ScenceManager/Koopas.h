@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Mario.h"
+#include "Floor.h"
 
 #define KOOPAS_WALKING_SPEED 0.03f;
 
@@ -17,6 +18,9 @@
 #define KOOPAS_ANI_WALKING_RIGHT 1
 #define KOOPAS_ANI_DIE 2
 #define KOOPAS_ANI_DIE_AND_MOVE 3
+#define KOOPAS_ANI_DIE_UP	4
+#define KOOPAS_ANI_REVIVE_UP 5
+#define KOOPAS_ANI_REVIVE    6 
 
 class CKoopas : public CGameObject
 {
@@ -27,6 +31,8 @@ class CKoopas : public CGameObject
 	
 
 public:
+	DWORD timetorevive;
+	int startx, widthtogo;
 	CKoopas(CMario* mario);
 	int last_state;
 	CMario* Mario;

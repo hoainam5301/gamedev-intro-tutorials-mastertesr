@@ -11,7 +11,7 @@
 #include "Items.h"
 #include "Weapon.h"
 #include "TileMap.h"
-
+#include "RaccoonTail.h"
 class CPlayScene: public CScene
 {
 protected: 
@@ -19,6 +19,8 @@ protected:
 	CItems	*items;
 	//CWeapon* weapon;
 	TileMap* map;
+	//CRaccoonTail* tail=new CRaccoonTail();
+	
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
 	// *gachthuong;
@@ -43,6 +45,7 @@ protected:
 		a->SetPosition(x, y);
 		return a;
 	}
+	
 	
 
 	void _ParseSection_TEXTURES(string line);
