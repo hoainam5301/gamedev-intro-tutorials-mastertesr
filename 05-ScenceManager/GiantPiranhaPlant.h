@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Mario.h"
+#include "Fireball.h"
 
 #define GIANT_BOX_WIDTH 16
 #define  GIANT_BOX_HEIGHT 32
@@ -18,12 +19,15 @@ public:
 	//float  openclose;
 	float start_x;			// initial position of Mario at scene
 	float start_y;
+	vector <LPGAMEOBJECT> listFireBall;
 	DWORD timewaittoshoot= GetTickCount64();
 	DWORD timetomovedown;
+	CMario* Mario;
 	bool moveup = true;
 	bool not_in_pipeline = false;
 	bool fight;
-	//CGiantPiranhaPlant(float x , float y );
+	float delta_x, delta_y;
+	CGiantPiranhaPlant(CMario* mario );
 	virtual void SetState(int state);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

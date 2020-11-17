@@ -81,6 +81,12 @@
     <ClCompile Include="RaccoonTail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BrokenBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PieceBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brick.h">
@@ -147,6 +153,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RaccoonTail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BrokenBrick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PieceBrick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

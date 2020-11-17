@@ -12,6 +12,7 @@
 46	textures\enemies-5_1.png	0	255	255
 47	textures\effect.png	176	224	248
 48	textures\enemies-5_2.png	0	255	255
+49	textures\enemies_custom_1.png	255	255	255
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -96,7 +97,7 @@
 10066	176	129	190	145	0
 #kick left
 10067	135	129	151	145	0
-3holding turtle left
+#holding turtle left
 10068	56	169	70	185	0
 10069	15	169	30	185	0
 
@@ -179,7 +180,7 @@
 #running right
 10203	213	763	232	790	0
 10204	253	763	272	790	0
-10205	293	764	312	790	0
+10205	283	764	312	790	0
 #jump right
 10206	335	684	351	710	0
 #stop right
@@ -275,16 +276,26 @@
 32	4	19	12	27	42
 33	4	4	12	12	42
 34	18	19	26	27	43
-#Giant_Piranha_shoot_fireball_45
+#Giant_Piranha_shoot_fireball_45_left
 35	167	126	183	158	44
 36	150	126	166	158	44
-#Giant_Piranha_shot_fireball_45_more
+#Giant_Piranha_shot_fireball_45_more_left
 37	201	126	217	158	44
 38	184	126	200	158	44
 #QUESTION BRICK AFTER
 2	235	188	251	204	20
 #Effects Fire ball
 39	99	22	111	34	47
+#Piece brick
+40	37	120	45	128	47
+#Broken Brick
+41	274	188	290	204	20
+42	293	188	309	204	20
+43	312	188	328	204	20
+44	331	188	347	204	20
+#Giant_Piranha_shot_fireball_45_right
+45	
+
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ==== MARIO =========
@@ -518,6 +529,10 @@
 	
 # ==== QUESTION BRICK =========
 602	40001	1000	40001	100	40002	100	40003	100	40004	100
+#Piece Brick
+603	40	1
+#Broken brick
+604	41	50	42	50	43	50	44	50
 
 #====NAM====
 888	1	100
@@ -582,10 +597,14 @@
 10	704	705	706	706
 #FIRE BALL
 9	890	891
+#Piece Brick
+11	603
+#broken brick
+12	604
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box,6=Piranha_flower_shot
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box,6=Piranha_flower_shot,7=BrokenBrick
 # MARIO
 0	17	300	1
 #GOOMBA
@@ -640,6 +659,26 @@
 5	2176	272	22	3	9
 #Piranha_Flower
 6	360	368	10
+#BrokenBrick
+7	1952	400	12
+7	1968	384	12
+7	1968	400	12
+7	1984	368	12
+7	1984	384	12
+7	1984	400	12
+7	2000	368	12
+7	2000	384	12
+7	2000	400	12
+7	2016	368	12
+7	2016	384	12
+7	2016	400	12
+7	2032	368	12
+7	2032	384	12
+7	2032	400	12
+7	2048	400	12
+7	2096	384	12
+7	2096	400	12
+7	2112	400	12
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
 #50	115	98	0	148	150	1

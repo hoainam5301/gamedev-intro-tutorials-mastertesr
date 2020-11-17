@@ -7,6 +7,7 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "Floor.h"
+
 //#include "ColorBox.h"
 
 using namespace std;
@@ -40,6 +41,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_FLOOR   4
 #define OBJECT_TYPE_COLOR_BOX	5
 #define OBJECT_TYPE_PIRANHA_FLOWER_SHOOT 6
+#define OBJECT_TYPE_BROKEN_BRICK	7
 
 
 #define MAX_SCENE_LINE 1024
@@ -188,20 +190,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}break;
 	case OBJECT_TYPE_WEAPON:
 	{
-		obj = new CWeapon(x, y, player->nx);
-		//weapon = (CWeapon*)obj;
+		obj = new CWeapon(x, y, player->nx);		
 	}
 	case OBJECT_TYPE_BRICK:
-	{
-		//int width = atoi(tokens[5].c_str());
-		//int height = atoi(tokens[6].c_str());
+	{		
 		obj = new CBrick(x, y);
-		obj->id_brick_items = atoi(tokens[4].c_str());
-		//DebugOut(L"GACH NAM:%d \n", obj->idgachnam);
+		obj->id_brick_items = atoi(tokens[4].c_str());		
 	}
 	break;
 	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(player); break;
-	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:obj = new CGiantPiranhaPlant(); break;
+	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:obj = new CGiantPiranhaPlant(player); break;
+	case OBJECT_TYPE_BROKEN_BRICK:obj = new CBrokenBrick(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -364,11 +363,18 @@ void CPlayScene::Update(DWORD dt)
 			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player->nx));
 		player->isdone = true;
 	}
-	//if (player->level == MARIO_RACCON && (player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT))
-	//{
-	//	//DebugOut(L"asasd");
-	//	tail->SetPosition(player->x + 15, player->y + 18);
-	//}
+	if (player->level == MARIO_RACCON && (player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT))
+	{
+		if (player->nx > 0)
+			tail->SetPosition(player->x + 15, player->y + 18);
+		else
+			tail->SetPosition(player->x - 2, player->y + 18);
+		tail->isFighting = true;
+		tail->Update(dt, &coObjects);
+	}
+	else
+		tail->isFighting = false;
+
 	player->Collision_items(&listitems);
 	if (listweapon.size() != 0)
 	{
@@ -430,8 +436,8 @@ void CPlayScene::Render()
 
 	for (int i = objects.size()-1; i>=0; i--)
 		objects[i]->Render();
-	/*if (tail != NULL)
-		tail->Render();*/
+	if (tail != NULL)
+		tail->Render();
 	
 	/*if (listweapon.size() > 2)
 	{

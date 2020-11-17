@@ -6,6 +6,8 @@
 
 #include "Sprites.h"
 #include "Animations.h"
+#include "Utils.h"
+#include "Game.h"
 
 
 
@@ -57,6 +59,7 @@ public:
 	float vx;
 	float vy;
 	int id_items;
+	//bool isDestroyed;
 	int nx;	
 	int ny;
 	bool isExplode;

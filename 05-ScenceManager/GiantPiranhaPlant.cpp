@@ -2,17 +2,11 @@
 #include "Utils.h"
 
 
-//CGiantPiranhaPlant::CGiantPiranhaPlant(float x, float y) : CGameObject()
-//{
-//	start_x = x;
-//	start_y = y;
-//	this->x = x;
-//	this->y = y;
-//}
-void CGiantPiranhaPlant::Render()
-{	
-	animation_set->at(state)->Render(x, y);
+CGiantPiranhaPlant::CGiantPiranhaPlant(CMario* mario) : CGameObject()
+{
+	Mario=mario;
 }
+
 
 void CGiantPiranhaPlant::SetState(int state)
 {
@@ -32,7 +26,7 @@ void CGiantPiranhaPlant::SetState(int state)
 	//	vy = 0;
 	//	break;
 	case GIANT_STATE_SHOOT_45:
-		fight = false;
+		//fight = false;
 		break;
 	case GIANT_STATE_SHOOT_45_MORE:
 		//fight = false;
@@ -49,15 +43,7 @@ void CGiantPiranhaPlant::SetState(int state)
 }
 
 
-void CGiantPiranhaPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
-{
 
-	left = x;
-	top = y;
-	right = x + GIANT_BOX_WIDTH;
-	bottom = y + GIANT_BOX_HEIGHT;
-	
-}
 void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	
@@ -110,20 +96,27 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (moveup && GetTickCount64() - timewaittoshoot>1000)
 	{
 		fight = false;
-		//DebugOut(L"a");
 		SetState(GIANT_STATE_MOVE_UP);
 	}
 	else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
 	{
+		if (336 - Mario->y > 0)
+			SetState(GIANT_STATE_SHOOT_45_MORE);
+		else if(336-Mario->y<0)
+			SetState(GIANT_STATE_SHOOT_45);
+		//delta_x = x - Mario->x;
+		//delta_y = 336 - Mario->y;
+		CFireball* fireball = new CFireball({ x,336 }, 1);
+		listFireBall.push_back(fireball);
+		DebugOut(L"size cua lisst fireball %d \n", listFireBall.size());
 		
-		SetState( GIANT_STATE_SHOOT_45_MORE);	
+		
 		fight = true;
-		//DebugOut(L"b");
-		//timetomovedown=0;
+		
 	}
 	else if (GetTickCount64() - timewaittoshoot > 3000/* && timewaittoshoot != 0*/ && !moveup)
 	{
-		//DebugOut(L"c");
+		
 		SetState(GIANT_STATE_MOVE_DOWN);
 		timewaittoshoot = GetTickCount64();
 	}
@@ -137,5 +130,27 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{		
 		y = 336;
 	}
+	for (int i = 0; i < listFireBall.size(); i++)
+	{
+		listFireBall[i]->Update(dt, coObjects);
+	}
+}
+void CGiantPiranhaPlant::Render()
+{
+	animation_set->at(state)->Render(x, y);
+	for (int i = 0; i < listFireBall.size(); i++)
+	{
+		listFireBall[i]->Render();
+	}
+}
+
+void CGiantPiranhaPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+
+	left = x;
+	top = y;
+	right = x + GIANT_BOX_WIDTH;
+	bottom = y + GIANT_BOX_HEIGHT;
+
 }
 

@@ -12,6 +12,7 @@
 #include "Weapon.h"
 #include "TileMap.h"
 #include "RaccoonTail.h"
+#include "BrokenBrick.h"
 class CPlayScene: public CScene
 {
 protected: 
@@ -19,7 +20,7 @@ protected:
 	CItems	*items;
 	//CWeapon* weapon;
 	TileMap* map;
-	//CRaccoonTail* tail=new CRaccoonTail();
+	CRaccoonTail* tail=new CRaccoonTail();
 	
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
