@@ -11,6 +11,8 @@
 #include <dinput.h>
 
 #include "Scence.h"
+#include "Utils.h"
+#include "PlayScence.h"
 
 using namespace std;
 

@@ -1,19 +1,21 @@
 #pragma once
-#include "Game.h"
-#include "Textures.h"
+//#include "Game.h"
+//#include "Textures.h"
 #include "Scence.h"
 #include "GameObject.h"
-#include "Brick.h"
+//#include "Brick.h"
 #include "Mario.h"
-#include "GiantPiranhaPlant.h"
-#include "Goomba.h"
-#include "Koopas.h"
 #include "Items.h"
 #include "Weapon.h"
 #include "TileMap.h"
 #include "RaccoonTail.h"
 #include "BrokenBrick.h"
 #include "Coin.h"
+//#include "Utils.h"
+//#include "Textures.h"
+//#include "Sprites.h"
+//#include "Portal.h"
+//#include "Floor.h"
 
 class CPlayScene: public CScene
 {

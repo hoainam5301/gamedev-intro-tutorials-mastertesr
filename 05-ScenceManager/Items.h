@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
-#include "Mario.h"
+#include "Brick.h"
+//#include "Mario.h"
+
 #define Mushroom	0
 #define	Tree_Leaf	1
 #define FIRE_FLOWER	2

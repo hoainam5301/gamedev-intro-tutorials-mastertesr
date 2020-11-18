@@ -2,9 +2,7 @@
 #include <fstream>
 
 #include "Game.h"
-#include "Utils.h"
 
-#include "PlayScence.h"
 
 CGame * CGame::__instance = NULL;
 
@@ -65,7 +63,7 @@ void CGame::Init(HWND hWnd)
 */
 void CGame::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
 {
-	D3DXVECTOR3 p(floor(x - cam_x),floor( y - cam_y), 0);
+	D3DXVECTOR3 p(round(x - cam_x),round( y - cam_y), 0);
 	RECT r; 
 	r.left = left;
 	r.top = top;

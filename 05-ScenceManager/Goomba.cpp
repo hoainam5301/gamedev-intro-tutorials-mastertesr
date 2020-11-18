@@ -1,4 +1,7 @@
 #include "Goomba.h"
+
+#include "ColorBox.h"
+
 CGoomba::CGoomba()
 {
 	SetState(GOOMBA_STATE_WALKING);

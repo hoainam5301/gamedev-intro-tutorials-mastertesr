@@ -1,4 +1,5 @@
 #include "Koopas.h"
+#include "ColorBox.h"
 
 CKoopas::CKoopas(CMario* mario)
 {

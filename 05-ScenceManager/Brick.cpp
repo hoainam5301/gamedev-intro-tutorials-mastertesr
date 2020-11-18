@@ -1,6 +1,6 @@
 #include "Brick.h"
-#include "Items.h"
-#include "Utils.h"
+
+//#include "Utils.h"
 
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

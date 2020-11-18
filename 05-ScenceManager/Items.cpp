@@ -1,6 +1,6 @@
 #include "Items.h"
-#include "Brick.h"
-#include "Utils.h"
+
+
 #define GRAVITY 0.3f
 #define Item_move 62 // quang duong item di chuyen khi troi len
 CItems::CItems(float start_x,float start_y)

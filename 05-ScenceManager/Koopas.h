@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "Mario.h"
-#include "Floor.h"
+//#include "Floor.h"
 
 #define KOOPAS_WALKING_SPEED 0.03f;
 

@@ -1,9 +1,11 @@
 #include "Weapon.h"
-#include "Floor.h"
-#include "Math.h"
+
 #include "Koopas.h"
 #include "Goomba.h"
 #include "Brick.h"
+#include "Floor.h"
+
+
 
 
 CWeapon::CWeapon(float start_x, float start_y,int marionx)

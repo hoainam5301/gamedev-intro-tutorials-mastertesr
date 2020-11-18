@@ -2,13 +2,16 @@
 #include <fstream>
 
 #include "PlayScence.h"
-#include "Utils.h"
-#include "Textures.h"
-#include "Sprites.h"
+
+#include "GiantPiranhaPlant.h"
+#include "Goomba.h"
+#include "Koopas.h"
+//#include "Utils.h"
+//#include "Textures.h"
+//#include "Sprites.h"
 #include "Portal.h"
 #include "Floor.h"
-
-//#include "ColorBox.h"
+#include "ColorBox.h"
 
 using namespace std;
 
