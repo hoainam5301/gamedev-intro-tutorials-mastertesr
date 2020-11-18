@@ -42,6 +42,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_COLOR_BOX	5
 #define OBJECT_TYPE_PIRANHA_FLOWER_SHOOT 6
 #define OBJECT_TYPE_BROKEN_BRICK	7
+#define OBJECT_TYPE_COIN			10
 
 
 #define MAX_SCENE_LINE 1024
@@ -199,8 +200,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(player); break;
-	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:obj = new CGiantPiranhaPlant(player); break;
+	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:
+	{
+		obj = new CGiantPiranhaPlant(player); 
+		obj->id_giantpiranha = atoi(tokens[4].c_str());
+		break;
+	}
 	case OBJECT_TYPE_BROKEN_BRICK:obj = new CBrokenBrick(); break;
+	case OBJECT_TYPE_COIN:obj = new CCoin(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());

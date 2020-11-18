@@ -13,6 +13,8 @@
 #include "TileMap.h"
 #include "RaccoonTail.h"
 #include "BrokenBrick.h"
+#include "Coin.h"
+
 class CPlayScene: public CScene
 {
 protected: 

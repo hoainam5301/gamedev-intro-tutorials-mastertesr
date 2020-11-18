@@ -84,6 +84,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 				brokenbrick->SetState(STATE_DESTROYED);
 			}
 		}
+		//else if(dynamic_cast<C>)
 	}
 }
 

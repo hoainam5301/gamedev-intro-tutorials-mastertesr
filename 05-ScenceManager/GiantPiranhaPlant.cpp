@@ -8,127 +8,148 @@ CGiantPiranhaPlant::CGiantPiranhaPlant(CMario* mario) : CGameObject()
 }
 
 
-void CGiantPiranhaPlant::SetState(int state)
-{
-	CGameObject::SetState(state);
-	switch (state)
-	{
-	/*case GIANT_STATE_45:
-		break;
-	case GIANT_STATE_45_MORE:
-		break;	*/
-	//case GIANT_STATE_UP:
-	//	//state = GIANT_STATE_45_MORE;
-	//	vy = -0.125;
-	//	break;
-	//case GIANT_STATE_DOWN:
-	//	//state = GIANT_STATE_45;
-	//	vy = 0;
-	//	break;
-	case GIANT_STATE_SHOOT_45:
-		//fight = false;
-		break;
-	case GIANT_STATE_SHOOT_45_MORE:
-		//fight = false;
-		break;
-	case GIANT_STATE_MOVE_UP:	
-		vy = -0.15f;
-		moveup = false;
-		break;
-	case GIANT_STATE_MOVE_DOWN:		
-		vy = 0.15f;
-		moveup = true;
-		break;
-	}
-}
-
-
-
 void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	
 	CGameObject::Update(dt, coObjects);
 	y += dy;
+	if (start_y == 0) start_y = y;
 	
-	//y += (y == start_y - 32  && moveup ) ? 0 : dy;
-
-	//if (start_y == 0) start_y = y;
 	////y += dy;
-	if (y > 336 && y < 368)
+	if (y > start_y - GIANT_BOX_HEIGHT && y < start_y)
 		vy += MARIO_GRAVITY / 3 * dt;
 	else vy = 0;
 
-
-
-	///*if (start_y == 0)
-	//	start_y = y;*/
-	//if (timetoshoot == 0)
-	//{
-	//	timetoshoot = GetTickCount64();
-	//	timetomovedown = 0;
-	//	// -1 mean STATE DEFAULT
-	//	if (state == GIANT_STATE_DOWN || state == 0) SetState(GIANT_STATE_UP);
-	//}
-	//else if (GetTickCount64() - timetoshoot > 3000)
-	//{
-	//	if (state == GIANT_STATE_UP)
-	//	{
-	//		SetState(GIANT_STATE_DOWN);
-	//	}
-	//	if (timetomovedown == 0) timetomovedown = GetTickCount64();
-	//	if (GetTickCount64() - timetomovedown > 3000)
-	//	{
-	//		timetoshoot = 0;
-	//	}
-
-	//}
-
-	//
-	//if (y <= start_y - 32 )
-	//{
-	//	y = start_y - 32;
-	//}
-	//
-	//if (y >= start_y )
-	//{
-	//	y = start_y;
-	//}
-	if (moveup && GetTickCount64() - timewaittoshoot>1000)
+	if (id_giantpiranha == GIANT_PIRANHA_RED)
 	{
-		fight = false;
-		SetState(GIANT_STATE_MOVE_UP);
+		if (moveup && GetTickCount64() - timewaittoshoot > 1000)
+		{
+			fight = false;
+			if (x - Mario->x > 0)
+				SetState(GIANT_STATE_MOVE_UP_LEFT);
+			else
+				SetState(GIANT_STATE_MOVE_UP_RIGHT);						
+		}
+		else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
+		{
+			if (x - Mario->x > 0)
+			{
+				if (start_y-GIANT_BOX_HEIGHT - Mario->y > 0)
+					SetState(GIANT_STATE_SHOOT_45_MORE_LEFT);
+				else if (start_y - GIANT_BOX_HEIGHT - Mario->y < 0)
+					SetState(GIANT_STATE_SHOOT_45_LEFT);
+			}
+			else
+			{				
+				if (start_y - GIANT_BOX_HEIGHT - Mario->y > 0)
+					SetState(GIANT_STATE_SHOOT_45_MORE_RIGHT);
+				else if (start_y - GIANT_BOX_HEIGHT - Mario->y < 0)
+					SetState(GIANT_STATE_SHOOT_45_RIGHT);
+			}
+			//delta_x = x - Mario->x;
+			//delta_y = 336 - Mario->y;
+			CFireball* fireball = new CFireball({ x,336 }, 1);
+			listFireBall.push_back(fireball);
+			fight = true;
+		}
+		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
+		{
+			if (x - Mario->x > 0)
+				SetState(GIANT_STATE_MOVE_DOWN_LEFT);
+			else
+				SetState(GIANT_STATE_MOVE_DOWN_RIGHT);
+			timewaittoshoot = GetTickCount64();
+		}
 	}
-	else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
+	else if (id_giantpiranha == GIANT_PIRANHA_GREEN)
 	{
-		if (336 - Mario->y > 0)
-			SetState(GIANT_STATE_SHOOT_45_MORE);
-		else if(336-Mario->y<0)
-			SetState(GIANT_STATE_SHOOT_45);
-		//delta_x = x - Mario->x;
-		//delta_y = 336 - Mario->y;
-		CFireball* fireball = new CFireball({ x,336 }, 1);
-		listFireBall.push_back(fireball);
-		DebugOut(L"size cua lisst fireball %d \n", listFireBall.size());
-		
-		
-		fight = true;
-		
+		if (moveup && GetTickCount64() - timewaittoshoot > 1000)
+		{
+			fight = false;
+			if (x - Mario->x > 0)
+				SetState(GIANT_GREEN_STATE_MOVE_UP_LEFT);
+			else
+				SetState(GIANT_GREEN_STATE_MOVE_UP_RIGHT);
+		}
+		else if (GetTickCount64() - timewaittoshoot > 1500 && !fight)
+		{
+			if (x - Mario->x > 0)
+			{
+				if (start_y - GIANT_GREEN_BOX_HEIGHT - Mario->y > 0)
+					SetState(GIANT_GREEN_STATE_SHOOT_45_MORE_LEFT);
+				else if (start_y - GIANT_GREEN_BOX_HEIGHT - Mario->y < 0)
+					SetState(GIANT_GREEN_STATE_SHOOT_45_LEFT);
+			}
+			else
+			{
+				if (start_y - GIANT_GREEN_BOX_HEIGHT - Mario->y > 0)
+					SetState(GIANT_GREEN_STATE_SHOOT_45_MORE_RIGHT);
+				else if (start_y - GIANT_GREEN_BOX_HEIGHT - Mario->y < 0)
+					SetState(GIANT_GREEN_STATE_SHOOT_45_RIGHT);
+			}
+			CFireball* fireball = new CFireball({ x,start_y - GIANT_GREEN_BOX_HEIGHT }, 1);
+			if (x - Mario->x > 0)
+				fireball->nx =-1 ;
+			else
+				fireball->nx =1;
+			if (start_y - Mario->y < 0)
+				fireball->isbottom = true;
+			else
+				fireball->istop = true;
+			listFireBall.push_back(fireball);
+			fight = true;
+		}
+		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
+		{
+			if (x - Mario->x > 0)
+				SetState(GIANT_GREEN_STATE_MOVE_DOWN_LEFT);
+			else
+				SetState(GIANT_GREEN_STATE_MOVE_DOWN_RIGHT);
+			timewaittoshoot = GetTickCount64();
+		}
 	}
-	else if (GetTickCount64() - timewaittoshoot > 3000/* && timewaittoshoot != 0*/ && !moveup)
+	else if (id_giantpiranha == GIANT_PIRANHA_BITE)
 	{
-		
-		SetState(GIANT_STATE_MOVE_DOWN);
-		timewaittoshoot = GetTickCount64();
+		/*if (moveup && GetTickCount64() - timewaittoshoot > 1000)
+		{
+			fight = false;
+			
+		}
+		else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
+		{
+			
+		}
+		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
+		{
+			
+			timewaittoshoot = GetTickCount64();
+		}*/
 	}
 
-	if (y >= 368) 
+
+	if (id_giantpiranha == GIANT_PIRANHA_RED)
 	{
-		y = 368;
-		
+		if (y >= start_y && start_y != 0)
+		{
+			y = start_y;
+
+		}
+		if (y <= start_y - GIANT_BOX_HEIGHT && start_y != 0)
+		{
+			y = start_y - GIANT_BOX_HEIGHT;
+		}
 	}
-	if (y <= 336)
-	{		
-		y = 336;
+	if (id_giantpiranha == GIANT_PIRANHA_GREEN)
+	{
+		if (y >= start_y && start_y != 0)
+		{
+			y = start_y;
+
+		}
+		if (y <= start_y - GIANT_GREEN_BOX_HEIGHT && start_y != 0)
+		{
+			y = start_y - GIANT_GREEN_BOX_HEIGHT;
+		}
 	}
 	for (int i = 0; i < listFireBall.size(); i++)
 	{
@@ -141,6 +162,62 @@ void CGiantPiranhaPlant::Render()
 	for (int i = 0; i < listFireBall.size(); i++)
 	{
 		listFireBall[i]->Render();
+	}
+}
+
+void CGiantPiranhaPlant::SetState(int state)
+{
+	CGameObject::SetState(state);
+	switch (state)
+	{
+	case GIANT_STATE_SHOOT_45_LEFT:
+		break;
+	case GIANT_STATE_SHOOT_45_MORE_LEFT:
+		break;
+	case GIANT_STATE_MOVE_UP_LEFT:
+		vy = -0.15f;
+		moveup = false;
+		break;
+	case GIANT_STATE_MOVE_DOWN_LEFT:
+		vy = 0.15f;
+		moveup = true;
+		break;
+	case GIANT_STATE_SHOOT_45_RIGHT:
+		break;
+	case GIANT_STATE_SHOOT_45_MORE_RIGHT:
+		break;
+	case GIANT_STATE_MOVE_UP_RIGHT:
+		vy = -0.15f;
+		moveup = false;
+		break;
+	case GIANT_STATE_MOVE_DOWN_RIGHT:
+		vy = 0.15f;
+		moveup = true;
+		break;
+	case GIANT_GREEN_STATE_SHOOT_45_LEFT:
+		break;
+	case GIANT_GREEN_STATE_SHOOT_45_MORE_LEFT:
+		break;
+	case GIANT_GREEN_STATE_MOVE_UP_LEFT:
+		vy = -0.15f;
+		moveup = false;
+		break;
+	case GIANT_GREEN_STATE_MOVE_DOWN_LEFT:
+		vy = 0.15f;
+		moveup = true;
+		break;
+	case GIANT_GREEN_STATE_SHOOT_45_RIGHT:
+		break;
+	case GIANT_GREEN_STATE_SHOOT_45_MORE_RIGHT:
+		break;
+	case GIANT_GREEN_STATE_MOVE_UP_RIGHT:
+		vy = -0.15f;
+		moveup = false;
+		break;
+	case GIANT_GREEN_STATE_MOVE_DOWN_RIGHT:
+		vy = 0.15f;
+		moveup = true;
+		break;
 	}
 }
 

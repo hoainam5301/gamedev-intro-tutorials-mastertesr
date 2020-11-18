@@ -34,7 +34,32 @@ void CFireball::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vx = -FIREBALL_SPEED;
 		vy += (MARIO_GRAVITY * dt);
 	}*/
-	vx = -0.1;
+	if (isbottom)
+	{
+		if (nx < 0)
+		{
+			vx = -0.1;
+			vy = 0.1;
+		}
+		else
+		{
+			vx = 0.1;
+			vy = 0.1;
+		}
+	}
+	if (istop)
+	{
+		if (nx < 0)
+		{
+			vx = -0.1;
+			vy = -0.1;
+		}
+		else
+		{
+			vx = 0.1;
+			vy = -0.1;
+		}
+	}
 	x += dx;
 	y += dy;
 	//vector<LPCOLLISIONEVENT> coEvents;

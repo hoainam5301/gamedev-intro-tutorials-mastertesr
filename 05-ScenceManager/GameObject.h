@@ -64,7 +64,8 @@ public:
 	int ny;
 	bool isExplode;
 	bool isHolding;
-	int id_brick_items;				//id cua gach co items(idgachranam)
+	int id_brick_items;	//id cua gach co items(idgachranam)
+	int id_giantpiranha;// id cua giant piranha, dung de phan biet mau xanh vs do, can or ban dan 
 
 	bool isdone;
 	bool loadFireball;
