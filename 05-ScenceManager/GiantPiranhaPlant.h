@@ -33,24 +33,22 @@
 
 class CGiantPiranhaPlant : public CGameObject
 {
-	int stateLocal;
-public:
-	//float  openclose;
+	
+public:	
 	float start_x;			// initial position of Mario at scene
 	float start_y;
 	vector <LPGAMEOBJECT> listFireBall;
-	DWORD timewaittoshoot= GetTickCount64();
-	DWORD timetomovedown;
+	DWORD timewaittoshoot = GetTickCount64();
+	//DWORD timetomovedown;
 	CMario* Mario;
 	bool moveup = true;
 	bool not_in_pipeline = false;
 	bool fight;
 	float delta_x, delta_y;
-	CGiantPiranhaPlant(CMario* mario );
+	CGiantPiranhaPlant(CMario* mario);
 	virtual void SetState(int state);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
-	//void SetState(int state);
 };
 

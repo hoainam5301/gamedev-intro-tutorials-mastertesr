@@ -2,6 +2,7 @@
 [TEXTURES]
 0	textures\mario.png	255	255	255
 20	textures\misc.png	166	185	255
+21	textures\misc_1.png	166	185	255
 999	textures\raccoon_3.png	255	255	255
 40	textures\raccoon_4.png	255	255	255
 41	textures\raccoon_5.png	255 	255	255
@@ -262,7 +263,10 @@
 #KOOPAS REVIAL UP
 30058	235	277	253	293	48
 #KOOPAS REVIAL 
-30059	71	75	89	91	45	
+30059	71	75	89	91	45
+#KOOPAS DIE AND MOVE UP
+30060	258	255	274	271	48
+30061	237	255	253	271	48	
 
 #NAM
 1	156	121	172	137	20
@@ -594,6 +598,13 @@
 715	30058	100
 #revial 
 716	30059	100
+#die and move up
+717	30060	50	30061	50	30058	50
+#holding 
+718	30054	100
+#holding up
+719	30057	100
+
 #======Giant_piranha_red
 #Giant_Piranha_shoot_fireball_45_left
 704	36	100
@@ -644,11 +655,11 @@
 # GOOMBA
 3	702	703	707
 #KOOPAS
-4	710	711	712	713	714	715	716
+4	710	711	712	713	714	715	716	717	718	719
 #Items
 8	888	700	701
 #Giant_Piranha_Shot_fireball
-10	704	705	706	706	720	721	722	722	723	724	725	725	726	727	728	728	729	
+10	704	705	706	706	720	721	722	722	723	724	725	725	726	727	728	728	
 #FIRE BALL
 9	890	891
 #Piece Brick
@@ -657,14 +668,16 @@
 12	604
 #Coin
 13	750
+#Giant_Piranha_Bite
+14	729	729
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box,6=Piranha_flower_shot,7=BrokenBrick,10=Coin
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box,6=Piranha_flower_shot,7=BrokenBrick,10=Coin,11=Piranha_bite
 # MARIO
 0	17	300	1
 #GOOMBA
-#2	352	400	3
+2	352	400	3
 #KOOPAS
 #3	100	300	4
 #3	240	340	4
@@ -679,7 +692,7 @@
 1	656	384	22	2
 1	704	352	22	2
 1	1473	368	22	2
-1	400	400	22	1
+1	400	400	22	2
 #Floor
 4	0	416	22	39	1
 4	624	400	22	29	1
@@ -713,9 +726,11 @@
 5	1328	320	22	7	6
 5	2144	368	22	3	3
 5	2176	272	22	3	9
-#Piranha_Flower
+#Piranha_Flower_Shot
 6	360	368	10	1
 #6	360	368	10	2
+#Piranha_Bite
+#11	100	368	14
 #BrokenBrick
 7	1952	400	12
 7	1968	384	12

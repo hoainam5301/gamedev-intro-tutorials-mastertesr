@@ -1,11 +1,9 @@
 #include "Weapon.h"
-
+#include "Floor.h"
+#include "Math.h"
 #include "Koopas.h"
 #include "Goomba.h"
 #include "Brick.h"
-#include "Floor.h"
-
-
 
 
 CWeapon::CWeapon(float start_x, float start_y,int marionx)
@@ -103,16 +101,16 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			   CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 			   if (goomba->GetState() != GOOMBA_STATE_DIE)
 			   {
-				   goomba->SetState(GOOMBA_STATE_DIE);
+				   goomba->SetState(GOOMBA_STATE_DIE_FLY);
 				   SetState(FIRE_BALL_EXPLODE);
 			   }
 		   }
 		   else if (dynamic_cast<CKoopas*>(e->obj))
 		   {
 			   CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
-			   if (koopas->GetState() != KOOPAS_STATE_DIE || koopas->GetState()!=KOOPAS_ANI_DIE_UP)
+			   if (koopas->GetState() != KOOPAS_STATE_DIE || koopas->GetState()!=KOOPAS_STATE_DIE_UP)
 			   {
-				   koopas->SetState(KOOPAS_ANI_DIE_UP);
+				   koopas->SetState(KOOPAS_STATE_DIE_UP);
 				   SetState(FIRE_BALL_EXPLODE);
 			   }
 		   }

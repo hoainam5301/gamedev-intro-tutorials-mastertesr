@@ -1,6 +1,8 @@
 #include "RaccoonTail.h"
-
 #include "BrokenBrick.h"
+#include "Goomba.h"
+#include "Koopas.h"
+#include "Brick.h"
 
 
 CRaccoonTail::CRaccoonTail()
@@ -14,59 +16,9 @@ void CRaccoonTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// TO-DO: make sure Koopas can interact with the world and to each of them too!
 	// 
 	CGameObject::Update(dt);
-	Collision_ENEMY(coObjects);
-	//vector<LPCOLLISIONEVENT> coEvents;
-	//vector<LPCOLLISIONEVENT> coEventsResult;
-
-	//coEvents.clear();
-
-	//CalcPotentialCollisions(coObjects, coEvents);
-	//if (coEvents.size() == 0)
-	//{
-	//	x += dx;
-	//	y += dy;
-	//}
-	//else
-	//{
-	//	float min_tx, min_ty, nx = 0, ny = 0;
-	//	float rdx = 0;
-	//	float rdy = 0;
-	//	// TODO: This is a very ugly designed function!!!!
-	//	FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-	//	// block every object first!
-
-	//	//x += min_tx * dx + nx * 0.5f;
-	//	//y += min_ty * dy + ny * 0.5f;
-
-	//	if (ny != 0)
-	//		vy = 0;
-	//	//Collision logic with other objects
-	//	if (isFighting)
-	//	{
-	//		for (UINT i = 0; i < coEventsResult.size(); i++)
-	//		{
-	//			LPCOLLISIONEVENT e = coEventsResult[i];
-
-
-	//			if (dynamic_cast<CBrokenBrick*>(e->obj))
-	//			{
-	//				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);
-	//				if (e->nx != 0)
-	//				{
-	//					brokenbrick->isDestroyed = true;
-	//					brokenbrick->SetState(STATE_DESTROYED);
-	//				}
-
-	//			}
-
-	//		}
-	//	}
-	//	//DebugOut(L"gia tri vx %f \n", vx);
-	//}
-
-	//for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	Collision_ENEMY(coObjects);	
 }
+
 void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 {
 	float l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail;
@@ -84,7 +36,35 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 				brokenbrick->SetState(STATE_DESTROYED);
 			}
 		}
-		//else if(dynamic_cast<C>)
+		else if (dynamic_cast<CGoomba*>(e))
+		{
+			CGoomba* goomba = dynamic_cast<CGoomba*>(e);
+			goomba->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
+			{
+				goomba->SetState(GOOMBA_STATE_DIE_FLY);
+			}
+		}
+		else if (dynamic_cast<CKoopas*>(e))
+		{
+			CKoopas* koopas = dynamic_cast<CKoopas*>(e);
+			koopas->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
+			{
+				koopas->SetState(KOOPAS_STATE_DIE_UP);
+				koopas->hitbytail = true;
+			}
+		}
+		else if (dynamic_cast<CBrick*>(e))
+		{
+			CBrick* brick = dynamic_cast<CBrick*>(e);
+			brick-> GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
+			{				
+				brick->hitbytail = true;
+				
+			}
+		}
 	}
 }
 

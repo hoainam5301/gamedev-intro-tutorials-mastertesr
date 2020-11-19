@@ -1,5 +1,5 @@
 #include "GiantPiranhaPlant.h"
-
+#include "Utils.h"
 
 
 CGiantPiranhaPlant::CGiantPiranhaPlant(CMario* mario) : CGameObject()
@@ -22,7 +22,7 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (id_giantpiranha == GIANT_PIRANHA_RED)
 	{
-		if (moveup && GetTickCount64() - timewaittoshoot > 1000)
+		if (moveup && GetTickCount64() - timewaittoshoot > 1500)
 		{
 			fight = false;
 			if (x - Mario->x > 0)
@@ -30,7 +30,7 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else
 				SetState(GIANT_STATE_MOVE_UP_RIGHT);						
 		}
-		else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
+		else if (GetTickCount64() - timewaittoshoot > 3000 && !fight)
 		{
 			if (x - Mario->x > 0)
 			{
@@ -46,13 +46,19 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (start_y - GIANT_BOX_HEIGHT - Mario->y < 0)
 					SetState(GIANT_STATE_SHOOT_45_RIGHT);
 			}
-			//delta_x = x - Mario->x;
-			//delta_y = 336 - Mario->y;
-			CFireball* fireball = new CFireball({ x,336 }, 1);
+			CFireball* fireball = new CFireball({ x,start_y - GIANT_BOX_HEIGHT }, 1);
+			if (x - Mario->x > 0)
+				fireball->nx = -1;
+			else
+				fireball->nx = 1;
+			if (start_y -GIANT_BOX_HEIGHT- Mario->y < 0)
+				fireball->isbottom = true;
+			else
+				fireball->istop = true;
 			listFireBall.push_back(fireball);
 			fight = true;
 		}
-		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
+		else if (GetTickCount64() - timewaittoshoot > 4000 && !moveup)
 		{
 			if (x - Mario->x > 0)
 				SetState(GIANT_STATE_MOVE_DOWN_LEFT);
@@ -108,24 +114,6 @@ void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			timewaittoshoot = GetTickCount64();
 		}
 	}
-	else if (id_giantpiranha == GIANT_PIRANHA_BITE)
-	{
-		/*if (moveup && GetTickCount64() - timewaittoshoot > 1000)
-		{
-			fight = false;
-			
-		}
-		else if (GetTickCount64() - timewaittoshoot > 2000 && !fight)
-		{
-			
-		}
-		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
-		{
-			
-			timewaittoshoot = GetTickCount64();
-		}*/
-	}
-
 
 	if (id_giantpiranha == GIANT_PIRANHA_RED)
 	{

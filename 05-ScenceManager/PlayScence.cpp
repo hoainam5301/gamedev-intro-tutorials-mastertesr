@@ -2,16 +2,12 @@
 #include <fstream>
 
 #include "PlayScence.h"
-
-#include "GiantPiranhaPlant.h"
-#include "Goomba.h"
-#include "Koopas.h"
 //#include "Utils.h"
 //#include "Textures.h"
 //#include "Sprites.h"
-#include "Portal.h"
-#include "Floor.h"
-#include "ColorBox.h"
+
+
+//
 
 using namespace std;
 
@@ -46,6 +42,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_PIRANHA_FLOWER_SHOOT 6
 #define OBJECT_TYPE_BROKEN_BRICK	7
 #define OBJECT_TYPE_COIN			10
+#define OBJECT_TYPE_PIRANHA_BITE 11
 
 
 #define MAX_SCENE_LINE 1024
@@ -211,6 +208,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_BROKEN_BRICK:obj = new CBrokenBrick(); break;
 	case OBJECT_TYPE_COIN:obj = new CCoin(); break;
+	case OBJECT_TYPE_PIRANHA_BITE:obj = new CGiantPiranhaPlantBite(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -248,16 +246,16 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 }
 int CPlayScene::RandomItems()
 {
-	CMario* a = new CMario();
-	a = player;
+	//CMario* a = new CMario();
+	//a = player;
 	//int random = rand()%2;
-	if (a->level == MARIO_LEVEL_SMALL)
+	if (player->level == MARIO_LEVEL_SMALL)
 		return Mushroom;
-	else if (a->level == MARIO_LEVEL_BIG)
+	else if (player->level == MARIO_LEVEL_BIG)
 		return Tree_Leaf;
-	else if (a->level == MARIO_RACCON)
+	else if (player->level == MARIO_RACCON)
 		return FIRE_FLOWER;
-	else if (a->level == MARIO_FIRE)
+	else if (player->level == MARIO_FIRE)
 		return Tree_Leaf;
 	//DebugOut(L"radomitem %d \n", RandomItems());
 }
@@ -323,7 +321,6 @@ void CPlayScene::Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
-	//CBrick* gachthuong = new CBrick();
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -335,7 +332,7 @@ void CPlayScene::Update(DWORD dt)
 		objects[i]->Update(dt, &coObjects);
 		LPGAMEOBJECT a = objects[i];
 
-		if (dynamic_cast<CBrick*>(a) && a->id_brick_items == 2)
+		if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_ITEMS)
 		{
 			CBrick* gach = dynamic_cast<CBrick*>(a);
 			if (gach->bottom_coll == 1 && gach->created_item == 0 && gach->bouncing == 1)
@@ -343,26 +340,13 @@ void CPlayScene::Update(DWORD dt)
 				gach->created_item = 1;
 				listitems.push_back(MadeItems(gach->x, gach->y));
 			}
+			else if (gach->created_item == 0 && gach->hitbytail)
+			{
+				gach->created_item = 1;
+				listitems.push_back(MadeItems(gach->x, gach->y));
+			}
+			//DebugOut(L"gach bi danh boi duoi %d \n", gach->hitbytail);
 		}
-		if (dynamic_cast<CGiantPiranhaPlant*>(a))
-		{
-			//CGiantPiranhaPlant* flower = dynamic_cast<CGiantPiranhaPlant*>(a);
-			//if (flower->GetState() == GIANT_STATE_MOVE_UP)
-			//{
-			//	if (flower->y - player->y < 0)
-			//		flower->SetState(GIANT_STATE_SHOOT_45);
-			//	else if (flower->y - player->y >= 0)
-			//		flower->SetState(GIANT_STATE_SHOOT_45_MORE);
-			//}
-			///*if()*/
-			//if (player->nx > 0)
-			//	listweapon.push_back(MadeWeapon(flower->x, flower->y + 6, -player->nx));
-			//else
-			//	listweapon.push_back(MadeWeapon(flower->x , flower->y + 6, -player->nx));
-
-		}
-		
-
 	}
 	
 	if (player->use_Weapon && !player->isdone)
@@ -652,7 +636,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		CGame::GetInstance()->cam_x = 0;
 		break;
 	case DIK_S:
-		if (mario->level == MARIO_RACCON)
+		if (mario->level == MARIO_RACCON && !mario->isHolding)
 		{
 			if (mario->nx > 0)
 				mario->SetState(MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT);

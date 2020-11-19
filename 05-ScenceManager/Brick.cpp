@@ -1,6 +1,6 @@
 #include "Brick.h"
-
-//#include "Utils.h"
+#include "Items.h"
+#include "Utils.h"
 
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -22,8 +22,7 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			this->y = height;	
 			vy = 0;
 			bouncing = 1;
-		}
-		//DebugOut(L" yyyyy %f \n", this->y);
+		}		
 	}
 }
 	

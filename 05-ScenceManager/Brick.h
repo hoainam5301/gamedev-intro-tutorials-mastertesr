@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "Items.h"
 
 #define BRICK_BBOX_WIDTH  16
 #define BRICK_BBOX_HEIGHT 16
@@ -18,7 +17,7 @@ public:
 	int bottom_coll, created_item, bouncing;    //vachamday,taoitemroi,
 	bool move;
 	int width, height;
-	//int cucgachranam;
+	bool hitbytail;	
 	CBrick(float width, float height);
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

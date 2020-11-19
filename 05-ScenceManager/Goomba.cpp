@@ -1,5 +1,4 @@
 #include "Goomba.h"
-
 #include "ColorBox.h"
 
 CGoomba::CGoomba()
@@ -9,7 +8,7 @@ CGoomba::CGoomba()
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	if (state != GOOMBA_STATE_DIE /*|| state!=GOOMBA_STATE_DIE_FLY*/)
+	if (state != GOOMBA_STATE_DIE && state!=GOOMBA_STATE_DIE_FLY)
 	{
 		left = x;
 		top = y;
@@ -23,11 +22,10 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	//
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!
 	// 	
-	/*if (vx > 0 && x > 290) {
-		x = 290; vx = -vx;
-	}*/	
+	
 	CGameObject::Update(dt);
-	vy += 0.00005 * dt;
+	if(GetState()!=GOOMBA_STATE_DIE)
+		vy += 0.0005 * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
@@ -39,7 +37,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	else
 	{
-		//chamsan = true;
 		float min_tx, min_ty, nx = 0, ny = 0;
 		float rdx = 0;
 		float rdy = 0;
@@ -51,26 +48,11 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		y += min_ty * dy + ny * 0.5f;
 		x += min_tx * dx + nx * 0.5f;
-		/*if (ny < 0)
-		{
-			vy = -MOVING_SPEED;
-		}*/
+	
 
 		if (ny != 0)
 			vy = 0;
-		//if (coEvents.size() <= 3)
-		//{
-		//	x += dx;
-		//}
-		//else
-		//	//doihuong *= -1;
-		//	if (nx != 0) this->isdone = true;
-
-		/*if (ny==0 && nx!=0)
-		{
-			doihuong *= -1;
-			x += nx * 2;
-		}*/
+	
 
 
 
@@ -94,30 +76,16 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 }
 
 void CGoomba::Render()
-{
-	int ani = GOOMBA_ANI_WALKING;
-	if (state == GOOMBA_STATE_DIE) {
-		ani = GOOMBA_ANI_DIE;
-	}
-	else if (state == GOOMBA_STATE_DIE_FLY)
-		ani = GOOMBA_ANI_DIE_FLY;
-	if(state==GOOMBA_STATE_WALKING)
-		animation_set->at(ani)->Render(x,y);
-	else if (state == GOOMBA_STATE_DIE)
+{	
+	if (state == GOOMBA_STATE_DIE)
 	{
 		if(timerenderanidie==0)
 			timerenderanidie = GetTickCount64();
-		if (GetTickCount64() - timerenderanidie < 200)
-			animation_set->at(ani)->Render(x, y);
+		if (GetTickCount64() - timerenderanidie < 300)
+			animation_set->at(state)->Render(x, y);
 	}
-	else if (state == GOOMBA_STATE_DIE_FLY)
-	{
-		if (timerenderanidie == 0)
-			timerenderanidie = GetTickCount64();
-		if (GetTickCount64() - timerenderanidie < 200)
-			animation_set->at(ani)->Render(x, y);
-	}
-
+	else 
+		animation_set->at(state)->Render(x, y);
 	//RenderBoundingBox();
 }
 CGoomba::CGoomba(float width, float height)
@@ -131,7 +99,6 @@ void CGoomba::SetState(int state)
 	switch (state)
 	{
 		case GOOMBA_STATE_DIE:
-			y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
 			vx = 0;
 			vy = 0;
 			break;
@@ -139,7 +106,7 @@ void CGoomba::SetState(int state)
 			vx = -GOOMBA_WALKING_SPEED;
 			break;
 		case GOOMBA_STATE_DIE_FLY:
-			vx = -GOOMBA_WALKING_SPEED + 0.04f;
+			vx = -vx;
 			vy = -0.15;
 			break;
 	}

@@ -2,7 +2,9 @@
 #include <fstream>
 
 #include "Game.h"
+#include "Utils.h"
 
+#include "PlayScence.h"
 
 CGame * CGame::__instance = NULL;
 
