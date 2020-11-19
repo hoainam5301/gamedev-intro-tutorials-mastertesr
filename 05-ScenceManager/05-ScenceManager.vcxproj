@@ -132,6 +132,7 @@
     <ClCompile Include="Fireball.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GiantPiranhaPlant.cpp" />
+    <ClCompile Include="GiantPiranhaPlantBite.cpp" />
     <ClCompile Include="Items.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="PieceBrick.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Fireball.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="GiantPiranhaPlant.h" />
+    <ClInclude Include="GiantPiranhaPlantBite.h" />
     <ClInclude Include="Items.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="PieceBrick.h" />
