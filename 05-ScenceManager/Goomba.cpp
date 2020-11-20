@@ -80,8 +80,8 @@ void CGoomba::Render()
 	if (state == GOOMBA_STATE_DIE)
 	{
 		if(timerenderanidie==0)
-			timerenderanidie = GetTickCount64();
-		if (GetTickCount64() - timerenderanidie < 300)
+			timerenderanidie = GetTickCount();
+		if (GetTickCount() - timerenderanidie < 300)
 			animation_set->at(state)->Render(x, y);
 	}
 	else 

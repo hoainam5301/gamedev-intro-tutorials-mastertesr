@@ -24,7 +24,7 @@ void CItems::GetBoundingBox(float& left, float& top, float& right, float& bottom
 }
 void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	DebugOut(L"id items %d \n", id_items);
+	//DebugOut(L"id items %d \n", id_items);
 	if (id_items == Mushroom)
 	{
 		if (spawn) {

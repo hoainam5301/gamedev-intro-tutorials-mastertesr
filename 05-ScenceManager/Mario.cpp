@@ -113,8 +113,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (nx != 0)
 		{
 			vx = last_vx;
-			if (isRunning)
-				vx = 0;			
+			/*if (isRunning)
+				vx = 0;	*/		
 		}
 
 		if (ny != 0)
@@ -337,8 +337,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					Brick->bottom_coll = 1;				
 				}
-				else if (e->nx != 0)
-					vx = 0;
+				/*else if (e->nx != 0)
+					vx = 0;*/
 			} //if NAm
 			else if (dynamic_cast<CPortal*>(e->obj))
 			{
@@ -349,8 +349,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0)
 					isFalling = false;
-				else if (e->nx != 0)
-					vx = 0;
+				/*else if (e->nx != 0)
+					vx = 0;*/
 				/*else if (e->nx != 0)*/
 					//DebugOut(L"Aaaaaaa");
 			}
@@ -387,8 +387,9 @@ void CMario::Render()
 {
 	int alpha = 255;
 	if (untouchable) alpha = 128;
+	DebugOut(L"stataaaaaa %d\n", state);
 	animation_set->at(state)->Render(x, y, alpha);
-	//DebugOut(L"stataaaaaa %d\n", state);
+	
 	RenderBoundingBox();
 }
 
@@ -589,7 +590,7 @@ void CMario::SetState(int State)
 			state = MARIO_ANI_SMALL_HOLDING_TURTLE_WALK_LEFT;*/
 		if (lastnx == 1 && vx >= MARIO_MIN_SPEED_TO_STOP)
 		{
-			SetState(MARIO_ANI_SMALL_STOP_LEFT);
+			SetState(MARIO_ANI_SMALL_STOP_RIGHT);
 			if (isHolding)
 				state = MARIO_ANI_SMALL_HOLDING_TURTLE_WALK_LEFT;
 		}
@@ -818,33 +819,54 @@ void CMario::SetState(int State)
 	case MARIO_RACCON_ANI_JUMP_RIGHT:
 		if (isSitting)
 			state = MARIO_RACCON_ANI_SITTING_RIGHT;
+		if (isHolding)
+			state = MARIO_RACCON_ANI_HOLDING_TURTLE_JUMP_RIGHT;
 		break;
 	case MARIO_RACCON_ANI_JUMP_LEFT:
 		if (isSitting)
 			state = MARIO_RACCON_ANI_SITTING_LEFT;
+		if (isHolding)
+			state = MARIO_RACCON_ANI_HOLDING_TURTLE_JUMP_LEFT;
 		break;
 	case MARIO_FIRE_ANI_JUMP_RIGHT:
 		if (isSitting)
 			state = MARIO_FIRE_ANI_SITTING_RIGHT;
+		if (isHolding)
+			state = MARIO_FIRE_ANI_HOLDING_TURTLE_JUMP_RIGHT;
 		break;
 	case MARIO_FIRE_ANI_JUMP_LEFT:
 		if (isSitting)
 			state = MARIO_FIRE_ANI_SITTING_LEFT;
+		if (isHolding)
+			state = MARIO_FIRE_ANI_HOLDING_TURTLE_JUMP_LEFT;
 		break;
 	case MARIO_ANI_BIG_JUMP_RIGHT:
 		if (isSitting)
 			state = MARIO_ANI_BIG_SITTING_RIGHT;
+		if (isHolding)
+			state = MARIO_ANI_BIG_HOLDING_TURTLE_JUMP_RIGHT;
 		break;
 	case MARIO_ANI_BIG_JUMP_LEFT:
 		if (isSitting)
 			state = MARIO_ANI_BIG_SITTING_LEFT;
+		if (isHolding)
+			state = MARIO_ANI_BIG_HOLDING_TURTLE_JUMP_LEFT;
 		break;
 	case MARIO_ANI_SMALL_JUMP_LEFT:
+		if (isJumping)
+		{
+			vy = -MARIO_JUMP_SPEED_Y;
+		}
+		if (isHolding)
+			state = MARIO_ANI_SMALL_HOLDING_TURTLE_JUMP_LEFT;
+		break;
 	case MARIO_ANI_SMALL_JUMP_RIGHT:
 		if (isJumping)
 		{
 			vy = -MARIO_JUMP_SPEED_Y;
 		}
+		if (isHolding)
+			state = MARIO_ANI_SMALL_HOLDING_TURTLE_JUMP_RIGHT;
 		break;
 	case MARIO_STATE_IDLE:
 		isRunning = false;
@@ -899,7 +921,7 @@ void CMario::SetState(int State)
 					vx = 0;
 				state = MARIO_ANI_SMALL_WALKING_RIGHT;
 				if (isHolding)
-					state = MARIO_ANI_SMALL_HOLDING_TURTLE_IDLE_LEFT;
+					state = MARIO_ANI_SMALL_HOLDING_TURTLE_IDLE_RIGHT;
 			}
 			if (vx < 0) {
 				vx += MARIO_SUB_WALKING_ACC * dt;
@@ -908,7 +930,7 @@ void CMario::SetState(int State)
 					vx = 0;
 				state = MARIO_ANI_SMALL_WALKING_LEFT;
 				if (isHolding)
-					state = MARIO_ANI_SMALL_HOLDING_TURTLE_IDLE_RIGHT;
+					state = MARIO_ANI_SMALL_HOLDING_TURTLE_IDLE_LEFT;
 			}
 			if (nx > 0 && vx == 0)
 			{
@@ -1179,53 +1201,53 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	if (level == MARIO_LEVEL_BIG)
 	{
 		left = x;
-		top = y;
-		bottom = y + MARIO_BIG_BBOX_HEIGHT;
+		top = y+3;
+		bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		if (nx > 0)
 		{
-			left = x + MARIO_BIG_BBOX_LEFT;
-			right = x + MARIO_BIG_BBOX_WIDTH_RIGHT;
+			left = x + MARIO_BIG_BBOX_LEFT+5;
+			right = x + MARIO_BIG_BBOX_WIDTH_RIGHT+5;
 
 		}
 		else
 		{
-			left = x;
-			right = x + MARIO_BIG_BBOX_WIDTH;
+			left = x + MARIO_BIG_BBOX_LEFT + 5;
+			right = x + MARIO_BIG_BBOX_WIDTH+8;
 		}
 		if (isSitting)
 		{
-			top = y + MARIO_SIT_BBOX;
+			top = y + MARIO_SIT_BBOX+3;
 			bottom = top + MARIO_BIG_SIT_BBOX_HEIGHT;
 		}
 	}
 	else if (level == MARIO_LEVEL_SMALL)
 	{
-		left = x;
-		top = y;
-		right = x + MARIO_SMALL_BBOX_WIDTH;
-		bottom = y + MARIO_SMALL_BBOX_HEIGHT;
+		left = x+12;
+		top = y+15;
+		right = left + MARIO_SMALL_BBOX_WIDTH-3;
+		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
 	}
 	else if (level == MARIO_RACCON)
 	{
 		left = x;
-		top = y;
+		top = y+2;
 		bottom = top + MARIO_RACCON_BBOX_HEIGHT;
 		right = left + MARIO_RACCON_BBOX_WIDTH;						
 		if (isSitting)
 		{
-			top = y + MARIO_RACCON_BBOX_SIT;
+			top = y + MARIO_RACCON_BBOX_SIT+2;
 			bottom = top + MARIO_RACCON_SIT_BBOX_HEIGHT;
 		}
 		if (nx > 0)
 		{
 			left = x + MARIO_SIT_BBOX+3;
 			if (isHolding)
-				left = x + MARIO_SIT_BBOX;;
+				left = x + MARIO_SIT_BBOX;
 			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
 		}
 		else
 		{
-			left = x + MARIO_RACCON_BBOX_LEFT;
+			left = x + MARIO_RACCON_BBOX_LEFT+2;
 			if (isHolding)
 				left = x;
 			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
@@ -1234,12 +1256,26 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	else if (level == MARIO_FIRE)
 	{
 		left = x;
-		top = y;
+		top = y+3;
 		right = left + MARIO_FIRE_BBOX_WIDTH;
 		bottom = top + MARIO_FIRE_BBOX_HEIGHT;
+		if (nx > 0)
+		{
+			left = x + MARIO_SIT_BBOX + 3;
+			if (isHolding)
+				left = x + MARIO_SIT_BBOX;;
+			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
+		}
+		else
+		{
+			left = x + MARIO_RACCON_BBOX_LEFT+2;
+			if (isHolding)
+				left = x;
+			right = left + MARIO_RACCON_BBOX_WIDTH_RIGHT;
+		}
 		if (isSitting)
 		{
-			top = y + MARIO_SIT_BBOX;
+			top = y + MARIO_SIT_BBOX+3;
 			bottom = top + MARIO_FIRE_SIT_BBOX_HEIGHT;
 		}
 	}

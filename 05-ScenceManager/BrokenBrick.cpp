@@ -11,9 +11,9 @@ void CBrokenBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	/*if (isDestroyed)
 		DebugOut(L"dasdasdasdasda");*/
-	for (LPGAMEOBJECT piece : listPiece)
+	for (int i=0;i<listPiece.size();i++)
 	{
-		piece->Update(dt, coObjects);	
+		listPiece[i]->Update(dt, coObjects);	
 	}
 }
 
