@@ -357,7 +357,7 @@ void CPlayScene::Update(DWORD dt)
 			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player->nx));
 		player->isdone = true;
 	}
-	if (player->level == MARIO_RACCON && (player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT))
+	if (player->level == MARIO_RACCON && (player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT))
 	{
 		if (player->nx > 0)
 			tail->SetPosition(player->x + 15, player->y + 18);
@@ -477,9 +477,9 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			{
 				//DebugOut(L"huong nx %d \n", mario->nx);
 				if (mario->nx > 0)
-					mario->SetState(MARIO_RACCON_ANI_KEEP_FLYING_RIGHT);
+					mario->SetState(MARIO_RACCOON_STATE_KEEP_FLYING_RIGHT);
 				else
-					mario->SetState(MARIO_RACCON_ANI_KEEP_FLYING_LEFT);		
+					mario->SetState(MARIO_RACCOON_STATE_KEEP_FLYING_LEFT);		
 				mario->isFlying = true;
 				mario->Firstspaceup = false;
 				return;
@@ -496,9 +496,9 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 				if (!mario->isSitting)
 				{
 					if (mario->nx > 0)
-						mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
+						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
 					else
-						mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
 				}
 			}
 			else
@@ -524,25 +524,25 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			if (mario->nx > 0)
 			{
 				if (mario->level == MARIO_LEVEL_BIG)
-					mario->SetState(MARIO_ANI_BIG_KICK_RIGHT);
+					mario->SetState(MARIO_BIG_STATE_KICK_RIGHT);
 				else if (mario->level == MARIO_LEVEL_SMALL)
-					mario->SetState(MARIO_ANI_SMALL_KICK_RIGHT);
+					mario->SetState(MARIO_SMALL_STATE_KICK_RIGHT);
 				else if (mario->level == MARIO_RACCON)
-					mario->SetState(MARIO_RACCON_ANI_KICK_RIGHT);
+					mario->SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
 				else if (mario->level == MARIO_FIRE)
-					mario->SetState(MARIO_FIRE_ANI_KICK_RIGHT);
+					mario->SetState(MARIO_FIRE_STATE_KICK_RIGHT);
 
 			}
 			else
 			{
 				if (mario->level == MARIO_LEVEL_BIG)
-					mario->SetState(MARIO_ANI_BIG_KICK_LEFT);
+					mario->SetState(MARIO_BIG_STATE_KICK_LEFT);
 				else if (mario->level == MARIO_LEVEL_SMALL)
-					mario->SetState(MARIO_ANI_SMALL_KICK_LEFT);
+					mario->SetState(MARIO_SMALL_STATE_KICK_LEFT);
 				else if (mario->level == MARIO_RACCON)
-					mario->SetState(MARIO_RACCON_ANI_KICK_LEFT);
+					mario->SetState(MARIO_RACCOON_STATE_KICK_LEFT);
 				else if (mario->level == MARIO_FIRE)
-					mario->SetState(MARIO_FIRE_ANI_KICK_LEFT);
+					mario->SetState(MARIO_FIRE_STATE_KICK_LEFT);
 			}
 			mario->isHolding = false;
 		}
@@ -573,9 +573,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			if (!mario->isSitting)
 			{
 				if (mario->nx > 0)
- 					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_RIGHT);
+ 					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
 				else
-					mario->SetState(MARIO_RACCON_ANI_FALLING_ROCK_TAIL_LEFT);
+					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
 				//mario->vy = (-0.0006 * 1.2 *mario-> dt);
 			}
 		}
@@ -590,16 +590,16 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			if (mario->level == MARIO_LEVEL_BIG)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_ANI_BIG_JUMP_RIGHT);
+					mario->SetState(MARIO_BIG_STATE_JUMP_RIGHT);
 				else
-					mario->SetState(MARIO_ANI_BIG_JUMP_LEFT);
+					mario->SetState(MARIO_BIG_STATE_JUMP_LEFT);
 			}
 			else if (mario->level == MARIO_LEVEL_SMALL)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_ANI_SMALL_JUMP_RIGHT);
+					mario->SetState(MARIO_SMALL_STATE_JUMP_RIGHT);
 				else
-					mario->SetState(MARIO_ANI_SMALL_JUMP_LEFT);
+					mario->SetState(MARIO_SMALL_STATE_JUMP_LEFT);
 			}
 			else if (mario->level == MARIO_RACCON)
 			{
@@ -607,25 +607,25 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 				{
 					//DebugOut(L"huong nx %d \n", mario->nx);
 					if (mario->nx > 0)
-						mario->SetState(MARIO_RACCON_ANI_FLYING_RIGHT);
+						mario->SetState(MARIO_RACCOON_STATE_FLYING_RIGHT);
 					else
-						mario->SetState(MARIO_RACCON_ANI_FLYING_LEFT);
+						mario->SetState(MARIO_RACCOON_STATE_FLYING_LEFT);
 					mario->isFlying = true;
 				}
 				else 
 				{
 					if (mario->nx > 0)
-						mario->SetState(MARIO_RACCON_ANI_JUMP_RIGHT);
+						mario->SetState(MARIO_RACCOON_STATE_JUMP_RIGHT);
 					else
-						mario->SetState(MARIO_RACCON_ANI_JUMP_LEFT);
+						mario->SetState(MARIO_RACCOON_STATE_JUMP_LEFT);
 				}
 			}
 			else if (mario->level == MARIO_FIRE)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_FIRE_ANI_JUMP_RIGHT);
+					mario->SetState(MARIO_FIRE_STATE_JUMP_RIGHT);
 				else
-					mario->SetState(MARIO_FIRE_ANI_JUMP_LEFT);
+					mario->SetState(MARIO_FIRE_STATE_JUMP_LEFT);
 			}
   		mario->vy = -MARIO_JUMP_SPEED_Y;		
 		}
@@ -639,30 +639,30 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		if (mario->level == MARIO_RACCON && !mario->isHolding)
 		{
 			if (mario->nx > 0)
-				mario->SetState(MARIO_RACCON_ANI_FIGHT_IDLE_RIGHT);
+				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT);
 			else
-				mario->SetState(MARIO_RACCON_ANI_FIGHT_IDLE_LEFT);
+				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT);
 		}
 		break;
 	case DIK_Q:
 		if (mario->level == MARIO_LEVEL_SMALL)
-			mario->SetState(MARIO_ANI_SMALL_KICK_RIGHT);
+			mario->SetState(MARIO_SMALL_STATE_KICK_RIGHT);
 		else if (mario->level == MARIO_LEVEL_BIG)
-			mario->SetState(MARIO_ANI_BIG_KICK_RIGHT);
+			mario->SetState(MARIO_BIG_STATE_KICK_RIGHT);
 		else if (mario->level == MARIO_RACCON)
-			mario->SetState(MARIO_RACCON_ANI_KICK_RIGHT);
+			mario->SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
 		else if (mario->level == MARIO_FIRE)
-			mario->SetState(MARIO_FIRE_ANI_KICK_RIGHT);
+			mario->SetState(MARIO_FIRE_STATE_KICK_RIGHT);
 		break;
 	case DIK_W:
 		if (mario->level == MARIO_LEVEL_SMALL)
-			mario->SetState(MARIO_ANI_SMALL_KICK_LEFT);
+			mario->SetState(MARIO_SMALL_STATE_KICK_LEFT);
 		else if (mario->level == MARIO_LEVEL_BIG)
-			mario->SetState(MARIO_ANI_BIG_KICK_LEFT);
+			mario->SetState(MARIO_BIG_STATE_KICK_LEFT);
 		else if (mario->level == MARIO_RACCON)
-			mario->SetState(MARIO_RACCON_ANI_KICK_LEFT);
+			mario->SetState(MARIO_RACCOON_STATE_KICK_LEFT);
 		else if (mario->level == MARIO_FIRE)
-			mario->SetState(MARIO_FIRE_ANI_KICK_LEFT);
+			mario->SetState(MARIO_FIRE_STATE_KICK_LEFT);
 		break;
 	case DIK_1:
 		mario->level = MARIO_LEVEL_SMALL;
@@ -685,16 +685,16 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			if (mario->isJumping)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_FIRE_ANI_FIGHT_WHILE_JUMPING_RIGHT);
+					mario->SetState(MARIO_FIRE_STATE_FIGHT_WHILE_JUMPING_RIGHT);
 				else
-					mario->SetState(MARIO_FIRE_ANI_FIGHT_WHILE_JUMPING_LEFT);
+					mario->SetState(MARIO_FIRE_STATE_FIGHT_WHILE_JUMPING_LEFT);
 			}
 			else
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_FIRE_ANI_FIGHT_RIGHT);
+					mario->SetState(MARIO_FIRE_STATE_FIGHT_RIGHT);
 				else
-					mario->SetState(MARIO_FIRE_ANI_FIGHT_LEFT);
+					mario->SetState(MARIO_FIRE_STATE_FIGHT_LEFT);
 			}
 		}
 		//mario->isHolding = true;
@@ -721,30 +721,30 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			if (mario->level == MARIO_LEVEL_BIG)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_ANI_BIG_RUNNING_RIGHT);
+					mario->SetState(MARIO_BIG_STATE_RUNNING_RIGHT);
 				else
-					mario->SetState(MARIO_ANI_BIG_RUNNING_LEFT);
+					mario->SetState(MARIO_BIG_STATE_RUNNING_LEFT);
 			}
 			else if (mario->level == MARIO_LEVEL_SMALL)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_ANI_SMALL_RUNNING_RIGHT);
+					mario->SetState(MARIO_SMALL_STATE_RUNNING_RIGHT);
 				else
-					mario->SetState(MARIO_ANI_SMALL_RUNNING_LEFT);
+					mario->SetState(MARIO_SMALL_STATE_RUNNING_LEFT);
 			}
 			else if (mario->level == MARIO_RACCON)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_RACCON_ANI_RUNNING_RIGHT);
+					mario->SetState(MARIO_RACCOON_STATE_RUNNING_RIGHT);
 				else
-					mario->SetState(MARIO_RACCON_ANI_RUNNING_LEFT);
+					mario->SetState(MARIO_RACCOON_STATE_RUNNING_LEFT);
 			}
 			else if (mario->level == MARIO_FIRE)
 			{
 				if (mario->nx > 0)
-					mario->SetState(MARIO_FIRE_ANI_RUNNING_RIGHT);
+					mario->SetState(MARIO_FIRE_STATE_RUNNING_RIGHT);
 				else
-					mario->SetState(MARIO_FIRE_ANI_RUNNING_LEFT);
+					mario->SetState(MARIO_FIRE_STATE_RUNNING_LEFT);
 			}
 		}
 	}
@@ -755,25 +755,25 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	else if (game->IsKeyDown(DIK_RIGHT))
 	{
 		if (mario->level == MARIO_LEVEL_BIG)
-			mario->SetState(MARIO_ANI_BIG_WALKING_RIGHT);
+			mario->SetState(MARIO_BIG_STATE_WALKING_RIGHT);
 		else if (mario->level == MARIO_LEVEL_SMALL)
-			mario->SetState(MARIO_ANI_SMALL_WALKING_RIGHT);
+			mario->SetState(MARIO_SMALL_STATE_WALKING_RIGHT);
 		else if (mario->level == MARIO_RACCON)
-			mario->SetState(MARIO_RACCON_ANI_WALK_RIGHT);
+			mario->SetState(MARIO_RACCOON_STATE_WALK_RIGHT);
 		else if (mario->level == MARIO_FIRE)
-			mario->SetState(MARIO_FIRE_ANI_WALK_RIGHT);
+			mario->SetState(MARIO_FIRE_STATE_WALK_RIGHT);
 		mario->lastnx = 1;
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
 	{		
 		if (mario->level == MARIO_LEVEL_BIG)
-			mario->SetState(MARIO_ANI_BIG_WALKING_LEFT);
+			mario->SetState(MARIO_BIG_STATE_WALKING_LEFT);
 		else if (mario->level == MARIO_LEVEL_SMALL)
-			mario->SetState(MARIO_ANI_SMALL_WALKING_LEFT);
+			mario->SetState(MARIO_SMALL_STATE_WALKING_LEFT);
 		else if (mario->level == MARIO_RACCON)			
-			mario->SetState(MARIO_RACCON_ANI_WALK_LEFT);
+			mario->SetState(MARIO_RACCOON_STATE_WALK_LEFT);
 		else if (mario->level == MARIO_FIRE)
-			mario->SetState(MARIO_FIRE_ANI_WALK_LEFT);
+			mario->SetState(MARIO_FIRE_STATE_WALK_LEFT);
 		mario->lastnx = -1;
 	}
 	else if (game->IsKeyDown(DIK_DOWN) && !mario->isHolding) // giu koopas ko ngoi dc
@@ -781,23 +781,23 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		if (mario->level == MARIO_LEVEL_BIG)
 		{
 			if (mario->nx > 0)
-				mario->SetState(MARIO_ANI_BIG_SITTING_RIGHT);
+				mario->SetState(MARIO_BIG_STATE_SITTING_RIGHT);
 			else
-				mario->SetState(MARIO_ANI_BIG_SITTING_LEFT);
+				mario->SetState(MARIO_BIG_STATE_SITTING_LEFT);
 		}
 		else if (mario->level == MARIO_RACCON)
 		{
 			if (mario->nx > 0)
-				mario->SetState(MARIO_RACCON_ANI_SITTING_RIGHT);
+				mario->SetState(MARIO_RACCOON_STATE_SITTING_RIGHT);
 			else
-				mario->SetState(MARIO_RACCON_ANI_SITTING_LEFT);
+				mario->SetState(MARIO_RACCOON_STATE_SITTING_LEFT);
 		}
 		else if (mario->level == MARIO_FIRE)
 		{
 			if (mario->nx > 0)
-				mario->SetState(MARIO_FIRE_ANI_SITTING_RIGHT);
+				mario->SetState(MARIO_FIRE_STATE_SITTING_RIGHT);
 			else
-				mario->SetState(MARIO_FIRE_ANI_SITTING_LEFT);
+				mario->SetState(MARIO_FIRE_STATE_SITTING_LEFT);
 		}
 	}
 	else
@@ -808,24 +808,24 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			if (mario->nx > 0)
 			{				
 				if (mario->level == MARIO_LEVEL_SMALL)
-					mario->state = MARIO_ANI_SMALL_HOLDING_TURTLE_IDLE_RIGHT;
+					mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_IDLE_RIGHT;
 				else if (mario->level == MARIO_LEVEL_BIG)
-					mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_IDLE_RIGHT;
+					mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_IDLE_RIGHT;
 				else if (mario->level == MARIO_RACCON)
-					mario->state = MARIO_RACCON_ANI_HOLDING_TURTLE_IDLE_RIGHT;
+					mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_IDLE_RIGHT;
 				else if (mario->level == MARIO_FIRE)
-					mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_IDLE_RIGHT;
+					mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_IDLE_RIGHT;
 			}
 			else
 			{
 				if (mario->level == MARIO_LEVEL_SMALL)
-					mario->state = MARIO_ANI_SMALL_HOLDING_TURTLE_IDLE_LEFT;
+					mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_IDLE_LEFT;
 				else if (mario->level == MARIO_LEVEL_BIG)
-					mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_IDLE_LEFT;
+					mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_IDLE_LEFT;
 				else if (mario->level == MARIO_RACCON)
-					mario->state = MARIO_RACCON_ANI_HOLDING_TURTLE_IDLE_LEFT;
+					mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_IDLE_LEFT;
 				else if (mario->level == MARIO_FIRE)
-					mario->state = MARIO_FIRE_ANI_HOLDING_TURTLE_IDLE_LEFT;
+					mario->state = MARIO_FIRE_STATE_HOLDING_TURTLE_IDLE_LEFT;
 			}
 		if (mario->isJumping)
 		{
@@ -834,30 +834,30 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				if (mario->level == MARIO_LEVEL_BIG)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_ANI_BIG_JUMP_RIGHT;
+						mario->state = MARIO_BIG_STATE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_ANI_BIG_JUMP_LEFT;
+						mario->state = MARIO_BIG_STATE_JUMP_LEFT;
 				}
 				else if (mario->level == MARIO_LEVEL_SMALL)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_ANI_SMALL_JUMP_RIGHT;
+						mario->state = MARIO_SMALL_STATE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_ANI_SMALL_JUMP_LEFT;
+						mario->state = MARIO_SMALL_STATE_JUMP_LEFT;
 				}
 				else if (mario->level == MARIO_RACCON)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_RACCON_ANI_JUMP_RIGHT;
+						mario->state = MARIO_RACCOON_STATE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_RACCON_ANI_JUMP_LEFT;
+						mario->state = MARIO_RACCOON_STATE_JUMP_LEFT;
 				}
 				else if (mario->level == MARIO_FIRE)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_FIRE_ANI_JUMP_RIGHT;
+						mario->state = MARIO_FIRE_STATE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_FIRE_ANI_JUMP_LEFT;
+						mario->state = MARIO_FIRE_STATE_JUMP_LEFT;
 				}
 			}
 			else
@@ -865,23 +865,23 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				if (mario->level == MARIO_LEVEL_BIG)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_ANI_BIG_FALLING_RIGHT;
+						mario->state = MARIO_BIG_STATE_FALLING_RIGHT;
 					else
-						mario->state = MARIO_ANI_BIG_FALLING_LEFT;
+						mario->state = MARIO_BIG_STATE_FALLING_LEFT;
 				}
 				else if (mario->level == MARIO_RACCON)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_RACCON_ANI_FALLING_RIGHT;
+						mario->state = MARIO_RACCOON_STATE_FALLING_RIGHT;
 					else
-						mario->state = MARIO_RACCON_ANI_FALLING_LEFT;
+						mario->state = MARIO_RACCOON_STATE_FALLING_LEFT;
 				}
 				else if (mario->level == MARIO_FIRE)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_FIRE_ANI_FALLING_RIGHT;
+						mario->state = MARIO_FIRE_STATE_FALLING_RIGHT;
 					else
-						mario->state = MARIO_FIRE_ANI_FALLING_LEFT;
+						mario->state = MARIO_FIRE_STATE_FALLING_LEFT;
 				}
 				
 			}
@@ -890,30 +890,30 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				if (mario->level == MARIO_LEVEL_BIG)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_JUMP_RIGHT;
+						mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_ANI_BIG_HOLDING_TURTLE_JUMP_LEFT;
+						mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_JUMP_LEFT;
 				}
 				else if (mario->level == MARIO_LEVEL_SMALL)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_ANI_SMALL_HOLDING_TURTLE_JUMP_RIGHT;
+						mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_ANI_SMALL_HOLDING_TURTLE_JUMP_LEFT;
+						mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_JUMP_LEFT;
 				}
 				else if (mario->level == MARIO_RACCON)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_RACCON_ANI_HOLDING_TURTLE_JUMP_RIGHT;
+						mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_RACCON_ANI_HOLDING_TURTLE_JUMP_LEFT;
+						mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_LEFT;
 				}
 				else if (mario->level == MARIO_FIRE)
 				{
 					if (mario->nx > 0)
-						mario->state = MARIO_FIRE_ANI_HOLDING_TURTLE_JUMP_RIGHT;
+						mario->state = MARIO_FIRE_STATE_HOLDING_TURTLE_JUMP_RIGHT;
 					else
-						mario->state = MARIO_FIRE_ANI_HOLDING_TURTLE_JUMP_LEFT;
+						mario->state = MARIO_FIRE_STATE_HOLDING_TURTLE_JUMP_LEFT;
 				}
 			}
 			return;

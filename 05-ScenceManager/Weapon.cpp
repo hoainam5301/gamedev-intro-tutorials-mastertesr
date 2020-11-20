@@ -18,9 +18,9 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	/*CMario* a = new CMario();
 	DebugOut(L"hiiiiiiiiiiiii %d \n", a->GetState());
-	if (a->GetState() == MARIO_FIRE_ANI_FIGHT_RIGHT)
+	if (a->GetState() == MARIO_FIRE_STATE_FIGHT_RIGHT)
 		vx = 0.1;
-	else if (a->GetState() == MARIO_FIRE_ANI_FIGHT_LEFT)
+	else if (a->GetState() == MARIO_FIRE_STATE_FIGHT_LEFT)
 		vx = -0.1;*/
 	if (state == FIRE_BALL_MOVE)
 	{
