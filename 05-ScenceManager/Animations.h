@@ -30,13 +30,15 @@ class CAnimation
 	DWORD totalFrameTime;
 	vector<LPANIMATION_FRAME> frames;
 public:
-	CAnimation(int defaultTime = 100) { this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; }
+	CAnimation(int defaultTime = 100) {
+		this->aniStartTime = NULL; 
+		this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; }
 	void Add(int spriteId, DWORD time = 0);
 	void Reset() { currentFrame = -1; }
 	void Render(float x, float y, int alpha = 255);
 	void SetAniStartTime(DWORD t) { aniStartTime = t; }
-	bool IsOver() { return GetTickCount() - aniStartTime >= totalFrameTime; }
-	bool IsReadyToFight() { return GetTickCount() - aniStartTime >= totalFrameTime - 150; }
+	bool IsOver() { return GetTickCount64() - aniStartTime >= totalFrameTime; }
+	bool IsReadyToFight() { return GetTickCount64() - aniStartTime >= totalFrameTime - 150; }
 };
 
 typedef CAnimation *LPANIMATION;

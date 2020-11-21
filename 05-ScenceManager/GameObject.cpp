@@ -132,7 +132,7 @@ void CGameObject::RenderBoundingBox()
 void CGameObject::ResetAni()
 {
 	//animation_set->at(state)->Reset();
-	animation_set->at(state)->SetAniStartTime(GetTickCount());
+	animation_set->at(state)->SetAniStartTime(GetTickCount64());
 }
 
 CGameObject::~CGameObject()

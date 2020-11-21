@@ -183,6 +183,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GOOMBA:
 	{
 		obj = new CGoomba();
+		obj->id_goomba= atoi(tokens[4].c_str());
+		//DebugOut(L"id gooombaaaaaa %d \n",obj->id_goomba);
 	}break;
 	case OBJECT_TYPE_ITEMS:
 	{
@@ -253,7 +255,7 @@ int CPlayScene::RandomItems()
 		return Mushroom;
 	else if (player->level == MARIO_LEVEL_BIG)
 		return Tree_Leaf;
-	else if (player->level == MARIO_RACCON)
+	else if (player->level == MARIO_RACCOON)
 		return FIRE_FLOWER;
 	else if (player->level == MARIO_FIRE)
 		return Tree_Leaf;
@@ -357,7 +359,7 @@ void CPlayScene::Update(DWORD dt)
 			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player->nx));
 		player->isdone = true;
 	}
-	if (player->level == MARIO_RACCON && (player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT))
+	if (player->level == MARIO_RACCOON && (player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT))
 	{
 		if (player->nx > 0)
 			tail->SetPosition(player->x + 15, player->y + 18);
@@ -471,7 +473,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		{
 			mario->isJumping = false;
 		}
-		if (mario->level == MARIO_RACCON)
+		if (mario->level == MARIO_RACCOON)
 		{
 			if (mario->isMaxSpeed && !mario->Firstspaceup)
 			{
@@ -491,7 +493,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		if (mario->isFalling)
 		{
 		
-			if (mario->level == MARIO_RACCON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )																			//neu khong phai la lan tha phim space dau tien thi ao trang thai quay duoi 
+			if (mario->level == MARIO_RACCOON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )																			//neu khong phai la lan tha phim space dau tien thi ao trang thai quay duoi 
 			{				
 				if (!mario->isSitting)
 				{
@@ -527,7 +529,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 					mario->SetState(MARIO_BIG_STATE_KICK_RIGHT);
 				else if (mario->level == MARIO_LEVEL_SMALL)
 					mario->SetState(MARIO_SMALL_STATE_KICK_RIGHT);
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 					mario->SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
 				else if (mario->level == MARIO_FIRE)
 					mario->SetState(MARIO_FIRE_STATE_KICK_RIGHT);
@@ -539,7 +541,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 					mario->SetState(MARIO_BIG_STATE_KICK_LEFT);
 				else if (mario->level == MARIO_LEVEL_SMALL)
 					mario->SetState(MARIO_SMALL_STATE_KICK_LEFT);
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 					mario->SetState(MARIO_RACCOON_STATE_KICK_LEFT);
 				else if (mario->level == MARIO_FIRE)
 					mario->SetState(MARIO_FIRE_STATE_KICK_LEFT);
@@ -568,7 +570,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 	case DIK_SPACE:
 		
-		if ( mario->level == MARIO_RACCON && mario->isJumping && !mario->isFlying)
+		if ( mario->level == MARIO_RACCOON && mario->isJumping && !mario->isFlying)
 		{
 			if (!mario->isSitting)
 			{
@@ -601,7 +603,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 				else
 					mario->SetState(MARIO_SMALL_STATE_JUMP_LEFT);
 			}
-			else if (mario->level == MARIO_RACCON)
+			else if (mario->level == MARIO_RACCOON)
 			{
 				if (mario->isMaxSpeed && !mario->isFlying)
 				{
@@ -636,7 +638,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		CGame::GetInstance()->cam_x = 0;
 		break;
 	case DIK_S:
-		if (mario->level == MARIO_RACCON && !mario->isHolding)
+		if (mario->level == MARIO_RACCOON && !mario->isHolding)
 		{
 			if (mario->nx > 0)
 				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT);
@@ -649,7 +651,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetState(MARIO_SMALL_STATE_KICK_RIGHT);
 		else if (mario->level == MARIO_LEVEL_BIG)
 			mario->SetState(MARIO_BIG_STATE_KICK_RIGHT);
-		else if (mario->level == MARIO_RACCON)
+		else if (mario->level == MARIO_RACCOON)
 			mario->SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
 		else if (mario->level == MARIO_FIRE)
 			mario->SetState(MARIO_FIRE_STATE_KICK_RIGHT);
@@ -659,7 +661,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetState(MARIO_SMALL_STATE_KICK_LEFT);
 		else if (mario->level == MARIO_LEVEL_BIG)
 			mario->SetState(MARIO_BIG_STATE_KICK_LEFT);
-		else if (mario->level == MARIO_RACCON)
+		else if (mario->level == MARIO_RACCOON)
 			mario->SetState(MARIO_RACCOON_STATE_KICK_LEFT);
 		else if (mario->level == MARIO_FIRE)
 			mario->SetState(MARIO_FIRE_STATE_KICK_LEFT);
@@ -671,7 +673,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->level = MARIO_LEVEL_BIG;
 		break;
 	case DIK_3:
-		mario->level = MARIO_RACCON;
+		mario->level = MARIO_RACCOON;
 		break;
 	case DIK_4:
 		mario->level = MARIO_FIRE;
@@ -732,7 +734,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				else
 					mario->SetState(MARIO_SMALL_STATE_RUNNING_LEFT);
 			}
-			else if (mario->level == MARIO_RACCON)
+			else if (mario->level == MARIO_RACCOON)
 			{
 				if (mario->nx > 0)
 					mario->SetState(MARIO_RACCOON_STATE_RUNNING_RIGHT);
@@ -758,7 +760,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->SetState(MARIO_BIG_STATE_WALKING_RIGHT);
 		else if (mario->level == MARIO_LEVEL_SMALL)
 			mario->SetState(MARIO_SMALL_STATE_WALKING_RIGHT);
-		else if (mario->level == MARIO_RACCON)
+		else if (mario->level == MARIO_RACCOON)
 			mario->SetState(MARIO_RACCOON_STATE_WALK_RIGHT);
 		else if (mario->level == MARIO_FIRE)
 			mario->SetState(MARIO_FIRE_STATE_WALK_RIGHT);
@@ -770,7 +772,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->SetState(MARIO_BIG_STATE_WALKING_LEFT);
 		else if (mario->level == MARIO_LEVEL_SMALL)
 			mario->SetState(MARIO_SMALL_STATE_WALKING_LEFT);
-		else if (mario->level == MARIO_RACCON)			
+		else if (mario->level == MARIO_RACCOON)			
 			mario->SetState(MARIO_RACCOON_STATE_WALK_LEFT);
 		else if (mario->level == MARIO_FIRE)
 			mario->SetState(MARIO_FIRE_STATE_WALK_LEFT);
@@ -785,7 +787,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			else
 				mario->SetState(MARIO_BIG_STATE_SITTING_LEFT);
 		}
-		else if (mario->level == MARIO_RACCON)
+		else if (mario->level == MARIO_RACCOON)
 		{
 			if (mario->nx > 0)
 				mario->SetState(MARIO_RACCOON_STATE_SITTING_RIGHT);
@@ -811,7 +813,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 					mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_IDLE_RIGHT;
 				else if (mario->level == MARIO_LEVEL_BIG)
 					mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_IDLE_RIGHT;
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 					mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_IDLE_RIGHT;
 				else if (mario->level == MARIO_FIRE)
 					mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_IDLE_RIGHT;
@@ -822,7 +824,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 					mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_IDLE_LEFT;
 				else if (mario->level == MARIO_LEVEL_BIG)
 					mario->state = MARIO_BIG_STATE_HOLDING_TURTLE_IDLE_LEFT;
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 					mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_IDLE_LEFT;
 				else if (mario->level == MARIO_FIRE)
 					mario->state = MARIO_FIRE_STATE_HOLDING_TURTLE_IDLE_LEFT;
@@ -845,7 +847,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 					else
 						mario->state = MARIO_SMALL_STATE_JUMP_LEFT;
 				}
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 				{
 					if (mario->nx > 0)
 						mario->state = MARIO_RACCOON_STATE_JUMP_RIGHT;
@@ -869,7 +871,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 					else
 						mario->state = MARIO_BIG_STATE_FALLING_LEFT;
 				}
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 				{
 					if (mario->nx > 0)
 						mario->state = MARIO_RACCOON_STATE_FALLING_RIGHT;
@@ -901,7 +903,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 					else
 						mario->state = MARIO_SMALL_STATE_HOLDING_TURTLE_JUMP_LEFT;
 				}
-				else if (mario->level == MARIO_RACCON)
+				else if (mario->level == MARIO_RACCOON)
 				{
 					if (mario->nx > 0)
 						mario->state = MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_RIGHT;

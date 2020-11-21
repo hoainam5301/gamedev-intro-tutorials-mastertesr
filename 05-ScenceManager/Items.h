@@ -5,6 +5,10 @@
 #define	Tree_Leaf	1
 #define FIRE_FLOWER	2
 
+#define Tree_Leaf_move_left 3
+#define Tree_Leaf_move_right 4
+
+
 #define NAM_DUNG_YEN 0
 #define NAM_DI_CHUYEN 0.05f
 class CItems : public CGameObject
@@ -16,6 +20,7 @@ public:
 	int change_direction = 1;
 	float Start_y;
 	float Start_x;
+	float maxRight;
 	bool move;
 	//bool chamsan;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

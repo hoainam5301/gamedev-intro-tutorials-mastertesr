@@ -99,10 +99,21 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		   else if (dynamic_cast<CGoomba*>(e->obj))
 		   {
 			   CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-			   if (goomba->GetState() != GOOMBA_STATE_DIE)
+			   if (goomba->id_goomba == GOOMBA_NORMAL)
 			   {
-				   goomba->SetState(GOOMBA_STATE_DIE_FLY);
-				   SetState(FIRE_BALL_EXPLODE);
+				   if (goomba->GetState() != GOOMBA_STATE_DIE)
+				   {
+					   goomba->SetState(GOOMBA_STATE_DIE_FLY);
+					   SetState(FIRE_BALL_EXPLODE);
+				   }
+			   }
+			   else if (goomba->id_goomba == GOOMBA_RED)
+			   {
+				   if (goomba->GetState() != GOOMBA_RED_STATE_NO_WING_DIE)
+				   {
+					   goomba->SetState(GOOMBA_STATE_DIE_FLY);
+					   SetState(FIRE_BALL_EXPLODE);
+				   }
 			   }
 		   }
 		   else if (dynamic_cast<CKoopas*>(e->obj))

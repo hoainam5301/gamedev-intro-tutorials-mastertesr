@@ -21,16 +21,16 @@ void CGiantPiranhaPlantBite::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else vy = 0;
 
 	
-		if (moveup && GetTickCount() - timewaittoshoot > 1500)
+		if (moveup && GetTickCount64() - timewaittoshoot > 1500)
 		{
 			//fight = false;
 			SetState(GIANT_STATE_MOVE_UP);
 			
 		}	
-		else if (GetTickCount() - timewaittoshoot > 3000 && !moveup)
+		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
 		{
 			
-			timewaittoshoot = GetTickCount();
+			timewaittoshoot = GetTickCount64();
 			SetState(GIANT_STATE_MOVE_DOWN);
 		}
 

@@ -1,6 +1,8 @@
 #include "Items.h"
 #include "Brick.h"
 #include "ColorBox.h"
+#include "Math.h"
+
 #define GRAVITY 0.3f
 #define Item_move 62 // quang duong item di chuyen khi troi len
 CItems::CItems(float start_x,float start_y)
@@ -9,6 +11,7 @@ CItems::CItems(float start_x,float start_y)
 	this->Start_x = start_x;
 	this->Start_y = start_y;
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(8));
+	
 }
 
 void CItems::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -20,7 +23,12 @@ void CItems::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		top = y;
 		right = x + 18;
 		bottom = y + 18;
+		if (id_items == Tree_Leaf)
+		{
+			left = right = top = bottom = 0;
+		}
 	}
+	
 }
 void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -52,6 +60,7 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else if (id_items == Tree_Leaf)
 	{
+		maxRight = Start_y + 20;
 		if (spawn) {
 
 			if (this->y >= Start_x - 30)
@@ -59,61 +68,74 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else spawn = false;
 		}
 		else
-			vy = 0;
-	}
-	//DebugOut(L"gia tri start y %f \n", Start_y);
-	//DebugOut(L"gia tri y %f \n", y);
-	CGameObject::Update(dt);
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
-	coEvents.clear();
-	CalcPotentialCollisions(coObjects, coEvents);
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
-		//chamsan = true;
-		float min_tx, min_ty, nx = 0, ny = 0;
-		float rdx = 0;
-		float rdy = 0;
-		//x += dx;
-		// TODO: This is a very ugly designed function!!!!
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-		
-		// block every object first!				
-		y += min_ty * dy + ny * 0.5f;
-		x += min_tx * dx + nx * 0.5f;
-		
-	/*	if (nx != 0)
 		{
-			 change_direction *= -1;
-		}*/
-			
-		 //Collision logic with other objects
-		
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CColorBox*>(e->obj))
+			if (x <= Start_y )
 			{
-				if (e->nx != 0)
-				{
-					x += dx;
-				}
+				vy = 0.35;
+				vx = 0.3 * pow(35, vy);
 			}
-			else if (!dynamic_cast<CColorBox*>(e->obj))
+			if (x >= maxRight)
 			{
-				if(e->nx!=0)
-					change_direction *= -1;
+				vy = 0.35;
+				vx = -0.3 * pow(35, vy);
 			}
-
 		}
 	}
-	
-	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	x += vx;
+	y += vy;
+	//DebugOut(L"gia tri start y %f \n", Start_y);
+	//DebugOut(L"gia tri y %f \n", y);
+	//CGameObject::Update(dt);
+	//vector<LPCOLLISIONEVENT> coEvents;
+	//vector<LPCOLLISIONEVENT> coEventsResult;
+	//coEvents.clear();
+	//CalcPotentialCollisions(coObjects, coEvents);
+	//if (coEvents.size() == 0)
+	//{
+	//	x += dx;
+	//	y += dy;
+	//}
+	//else
+	//{
+	//	//chamsan = true;
+	//	float min_tx, min_ty, nx = 0, ny = 0;
+	//	float rdx = 0;
+	//	float rdy = 0;
+	//	//x += dx;
+	//	// TODO: This is a very ugly designed function!!!!
+	//	FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+	//	
+	//	// block every object first!				
+	//	y += min_ty * dy + ny * 0.5f;
+	//	x += min_tx * dx + nx * 0.5f;
+	//	
+	///*	if (nx != 0)
+	//	{
+	//		 change_direction *= -1;
+	//	}*/
+	//		
+	//	 //Collision logic with other objects
+	//	
+	//	for (UINT i = 0; i < coEventsResult.size(); i++)
+	//	{
+	//		LPCOLLISIONEVENT e = coEventsResult[i];
+	//		if (dynamic_cast<CColorBox*>(e->obj))
+	//		{
+	//			if (e->nx != 0)
+	//			{
+	//				x += dx;
+	//			}
+	//		}
+	//		else if (!dynamic_cast<CColorBox*>(e->obj))
+	//		{
+	//			if(e->nx!=0)
+	//				change_direction *= -1;
+	//		}
+
+	//	}
+	//}
+	//
+	//for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 void CItems::Render()
 {
@@ -132,6 +154,10 @@ void CItems::SetState(int state)
 	case Tree_Leaf:
 		break;
 	case FIRE_FLOWER:
+		break;
+	case Tree_Leaf_move_left:
+		break;
+	case Tree_Leaf_move_right:
 		break;
 	}
 }

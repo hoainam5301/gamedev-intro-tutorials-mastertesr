@@ -15,7 +15,7 @@ public:
 	float start_x;			// initial position of Mario at scene
 	float start_y;
 	vector <LPGAMEOBJECT> listFireBall;
-	DWORD timewaittoshoot = GetTickCount();
+	DWORD timewaittoshoot = GetTickCount64();
 	//DWORD timetomovedown;
 	//CMario* Mario;
 	bool moveup = true;

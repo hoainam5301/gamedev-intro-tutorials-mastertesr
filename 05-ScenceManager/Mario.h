@@ -142,7 +142,7 @@
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
-#define MARIO_RACCON		3
+#define MARIO_RACCOON		3
 #define MARIO_FIRE			4
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -153,18 +153,18 @@
 #define MARIO_SMALL_BBOX_WIDTH  15
 #define MARIO_SMALL_BBOX_HEIGHT 15
 
-#define MARIO_RACCON_BBOX_WIDTH 15
-#define MARIO_RACCON_BBOX_HEIGHT 27
-#define MARIO_RACCON_BBOX_SIT	9
-#define MARIO_RACCON_BBOX_WIDTH_RIGHT	15
-#define MARIO_RACCON_BBOX_LEFT 7
+#define MARIO_RACCOON_BBOX_WIDTH 15
+#define MARIO_RACCOON_BBOX_HEIGHT 27
+#define MARIO_RACCOON_BBOX_SIT	9
+#define MARIO_RACCOON_BBOX_WIDTH_RIGHT	15
+#define MARIO_RACCOON_BBOX_LEFT 7
 
 #define MARIO_FIRE_BBOX_WIDTH 15
 #define MARIO_FIRE_BBOX_HEIGHT 26
 #define MARIO_FIRE_BBOX_WIDTH_KICK 21
 
 #define MARIO_BIG_SIT_BBOX_HEIGHT	18
-#define MARIO_RACCON_SIT_BBOX_HEIGHT 18
+#define MARIO_RACCOON_SIT_BBOX_HEIGHT 18
 #define MARIO_FIRE_SIT_BBOX_HEIGHT   18
 #define MARIO_SIT_BBOX				8
 
@@ -207,9 +207,9 @@ public:
 
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
-	//void startOnKey() {Start_on_Key = GetTickCount(); }
-	//bool Istimeout() { return GetTickCount() - Start_on_Key >= 100; }
+	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount6464(); }
+	//void startOnKey() {Start_on_Key = GetTickCount64(); }
+	//bool Istimeout() { return GetTickCount64() - Start_on_Key >= 100; }
 	void Reset();
 	void SubRunningAcc();
 

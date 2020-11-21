@@ -11,20 +11,29 @@ CKoopas::CKoopas(CMario* mario)
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x;
-	top = y;
+	left = x+1;
+	top = y+11;
 	right = x + KOOPAS_BBOX_WIDTH;
 
 	if (state == KOOPAS_STATE_DIE)
 	{
+		
 		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
 	}
-	else if (state == KOOPAS_STATE_DIE_AND_MOVE||state==KOOPAS_STATE_DIE_AND_MOVE_UP)
+	else if (state == KOOPAS_STATE_DIE_AND_MOVE || state == KOOPAS_STATE_DIE_AND_MOVE_UP)
+	{
 		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-	else if (state == KOOPAS_STATE_REVIVE || state==KOOPAS_STATE_REVIVE_UP)
+	}
+	else if (state == KOOPAS_STATE_REVIVE || state == KOOPAS_STATE_REVIVE_UP)
+	{
+		left = x;
 		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-	else if (state == KOOPAS_STATE_WALKING_RIGHT ||state==KOOPAS_STATE_WALKING_LEFT)
+	}
+	else if (state == KOOPAS_STATE_WALKING_RIGHT || state == KOOPAS_STATE_WALKING_LEFT)
+	{
+		top = y;
 		bottom = top + KOOPAS_BBOX_HEIGHT;
+	}
 	else if (state == KOOPAS_STATE_DIE_UP)
 	{
 		if (!hitbytail)
@@ -34,34 +43,36 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 		}
 		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
 	}
-	else if (state == KOOPAS_STATE_HOLDING||state==KOOPAS_STATE_HOLDING_UP)
+	else if (state == KOOPAS_STATE_HOLDING || state == KOOPAS_STATE_HOLDING_UP)
+	{
 		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+	}
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (GetState() == KOOPAS_STATE_HOLDING|| GetState()== KOOPAS_STATE_HOLDING_UP)
 	{
-		if (Mario->level == MARIO_RACCON)
+		if (Mario->level == MARIO_RACCOON)
 		{
 			if (Mario->nx > 0)
-				SetPosition(Mario->x + 18, Mario->y + 9);
+				SetPosition(Mario->x + 17, Mario->y);
 			else
-				SetPosition(Mario->x - 12, Mario->y + 9);
+				SetPosition(Mario->x - 12, Mario->y);
 		}
 		else if (Mario->level == MARIO_LEVEL_SMALL)
 		{
 			if (Mario->nx > 0)
-				SetPosition(Mario->x + 10, Mario->y -5);
+				SetPosition(Mario->x + 19, Mario->y + 2);
 			else
-				SetPosition(Mario->x - 10, Mario->y -5);
+				SetPosition(Mario->x - 1, Mario->y +2);
 		}
 		else
 		{
 			if (Mario->nx > 0)
-				SetPosition(Mario->x + 8, Mario->y + 9);
+				SetPosition(Mario->x + 20, Mario->y);
 			else
-				SetPosition(Mario->x - 10, Mario->y + 9);
+				SetPosition(Mario->x - 6, Mario->y);
 		}
 		//state = KOOPAS_ANI_DIE;
 	}
@@ -74,7 +85,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(KOOPAS_STATE_DIE_AND_MOVE_UP);
 		
 	}
-	if (GetTickCount() - timetorevive > 200000 && (last_state == KOOPAS_STATE_DIE || last_state == KOOPAS_STATE_DIE_UP || last_state==KOOPAS_STATE_HOLDING||last_state==KOOPAS_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
+	if (GetTickCount64() - timetorevive > 200000 && (last_state == KOOPAS_STATE_DIE || last_state == KOOPAS_STATE_DIE_UP || last_state==KOOPAS_STATE_HOLDING||last_state==KOOPAS_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
 	{
 		Mario->isHolding = false;
 		if (last_state == KOOPAS_STATE_DIE || last_state==KOOPAS_STATE_HOLDING)
@@ -82,7 +93,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (last_state == KOOPAS_STATE_DIE_UP || last_state==KOOPAS_STATE_HOLDING_UP)
 			SetState(KOOPAS_STATE_REVIVE_UP);		
 	}
-	if (GetTickCount() - timetorevive > 200000 && (last_state == KOOPAS_STATE_REVIVE || last_state==KOOPAS_STATE_REVIVE_UP ))
+	if (GetTickCount64() - timetorevive > 200000 && (last_state == KOOPAS_STATE_REVIVE || last_state==KOOPAS_STATE_REVIVE_UP ))
 	{
 		SetState(KOOPAS_STATE_WALKING_RIGHT);
 		timetorevive = 0;		
@@ -188,7 +199,7 @@ void CKoopas::SetState(int State)
 	case KOOPAS_STATE_DIE:
 		vx = 0;
 		vy = 0;
-		timetorevive = GetTickCount();
+		timetorevive = GetTickCount64();
 		last_state = KOOPAS_STATE_DIE;
 		break;
 	case KOOPAS_STATE_DIE_UP:
@@ -197,7 +208,7 @@ void CKoopas::SetState(int State)
 		else
 			vx = -0.05;
 		vy = -0.05;
-		timetorevive = GetTickCount();
+		timetorevive = GetTickCount64();
 		last_state = KOOPAS_STATE_DIE_UP;
 		break;
 	case KOOPAS_STATE_WALKING_RIGHT:
