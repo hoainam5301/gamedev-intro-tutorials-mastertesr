@@ -14,6 +14,7 @@
 47	textures\effect.png	176	224	248
 48	textures\enemies-5_2.png	0	255	255
 49	textures\enemies_custom_1.png	255	255	255
+50	textures\mario-hold-shell-big.png	0	255	255
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -38,7 +39,7 @@
 #holding turtle right
 10010	319	320	345	350	0
 10011	345	320	371	350	0
-10012	370	320	396	350	0
+10012	7	4	33	33	50	#can lam lai
 
 # idle left
 10020	167	240	190	270	0
@@ -62,7 +63,7 @@
 #hoding turtle left
 10030	55	320	75	350	0
 10031	29	320	50	350	0
-10032	4	320	25	350	0
+10032	42	4	64	33	50
 
 # die 
 10099	365	209	391	225	0
@@ -204,7 +205,7 @@
 #holding turtle right
 10215	319	760	345	790	0
 10216	345	760	371	790	0
-10217	370	761	396	791	0
+10217	115	1520	151	1550	0	#can lam lai
 
 #idle left
 10220	167	680	190	710	0

@@ -434,9 +434,8 @@ void CMario::Render()
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	//DebugOut(L"stataaaaaa %d\n", state);
-	animation_set->at(state)->Render(x, y, alpha);
-	
-	RenderBoundingBox();
+	animation_set->at(state)->Render(x, y, alpha);	
+	//RenderBoundingBox();
 }
 
 
@@ -1244,7 +1243,15 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 {
 
 
-	if (level == MARIO_LEVEL_BIG)
+	/*if (state == MARIO_ANI_DIE)
+	{
+		left = x + 12;
+		top = y-10;
+		right = left + MARIO_SMALL_BBOX_WIDTH - 3;
+		bottom = top + 16;
+
+	}
+	else*/ if (level == MARIO_LEVEL_BIG)
 	{
 		left = x;
 		top = y+3;
@@ -1298,7 +1305,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		}
 		else
 		{
-			left = x + MARIO_RACCOON_BBOX_LEFT+2;
+			left = x + MARIO_RACCOON_BBOX_LEFT+1;
 			if (isHolding)
 				left = x;
 			right = left + MARIO_RACCOON_BBOX_WIDTH_RIGHT;
@@ -1330,6 +1337,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			bottom = top + MARIO_FIRE_SIT_BBOX_HEIGHT;
 		}
 	}
+
 }
 
 /*

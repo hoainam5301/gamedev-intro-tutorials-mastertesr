@@ -20,8 +20,6 @@
 #define MARIO_STATE_WALKING_LEFT	2
 #define MARIO_STATE_RUN				300
 
-#define MARIO_STATE_DIE				400
-
 #define MARIO_BIG_STATE_IDLE_RIGHT			0
 #define MARIO_BIG_STATE_WALKING_RIGHT			1
 #define MARIO_BIG_STATE_RUNNING_RIGHT			2
@@ -207,7 +205,7 @@ public:
 
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount6464(); }
+	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 	//void startOnKey() {Start_on_Key = GetTickCount64(); }
 	//bool Istimeout() { return GetTickCount64() - Start_on_Key >= 100; }
 	void Reset();
