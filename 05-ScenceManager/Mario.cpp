@@ -127,7 +127,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				Firstspaceup = true;
 			}
 			vy = 0;
-		}		
+		}
 		//
 		// Collision logic with other objects
 		//
@@ -158,17 +158,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
 							goomba->SetState(GOOMBA_STATE_DIE);
+							goomba->makeEffect = true;
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 							isJumping = true;
 						}
 					}
 					else if (goomba->id_goomba == GOOMBA_RED)				//kill goomba red
 					{
-						if (goomba->haswing)
+						if (goomba->hasWing)
 						{
-							goomba->SetState(GOOMBA_RED_STATE_NO_WING_WALK);		//khi co canh thi ve trang thai di bo
+							goomba->SetState(GOOMBA_RED_STATE_NO_WING_WALK);	//khi co canh thi ve trang thai di bo							
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
-							goomba->haswing = false;
+							goomba->hasWing = false;
 							isJumping = true;
 						}
 						else
@@ -238,28 +239,32 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);				
 				if (e->ny < 0)
 				{
-					if (koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT||koopas->GetState()==KOOPAS_STATE_WALKING_LEFT)
+					if (koopas->GetState() == KOOPA_RED_STATE_WALKING_RIGHT||koopas->GetState()==KOOPA_RED_STATE_WALKING_LEFT)
 					{
-						koopas->SetState(KOOPAS_STATE_DIE);
+						koopas->SetState(KOOPA_RED_STATE_DIE);
+						koopas->makeEffect = true;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						isJumping = true;
 					}
-					else if (koopas->GetState() == KOOPAS_STATE_DIE_AND_MOVE)
+					else if (koopas->GetState() == KOOPA_RED_STATE_DIE_AND_MOVE)
 					{
-						koopas->SetState(KOOPAS_STATE_DIE);
+						koopas->SetState(KOOPA_RED_STATE_DIE);
+						koopas->makeEffect = true;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						isJumping = true;
 					}
-					else if (koopas->GetState() == KOOPAS_STATE_DIE_AND_MOVE_UP)
+					else if (koopas->GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
 					{
-						koopas->SetState(KOOPAS_STATE_DIE_UP);
+						koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+						koopas->makeEffect = true;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						isJumping = true;
 					}
-					else if (koopas->GetState() == KOOPAS_STATE_DIE)
+					else if (koopas->GetState() == KOOPA_RED_STATE_DIE)
 					{
 						
-						koopas->SetState(KOOPAS_STATE_DIE_AND_MOVE);
+						koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+						koopas->makeEffect = true;
 						if (lastnx > 0)
 						{
 							koopas->nx = 1;							
@@ -269,9 +274,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						y += dy;
 						
 					}
-					else if (koopas->GetState() == KOOPAS_STATE_DIE_UP)
+					else if (koopas->GetState() == KOOPA_RED_STATE_DIE_UP)
 					{
-						koopas->SetState(KOOPAS_STATE_DIE_AND_MOVE_UP);
+						koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
+						koopas->makeEffect = true;
 						if (lastnx > 0)
 						{
 							koopas->nx = 1;
@@ -281,12 +287,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						y += dy;
 					}
 				}
-				else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx!=0 && (koopas->GetState()==KOOPAS_STATE_DIE||koopas->GetState()==KOOPAS_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
+				else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx!=0 && (koopas->GetState()==KOOPA_RED_STATE_DIE||koopas->GetState()==KOOPA_RED_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
 				{
-					if (koopas->last_state == KOOPAS_STATE_DIE)
-						koopas->SetState(KOOPAS_STATE_HOLDING);
-					else if (koopas->last_state == KOOPAS_STATE_DIE_UP)
-						koopas->SetState(KOOPAS_STATE_HOLDING_UP);
+					if (koopas->last_state == KOOPA_RED_STATE_DIE)
+						koopas->SetState(KOOPA_RED_STATE_HOLDING);
+					else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
+						koopas->SetState(KOOPA_RED_STATE_HOLDING_UP);
 					isHolding = true; //giu koopas van tang toc dc
 					if (nx > 0)
 					{
@@ -312,7 +318,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 
 				}
-				else if (koopas->GetState() == KOOPAS_STATE_DIE || koopas->GetState()==KOOPAS_STATE_DIE_UP)
+				else if (koopas->GetState() == KOOPA_RED_STATE_DIE || koopas->GetState()==KOOPA_RED_STATE_DIE_UP)
 				{
 					if (e->nx > 0)
 					{						
@@ -325,10 +331,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						else if (level == MARIO_FIRE)
 							SetState(MARIO_FIRE_STATE_KICK_LEFT);
 
-						if (koopas->last_state == KOOPAS_STATE_DIE)
-							koopas->SetState(KOOPAS_STATE_DIE_AND_MOVE);
-						else if (koopas->last_state == KOOPAS_STATE_DIE_UP)
-							koopas->SetState(KOOPAS_STATE_DIE_AND_MOVE_UP);
+						if (koopas->last_state == KOOPA_RED_STATE_DIE)
+							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+						else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
+							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
 						koopas->nx = -1;
 					}
 					else
@@ -342,10 +348,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						else if (level == MARIO_FIRE)
 							SetState(MARIO_FIRE_STATE_KICK_RIGHT);
 
-						if (koopas->last_state == KOOPAS_STATE_DIE)
-							koopas->SetState(KOOPAS_STATE_DIE_AND_MOVE);
-						else if (koopas->last_state == KOOPAS_STATE_DIE_UP)
-							koopas->SetState(KOOPAS_STATE_DIE_AND_MOVE_UP);
+						if (koopas->last_state == KOOPA_RED_STATE_DIE)
+							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+						else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
+							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
 						koopas->nx = 1;
 					}
 				}
@@ -353,7 +359,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (untouchable == 0)
 					{
-						if (koopas->GetState() != KOOPAS_STATE_DIE && koopas->GetState() != KOOPAS_STATE_DIE_UP && !isHolding)
+						if (koopas->GetState() != KOOPA_RED_STATE_DIE && koopas->GetState() != KOOPA_RED_STATE_DIE_UP && !isHolding)
 						{
 							if (level > MARIO_LEVEL_BIG)
 							{
@@ -453,6 +459,7 @@ void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 			if (e->id_items == Mushroom)
 			{
 				e->isdone = true;
+				e->makeEffect = true;
 				y -= 20;
 				level = MARIO_LEVEL_BIG;
 			}
@@ -460,11 +467,13 @@ void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 			{
 				y -= 5;
 				e->isdone = true;
+				e->makeEffect = true;
 				level = MARIO_RACCOON;
 			}
 			else if (e->id_items == FIRE_FLOWER)
 			{
 				e->isdone = true;
+				e->makeEffect=true;
 				level = MARIO_FIRE;
 			}
 		}
@@ -1281,7 +1290,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	else if (level == MARIO_LEVEL_SMALL)
 	{
 		left = x+12;
-		top = y+15;
+		top = y+14;
 		right = left + MARIO_SMALL_BBOX_WIDTH-3;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
 	}
@@ -1321,7 +1330,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		{
 			left = x + MARIO_SIT_BBOX + 3;
 			if (isHolding)
-				left = x + MARIO_SIT_BBOX;;
+				left = x + MARIO_SIT_BBOX;
 			right = left + MARIO_RACCOON_BBOX_WIDTH_RIGHT;
 		}
 		else

@@ -21,6 +21,7 @@ public:
 	float Start_y;
 	float Start_x;
 	float maxRight;
+	vector <LPGAMEOBJECT> listEffect;
 	bool move;
 	//bool chamsan;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

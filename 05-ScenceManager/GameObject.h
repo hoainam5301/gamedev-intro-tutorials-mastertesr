@@ -71,6 +71,7 @@ public:
 
 	bool isdone;
 	bool loadFireball;
+	bool makeEffect;
 
 	int state;
 

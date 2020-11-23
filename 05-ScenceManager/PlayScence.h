@@ -18,6 +18,7 @@
 #include "Floor.h"
 #include "ColorBox.h"
 #include "GiantPiranhaPlantBite.h"
+#include "MonneyEffect.h"
 
 class CPlayScene: public CScene
 {

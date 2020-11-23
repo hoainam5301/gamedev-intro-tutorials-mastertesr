@@ -27,15 +27,19 @@ class CGoomba : public CGameObject
 {
 	
 public: 
-	bool haswing=true;
+	bool hasWing=true;
 	bool isGrounded;
-	DWORD readytohighfly;
-	int countfly;
+	DWORD sulkyMario;  //doi mario bo ko them duoi nua
+	CMario* Mario;
+	DWORD readyToFlyHigh;
+	int countFly;
+	vector <LPGAMEOBJECT> listEffect;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
+	void SetSpeed();
 	CGoomba(float width, float height);
-	DWORD timerenderanidie;
-	CGoomba();
+	DWORD timeRenderAniDie;
+	CGoomba(CMario* mario);
 	virtual void SetState(int state);
 };

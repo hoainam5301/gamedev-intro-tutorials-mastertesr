@@ -135,6 +135,7 @@
     <ClCompile Include="GiantPiranhaPlantBite.cpp" />
     <ClCompile Include="Items.cpp" />
     <ClCompile Include="Koopas.cpp" />
+    <ClCompile Include="MonneyEffect.cpp" />
     <ClCompile Include="PieceBrick.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="GiantPiranhaPlantBite.h" />
     <ClInclude Include="Items.h" />
     <ClInclude Include="Koopas.h" />
+    <ClInclude Include="MonneyEffect.h" />
     <ClInclude Include="PieceBrick.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="RaccoonTail.h" />

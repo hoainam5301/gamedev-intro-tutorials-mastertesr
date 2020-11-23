@@ -112,6 +112,7 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				   if (goomba->GetState() != GOOMBA_RED_STATE_NO_WING_DIE)
 				   {
 					   goomba->SetState(GOOMBA_STATE_DIE_FLY);
+					   goomba->hasWing = false;
 					   SetState(FIRE_BALL_EXPLODE);
 				   }
 			   }
@@ -119,9 +120,9 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		   else if (dynamic_cast<CKoopas*>(e->obj))
 		   {
 			   CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
-			   if (koopas->GetState() != KOOPAS_STATE_DIE || koopas->GetState()!=KOOPAS_STATE_DIE_UP)
+			   if (koopas->GetState() != KOOPA_RED_STATE_DIE || koopas->GetState()!=KOOPA_RED_STATE_DIE_UP)
 			   {
-				   koopas->SetState(KOOPAS_STATE_DIE_UP);
+				   koopas->SetState(KOOPA_RED_STATE_DIE_UP);
 				   SetState(FIRE_BALL_EXPLODE);
 			   }
 		   }

@@ -51,7 +51,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			koopas->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
 			{
-				koopas->SetState(KOOPAS_STATE_DIE_UP);
+				koopas->SetState(KOOPA_RED_STATE_DIE_UP);
 				koopas->hitbytail = true;
 			}
 		}

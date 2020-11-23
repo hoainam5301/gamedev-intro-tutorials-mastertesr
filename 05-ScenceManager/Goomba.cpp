@@ -1,36 +1,41 @@
 #include "Goomba.h"
 #include "ColorBox.h"
+#include "MonneyEffect.h"
 
-CGoomba::CGoomba()
+CGoomba::CGoomba(CMario* mario)
 {
 	if (id_goomba == GOOMBA_NORMAL)
 		SetState(GOOMBA_STATE_WALKING);
 	else if (id_goomba == GOOMBA_RED)
 	{
 		SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
-		readytohighfly = GetTickCount64();
+		readyToFlyHigh = GetTickCount64();
 	}
-	
+	Mario = mario;
+	if (mario->x - this->x > 0)
+		this->nx = -1;
+	else
+		this->nx = 1;		
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	DebugOut(L"id gooooo %d \n", id_goomba);
+	//DebugOut(L"id gooooo %d \n", id_goomba);
 	if (id_goomba == GOOMBA_NORMAL)
 	{
 		if (state != GOOMBA_STATE_DIE && state != GOOMBA_STATE_DIE_FLY)
 		{
-			left = x;
-			top = y;
-			right = x + GOOMBA_BBOX_WIDTH;
-			bottom = y + GOOMBA_BBOX_HEIGHT;
+			left = x+4;
+			top = y+8;
+			right = left + GOOMBA_BBOX_WIDTH;
+			bottom = top + GOOMBA_BBOX_HEIGHT+1;
 		}
 	}
 	else if (id_goomba == GOOMBA_RED)
 	{
 		if (state != GOOMBA_RED_STATE_NO_WING_DIE && state != GOOMBA_RED_STATE_NO_WING_DIE_FLY)
 		{
-			if (haswing)
+			if (hasWing)
 			{
 				left = x;
 				top = y;
@@ -39,10 +44,10 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 			}
 			else
 			{
-				left = x;
-				top = y;
-				right = x + 26;
-				bottom = y + 25;
+				left = x+4;
+				top = y+8;
+				right = left + 16;
+				bottom = top + 16;
 			}
 			
 		}
@@ -55,39 +60,40 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!
 	// 	
 	//DebugOut(L"id goomba %d \n",id_goomba);
+	//
 	if (id_goomba == 2)
 	{
-		if (haswing)
+		if (hasWing)
 		{
-			if (countfly == 0 && isGrounded && GetTickCount64()-readytohighfly>1000)
+			if (countFly == 0 && isGrounded && GetTickCount64()-readyToFlyHigh>1000)
 			{
-				//DebugOut(L"aaaa \n");
+				
 				SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
-				readytohighfly = GetTickCount64();
-				countfly = 1;
+				readyToFlyHigh = GetTickCount64();
+				countFly = 1;
 			}
-			else if (countfly != 0 && GetTickCount64()-readytohighfly>200 && countfly < 4 && isGrounded) 
+			else if (countFly != 0 && GetTickCount64()-readyToFlyHigh>200 && countFly < 4 && isGrounded) 
 			{
-				//(L"bbbb \n");
+				
 				SetState(GOOMBA_RED_STATE_HAS_WING_FLY_LOW);
-				readytohighfly = GetTickCount64();
-				countfly++;
+				readyToFlyHigh = GetTickCount64();
+				countFly++;
 			}
-			else if (countfly == 4 && GetTickCount64()-readytohighfly>200 && isGrounded)
+			else if (countFly == 4 && GetTickCount64()-readyToFlyHigh>200 && isGrounded)
 			{
-				//DebugOut(L"cccc \n");
+			
 				SetState(GOOMBA_RED_STATE_HAS_WING_FLY_HIGH);
-				countfly = 0;
+				countFly = 0;
 			}
-			else if (countfly == 0 && isGrounded)
+			else if (countFly == 0 && isGrounded)
 			{
 				SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
 			}
 
 		}
-		else if(!haswing)
+		else 
 		{
-			if (GetState() != GOOMBA_RED_STATE_NO_WING_DIE || GetState() != GOOMBA_RED_STATE_NO_WING_DIE_FLY)
+			if (GetState() != GOOMBA_RED_STATE_NO_WING_DIE && GetState() != GOOMBA_RED_STATE_NO_WING_DIE_FLY)
 			{
 				SetState(GOOMBA_RED_STATE_NO_WING_WALK);
 			}
@@ -97,6 +103,14 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		if(GetState()!=GOOMBA_STATE_DIE && GetState()!=GOOMBA_STATE_DIE_FLY)
 			SetState(GOOMBA_STATE_WALKING);
+	}
+	if (makeEffect)
+	{
+		CMonneyEffect* monneyeffect = new CMonneyEffect();
+		monneyeffect->SetPosition(x, y);
+		monneyeffect->SetState(MAKE_100); 
+		makeEffect = false;
+		listEffect.push_back(monneyeffect);
 	}
 	
 	CGameObject::Update(dt);
@@ -142,13 +156,17 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (id_goomba == GOOMBA_NORMAL)
 			{
+				//DebugOut(L"gia tri nx %d \n ", nx);
 				if (dynamic_cast<CColorBox*>(e->obj))
 				{
 					if (e->nx != 0)
 						x += dx;
 				}
 				else if (e->nx != 0)
-					vx = -vx;
+				{
+					this->nx = -this->nx;
+					SetState(GOOMBA_STATE_WALKING);
+				}
 			}
 			else if (id_goomba == GOOMBA_RED)
 			{
@@ -158,32 +176,72 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						x += dx;
 				}
 				else if (e->nx != 0)
-					vx = vx * -1;
+				{
+					this->nx = -this->nx;
+					if (hasWing)
+					{
+						SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
+						//DebugOut(L"gia tri thoi gian %d \n", GetTickCount64());	
+						if (sulkyMario == 0)
+							sulkyMario = GetTickCount64();
+						if (GetTickCount64() - sulkyMario < 5000)
+						{
+							if (Mario->x - this->x > 0)
+								this->nx = 1;
+							else
+								this->nx = -1;							
+							SetState(GOOMBA_RED_STATE_HAS_WING_WALK);							
+						}
+						else
+						{							
+							sulkyMario = 0;
+							SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
+						}
+					}
+					else
+						SetState(GOOMBA_STATE_WALKING);
+
+				}
 			}
 		}
 	}
-
+	for (int i = 0; i < listEffect.size(); i++)
+	{
+		listEffect[i]->Update(dt, coObjects);
+	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
 void CGoomba::Render()
 {	
-	if (state == GOOMBA_STATE_DIE)
+	if (state == GOOMBA_STATE_DIE||state==GOOMBA_RED_STATE_NO_WING_DIE)
 	{
-		if(timerenderanidie==0)
-			timerenderanidie = GetTickCount64();
-		if (GetTickCount64() - timerenderanidie < 300)
+		if(timeRenderAniDie==0)
+			timeRenderAniDie = GetTickCount64();
+		if (GetTickCount64() - timeRenderAniDie < 300)
 			animation_set->at(state)->Render(x, y);
 	}
 	else 
 		animation_set->at(state)->Render(x, y);
-	RenderBoundingBox();
+	for (int i = 0; i < listEffect.size(); i++)
+	{
+		listEffect[i]->Render();
+	}
+	//RenderBoundingBox();
 }
-CGoomba::CGoomba(float width, float height)
+//CGoomba::CGoomba(float width, float height)
+//{
+//	this->x = width;
+//	this->y = height;
+//}
+void CGoomba::SetSpeed()
 {
-	this->x = width;
-	this->y = height;
+	if (nx > 0)
+		vx = GOOMBA_WALKING_SPEED;
+	if (nx < 0)
+		vx = -GOOMBA_WALKING_SPEED;	
 }
+
 void CGoomba::SetState(int state)
 {
 	CGameObject::SetState(state);
@@ -209,20 +267,20 @@ void CGoomba::SetState(int state)
 			vy = -0.15;
 			break;
 		case GOOMBA_RED_STATE_HAS_WING_WALK:
-			vx = -GOOMBA_WALKING_SPEED;
+			SetSpeed();			
 			break;
 		case GOOMBA_RED_STATE_NO_WING_WALK:
-			vx = -GOOMBA_WALKING_SPEED;
+			SetSpeed();
 			break;
 		case GOOMBA_RED_STATE_HAS_WING_FLY_LOW:
 			vy = -0.05;
-			vx = -GOOMBA_WALKING_SPEED;
+			SetSpeed();
 			isGrounded = false;
 			break;
 		case GOOMBA_RED_STATE_HAS_WING_FLY_HIGH:
 			isGrounded = false;
 			vy = -0.15;
-			vx = -GOOMBA_WALKING_SPEED;
+			SetSpeed();
 			break;
 	}
 }

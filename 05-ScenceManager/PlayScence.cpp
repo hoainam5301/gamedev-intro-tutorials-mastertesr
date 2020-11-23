@@ -43,6 +43,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BROKEN_BRICK	7
 #define OBJECT_TYPE_COIN			10
 #define OBJECT_TYPE_PIRANHA_BITE 11
+#define OBJECT_TYPE_MOONEY_EFFECT 12
 
 
 #define MAX_SCENE_LINE 1024
@@ -182,7 +183,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_GOOMBA:
 	{
-		obj = new CGoomba();
+		obj = new CGoomba(player);
 		obj->id_goomba= atoi(tokens[4].c_str());
 		//DebugOut(L"id gooombaaaaaa %d \n",obj->id_goomba);
 	}break;
@@ -191,6 +192,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CItems(x, y);
 		//items = (CItems*)obj;
 	}break;
+	case OBJECT_TYPE_MOONEY_EFFECT:obj = new CMonneyEffect(); break;
 	case OBJECT_TYPE_WEAPON:
 	{
 		obj = new CWeapon(x, y, player->nx);		
@@ -414,6 +416,8 @@ void CPlayScene::Update(DWORD dt)
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
 		CGame::GetInstance()->cam_x = cx;
+		//cy= player->y - (SCREEN_HEIGHT );
+		//CGame::GetInstance()->cam_y = player->y-200;
 	}
 }
 
