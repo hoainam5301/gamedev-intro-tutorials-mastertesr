@@ -204,7 +204,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj->id_brick_items = atoi(tokens[4].c_str());		
 	}
 	break;
-	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(player); break;
+	case OBJECT_TYPE_KOOPAS: 
+	{
+		int id_koopa= atoi(tokens[4].c_str());
+		obj = new CKoopas(player,id_koopa );
+		break;
+	}
 	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:
 	{
 		obj = new CGiantPiranhaPlant(player); 
@@ -358,7 +363,7 @@ void CPlayScene::Update(DWORD dt)
 				gach->created_item = 1;
 				listitems.push_back(MadeItems(gach->x, gach->y));
 			}
-			else if (gach->created_item == 0 && gach->hitbytail)
+			else if (gach->created_item == 0 && gach->hitByTail)
 			{
 				gach->created_item = 1;
 				listitems.push_back(MadeItems(gach->x, gach->y));

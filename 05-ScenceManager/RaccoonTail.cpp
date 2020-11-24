@@ -51,8 +51,14 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			koopas->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
 			{
-				koopas->SetState(KOOPA_RED_STATE_DIE_UP);
-				koopas->hitbytail = true;
+				if (koopas->id_koopa == KOOPA_RED)
+					koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+				else if (koopas->id_koopa == KOOPA_GREEN)
+				{
+					koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
+					koopas->hasWing = false;
+				}
+				koopas->hitByTail = true;
 			}
 		}
 		else if (dynamic_cast<CBrick*>(e))
@@ -61,7 +67,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			brick-> GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
 			{				
-				brick->hitbytail = true;
+				brick->hitByTail = true;
 				
 			}
 		}

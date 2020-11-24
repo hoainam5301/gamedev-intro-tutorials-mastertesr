@@ -120,11 +120,12 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		   else if (dynamic_cast<CKoopas*>(e->obj))
 		   {
 			   CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
-			   if (koopas->GetState() != KOOPA_RED_STATE_DIE || koopas->GetState()!=KOOPA_RED_STATE_DIE_UP)
-			   {
+			 /*  if (koopas->GetState() != KOOPA_RED_STATE_DIE || koopas->GetState()!=KOOPA_RED_STATE_DIE_UP)
+			   {*/
 				   koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+				   koopas->hitByWeapon = true;
 				   SetState(FIRE_BALL_EXPLODE);
-			   }
+			  // }
 		   }
 		   else if (dynamic_cast<CBrick*>(e->obj))
 		   {

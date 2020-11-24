@@ -228,147 +228,306 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			} // if Goomba //aabb
 			else if (dynamic_cast<CKoopas*>(e->obj))
 			{
-				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);				
-				if (e->ny < 0)
+				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
+				if (koopas->id_koopa == KOOPA_RED)
 				{
-					if (koopas->GetState() == KOOPA_RED_STATE_WALKING_RIGHT||koopas->GetState()==KOOPA_RED_STATE_WALKING_LEFT)
+					if (e->ny < 0)
 					{
-						koopas->SetState(KOOPA_RED_STATE_DIE);
-						koopas->makeEffect = true;
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
-						isJumping = true;
-					}
-					else if (koopas->GetState() == KOOPA_RED_STATE_DIE_AND_MOVE)
-					{
-						koopas->SetState(KOOPA_RED_STATE_DIE);
-						koopas->makeEffect = true;
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
-						isJumping = true;
-					}
-					else if (koopas->GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-					{
-						koopas->SetState(KOOPA_RED_STATE_DIE_UP);
-						koopas->makeEffect = true;
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
-						isJumping = true;
-					}
-					else if (koopas->GetState() == KOOPA_RED_STATE_DIE)
-					{
-						
-						koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
-						koopas->makeEffect = true;
-						if (lastnx > 0)
+						if (koopas->GetState() == KOOPA_RED_STATE_WALKING_RIGHT || koopas->GetState() == KOOPA_RED_STATE_WALKING_LEFT)
 						{
-							koopas->nx = 1;							
+							koopas->SetState(KOOPA_RED_STATE_DIE);
+							koopas->makeEffect = true;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
 						}
-						else						
-							koopas->nx = -1;
-						y += dy;
-						
-					}
-					else if (koopas->GetState() == KOOPA_RED_STATE_DIE_UP)
-					{
-						koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
-						koopas->makeEffect = true;
-						if (lastnx > 0)
+						else if (koopas->GetState() == KOOPA_RED_STATE_DIE_AND_MOVE)
 						{
-							koopas->nx = 1;
+							koopas->SetState(KOOPA_RED_STATE_DIE);
+							koopas->makeEffect = true;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
 						}
-						else
-							koopas->nx = -1;
-						y += dy;
-					}
-				}
-				else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx!=0 && (koopas->GetState()==KOOPA_RED_STATE_DIE||koopas->GetState()==KOOPA_RED_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
-				{
-					if (koopas->last_state == KOOPA_RED_STATE_DIE)
-						koopas->SetState(KOOPA_RED_STATE_HOLDING);
-					else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
-						koopas->SetState(KOOPA_RED_STATE_HOLDING_UP);
-					isHolding = true; //giu koopas van tang toc dc
-					if (nx > 0)
-					{
-						if (level == MARIO_LEVEL_SMALL)
-							SetState(MARIO_SMALL_STATE_HOLDING_TURTLE_WALK_LEFT);
-						else if (level == MARIO_LEVEL_BIG)
-							SetState(MARIO_BIG_STATE_HOLDING_TURTLE_WALK_LEFT);
-						else if (level == MARIO_RACCOON)
-							SetState(MARIO_RACCOON_STATE_HOLDING_TURTLE_WALK_LEFT);
-						else if (level == MARIO_FIRE)
-							SetState(MARIO_FIRE_STATE_HOLDING_TURTLE_WALK_LEFT);
-					}
-					else
-					{
-						if (level == MARIO_LEVEL_SMALL)
-							SetState(MARIO_SMALL_STATE_HOLDING_TURTLE_WALK_RIGHT);
-						else if (level == MARIO_LEVEL_BIG)
-							SetState(MARIO_BIG_STATE_HOLDING_TURTLE_WALK_RIGHT);
-						else if (level == MARIO_RACCOON)
-							SetState(MARIO_RACCOON_STATE_HOLDING_TURTLE_WALK_RIGHT);
-						else if (level == MARIO_FIRE)
-							SetState(MARIO_FIRE_STATE_HOLDING_TURTLE_WALK_RIGHT);						
-					}
-
-				}
-				else if (koopas->GetState() == KOOPA_RED_STATE_DIE || koopas->GetState()==KOOPA_RED_STATE_DIE_UP)
-				{
-					if (e->nx > 0)
-					{						
-						if (level == MARIO_LEVEL_SMALL)
-							SetState(MARIO_SMALL_STATE_KICK_LEFT);
-						else if (level == MARIO_LEVEL_BIG)
-							SetState(MARIO_BIG_STATE_KICK_LEFT);
-						else if (level == MARIO_RACCOON)
-							SetState(MARIO_RACCOON_STATE_KICK_LEFT);
-						else if (level == MARIO_FIRE)
-							SetState(MARIO_FIRE_STATE_KICK_LEFT);
-
-						if (koopas->last_state == KOOPA_RED_STATE_DIE)
-							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
-						else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
-							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
-						koopas->nx = -1;
-					}
-					else
-					{						
-						if (level == MARIO_LEVEL_SMALL)
-							SetState(MARIO_SMALL_STATE_KICK_RIGHT);
-						else if (level == MARIO_LEVEL_BIG)
-							SetState(MARIO_BIG_STATE_KICK_RIGHT);
-						else if (level == MARIO_RACCOON)
-							SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
-						else if (level == MARIO_FIRE)
-							SetState(MARIO_FIRE_STATE_KICK_RIGHT);
-
-						if (koopas->last_state == KOOPA_RED_STATE_DIE)
-							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
-						else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
-							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
-						koopas->nx = 1;
-					}
-				}
-				else if (e->nx != 0)
-				{
-					if (untouchable == 0)
-					{
-						if (koopas->GetState() != KOOPA_RED_STATE_DIE && koopas->GetState() != KOOPA_RED_STATE_DIE_UP && !isHolding)
+						else if (koopas->GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
 						{
-							if (level > MARIO_LEVEL_BIG)
+							koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+							koopas->makeEffect = true;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
+						}
+						else if (koopas->GetState() == KOOPA_RED_STATE_DIE)
+						{
+
+							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+							koopas->makeEffect = true;
+							if (lastnx > 0)
 							{
-								level = MARIO_LEVEL_BIG;
-								StartUntouchable();
-							}
-							else if (level == MARIO_LEVEL_BIG)
-							{
-								level = MARIO_LEVEL_SMALL;
-								StartUntouchable();
+								koopas->nx = 1;
 							}
 							else
+								koopas->nx = -1;
+							y += dy;
+
+						}
+						else if (koopas->GetState() == KOOPA_RED_STATE_DIE_UP)
+						{
+							koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
+							koopas->makeEffect = true;
+							if (lastnx > 0)
 							{
-								SetState(MARIO_ANI_DIE);
-								return;
-							}							
-						}						
+								koopas->nx = 1;
+							}
+							else
+								koopas->nx = -1;
+							y += dy;
+						}
+					}
+					else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx != 0 && (koopas->GetState() == KOOPA_RED_STATE_DIE || koopas->GetState() == KOOPA_RED_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
+					{
+						if (koopas->last_state == KOOPA_RED_STATE_DIE)
+							koopas->SetState(KOOPA_RED_STATE_HOLDING);
+						else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
+							koopas->SetState(KOOPA_RED_STATE_HOLDING_UP);
+						isHolding = true; //giu koopas van tang toc dc
+						if (nx > 0)
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_HOLDING_TURTLE_WALK_LEFT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_HOLDING_TURTLE_WALK_LEFT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_HOLDING_TURTLE_WALK_LEFT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_HOLDING_TURTLE_WALK_LEFT);
+						}
+						else
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_HOLDING_TURTLE_WALK_RIGHT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_HOLDING_TURTLE_WALK_RIGHT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_HOLDING_TURTLE_WALK_RIGHT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_HOLDING_TURTLE_WALK_RIGHT);
+						}
+
+					}
+					else if (koopas->GetState() == KOOPA_RED_STATE_DIE || koopas->GetState() == KOOPA_RED_STATE_DIE_UP)
+					{
+						if (e->nx > 0)
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_KICK_LEFT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_KICK_LEFT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_KICK_LEFT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_KICK_LEFT);
+
+							if (koopas->last_state == KOOPA_RED_STATE_DIE)
+								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+							else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
+								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
+							koopas->nx = -1;
+						}
+						else
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_KICK_RIGHT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_KICK_RIGHT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_KICK_RIGHT);
+
+							if (koopas->last_state == KOOPA_RED_STATE_DIE)
+								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+							else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
+								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
+							koopas->nx = 1;
+						}
+					}
+					else if (e->nx != 0)
+					{
+						if (untouchable == 0)
+						{
+							if (koopas->GetState() != KOOPA_RED_STATE_DIE && koopas->GetState() != KOOPA_RED_STATE_DIE_UP && !isHolding)
+							{
+								if (level > MARIO_LEVEL_BIG)
+								{
+									level = MARIO_LEVEL_BIG;
+									StartUntouchable();
+								}
+								else if (level == MARIO_LEVEL_BIG)
+								{
+									level = MARIO_LEVEL_SMALL;
+									StartUntouchable();
+								}
+								else
+								{
+									SetState(MARIO_ANI_DIE);
+									return;
+								}
+							}
+						}
+					}
+				}
+				else if (koopas->id_koopa == KOOPA_GREEN)
+				{					
+					if (e->ny < 0)
+					{
+						if (koopas->GetState() == KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT || koopas->GetState() == KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT)
+						{
+							if (koopas->nx > 0)
+								koopas->SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
+							else
+								koopas->SetState(KOOPA_GREEN_STATE_WALKING_LEFT);
+							koopas->makeEffect = true;
+							koopas->hasWing = false;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
+						}
+						else if (koopas->GetState() == KOOPA_GREEN_STATE_WALKING_LEFT || koopas->GetState() == KOOPA_GREEN_STATE_WALKING_RIGHT)
+						{
+							koopas->SetState(KOOPA_GREEN_STATE_DIE);
+							koopas->makeEffect = true;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
+						}
+						else if (koopas->GetState() == KOOPA_GREEN_STATE_DIE_AND_MOVE)
+						{
+							koopas->SetState(KOOPA_GREEN_STATE_DIE);
+							koopas->makeEffect = true;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
+						}
+						else if (koopas->GetState() == KOOPA_GREEN_STATE_DIE_AND_MOVE_UP)
+						{
+							koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
+							koopas->makeEffect = true;
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+							isJumping = true;
+						}
+						else if (koopas->GetState() == KOOPA_GREEN_STATE_DIE)
+						{
+
+							koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE);
+							koopas->makeEffect = true;
+							if (lastnx > 0)
+							{
+								koopas->nx = 1;
+							}
+							else
+								koopas->nx = -1;
+							y += dy;
+
+						}
+						else if (koopas->GetState() == KOOPA_GREEN_STATE_DIE_UP)
+						{
+							koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE_UP);
+							koopas->makeEffect = true;
+							if (lastnx > 0)
+							{
+								koopas->nx = 1;
+							}
+							else
+								koopas->nx = -1;
+							y += dy;
+						}
+					}
+					else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx != 0 && (koopas->GetState() == KOOPA_GREEN_STATE_DIE || koopas->GetState() == KOOPA_GREEN_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
+					{
+						if (koopas->last_state == KOOPA_GREEN_STATE_DIE)
+							koopas->SetState(KOOPA_GREEN_STATE_HOLDING);
+						else if (koopas->last_state == KOOPA_GREEN_STATE_DIE_UP)
+							koopas->SetState(KOOPA_GREEN_STATE_HOLDING_UP);
+						isHolding = true; //giu koopas van tang toc dc
+						if (nx > 0)
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_HOLDING_TURTLE_WALK_LEFT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_HOLDING_TURTLE_WALK_LEFT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_HOLDING_TURTLE_WALK_LEFT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_HOLDING_TURTLE_WALK_LEFT);
+						}
+						else
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_HOLDING_TURTLE_WALK_RIGHT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_HOLDING_TURTLE_WALK_RIGHT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_HOLDING_TURTLE_WALK_RIGHT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_HOLDING_TURTLE_WALK_RIGHT);
+						}
+
+					}
+					else if (koopas->GetState() == KOOPA_GREEN_STATE_DIE || koopas->GetState() == KOOPA_GREEN_STATE_DIE_UP)
+					{
+						if (e->nx > 0)
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_KICK_LEFT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_KICK_LEFT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_KICK_LEFT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_KICK_LEFT);
+
+							if (koopas->last_state == KOOPA_GREEN_STATE_DIE)
+								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE);
+							else if (koopas->last_state == KOOPA_GREEN_STATE_DIE_UP)
+								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE_UP);
+							koopas->nx = -1;
+						}
+						else
+						{
+							if (level == MARIO_LEVEL_SMALL)
+								SetState(MARIO_SMALL_STATE_KICK_RIGHT);
+							else if (level == MARIO_LEVEL_BIG)
+								SetState(MARIO_BIG_STATE_KICK_RIGHT);
+							else if (level == MARIO_RACCOON)
+								SetState(MARIO_RACCOON_STATE_KICK_RIGHT);
+							else if (level == MARIO_FIRE)
+								SetState(MARIO_FIRE_STATE_KICK_RIGHT);
+
+							if (koopas->last_state == KOOPA_GREEN_STATE_DIE)
+								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE);
+							else if (koopas->last_state == KOOPA_GREEN_STATE_DIE_UP)
+								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE_UP);
+							koopas->nx = 1;
+						}
+					}
+					else if (e->nx != 0)
+					{
+						if (untouchable == 0)
+						{
+							if (koopas->GetState() != KOOPA_GREEN_STATE_DIE && koopas->GetState() != KOOPA_GREEN_STATE_DIE_UP && !isHolding)
+							{
+								if (level > MARIO_LEVEL_BIG)
+								{
+									level = MARIO_LEVEL_BIG;
+									StartUntouchable();
+								}
+								else if (level == MARIO_LEVEL_BIG)
+								{
+									level = MARIO_LEVEL_SMALL;
+									StartUntouchable();
+								}
+								else
+								{
+									SetState(MARIO_ANI_DIE);
+									return;
+								}
+							}
+						}
 					}
 				}
 

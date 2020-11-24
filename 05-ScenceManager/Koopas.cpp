@@ -3,56 +3,94 @@
 #include "Floor.h"
 #include "MonneyEffect.h"
 
-CKoopas::CKoopas(CMario* mario)
+CKoopas::CKoopas(CMario* mario,int id_Koopa)
 {
-	//CMario* Mario = new CMario();
 	Mario = mario;
-	SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+	id_koopa = id_Koopa;
+	if (id_koopa == KOOPA_RED)
+		SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+	else if (id_koopa == KOOPA_GREEN)
+	{
+		SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT);
+		timeToFly = GetTickCount64();
+		
+	}
+	
 }
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x+1;
 	top = y+11;
+	bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
 	right = x + KOOPAS_BBOX_WIDTH;
-
-	if (state == KOOPA_RED_STATE_DIE)
+	if (id_koopa == KOOPA_RED)
 	{
-		
-		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-	}
-	else if (state == KOOPA_RED_STATE_DIE_AND_MOVE || state == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-	{
-		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-	}
-	else if (state == KOOPA_RED_STATE_REVIVE || state == KOOPA_RED_STATE_REVIVE_UP)
-	{
-		left = x;
-		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-	}
-	else if (state == KOOPA_RED_STATE_WALKING_RIGHT || state == KOOPA_RED_STATE_WALKING_LEFT)
-	{
-		top = y;
-		bottom = top + KOOPAS_BBOX_HEIGHT;
-	}
-	else if (state == KOOPA_RED_STATE_DIE_UP)
-	{
-		if (!hitbytail)
+		/*if (state == KOOPA_RED_STATE_DIE)
 		{
-			left = right;
-			top = bottom;
+
+			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
 		}
-		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		else if (state == KOOPA_RED_STATE_DIE_AND_MOVE || state == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+		{
+			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		}
+		else*/
+		if (state == KOOPA_RED_STATE_REVIVE || state == KOOPA_RED_STATE_REVIVE_UP)
+		{
+			left = x;
+			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		}
+		else if (state == KOOPA_RED_STATE_WALKING_RIGHT || state == KOOPA_RED_STATE_WALKING_LEFT)
+		{
+			top = y;
+			bottom = top + KOOPAS_BBOX_HEIGHT;
+		}
+		else if (state == KOOPA_RED_STATE_DIE_UP)
+		{
+			/*if (!hitByTail)
+			{
+				left = right;
+				top = bottom;
+			}*/
+			if(hitByWeapon)
+				left = top = right = bottom = 0;
+			//bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		}
+		/*else if (state == KOOPA_RED_STATE_HOLDING || state == KOOPA_RED_STATE_HOLDING_UP)
+		{
+			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		}*/
 	}
-	else if (state == KOOPA_RED_STATE_HOLDING || state == KOOPA_RED_STATE_HOLDING_UP)
+	else if (id_koopa == KOOPA_GREEN)
 	{
-		bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		if (state == KOOPA_GREEN_STATE_REVIVE || state == KOOPA_GREEN_STATE_REVIVE_UP)
+		{
+			left = x;
+			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+		}
+		else if (state == KOOPA_GREEN_STATE_WALKING_RIGHT || state == KOOPA_GREEN_STATE_WALKING_LEFT || state==KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT || state==KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT)
+		{
+			top = y;
+			bottom = top + KOOPAS_BBOX_HEIGHT;
+		}
+		else if (state == KOOPA_GREEN_STATE_DIE_UP)
+		{
+			/*if (!hitByTail)
+			{
+				left = right;
+				top = bottom;
+			}*/
+			if (hitByWeapon)
+				left = top = right = bottom = 0;
+			
+		}
 	}
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (GetState() == KOOPA_RED_STATE_HOLDING|| GetState()== KOOPA_RED_STATE_HOLDING_UP)
+	if (GetState() == KOOPA_RED_STATE_HOLDING || GetState()== KOOPA_RED_STATE_HOLDING_UP || GetState() == KOOPA_GREEN_STATE_HOLDING || GetState() == KOOPA_GREEN_STATE_HOLDING_UP)
 	{
 		if (Mario->level == MARIO_RACCOON)
 		{
@@ -77,27 +115,67 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		//state = KOOPAS_ANI_DIE;
 	}
-	if (!Mario->isHolding && (last_state == KOOPA_RED_STATE_HOLDING||last_state==KOOPA_RED_STATE_HOLDING_UP))//de khi tha mai rua ra thi mai rua bi da
+	if (id_koopa == KOOPA_RED)
 	{
-		nx = Mario->nx;
-		if (last_state == KOOPA_RED_STATE_HOLDING)
-			SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
-		else if (last_state == KOOPA_RED_STATE_HOLDING_UP)
-			SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
-		
+		if (!Mario->isHolding && (last_state == KOOPA_RED_STATE_HOLDING || last_state == KOOPA_RED_STATE_HOLDING_UP))//de khi tha mai rua ra thi mai rua bi da
+		{
+			nx = Mario->nx;
+			if (last_state == KOOPA_RED_STATE_HOLDING)
+				SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
+			else if (last_state == KOOPA_RED_STATE_HOLDING_UP)
+				SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
+
+		}
+		if (GetTickCount64() - timeToRevive > 8000 && (last_state == KOOPA_RED_STATE_DIE || last_state == KOOPA_RED_STATE_DIE_UP || last_state == KOOPA_RED_STATE_HOLDING || last_state == KOOPA_RED_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
+		{
+			Mario->isHolding = false;
+			if (last_state == KOOPA_RED_STATE_DIE || last_state == KOOPA_RED_STATE_HOLDING)
+				SetState(KOOPA_RED_STATE_REVIVE);
+			else if (last_state == KOOPA_RED_STATE_DIE_UP || last_state == KOOPA_RED_STATE_HOLDING_UP)
+				SetState(KOOPA_RED_STATE_REVIVE_UP);
+			hitByTail = false;
+		}
+		if (GetTickCount64() - timeToRevive > 10000 && (last_state == KOOPA_RED_STATE_REVIVE || last_state == KOOPA_RED_STATE_REVIVE_UP))
+		{
+			SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+			timeToRevive = 0;
+		}
 	}
-	if (GetTickCount64() - timetorevive > 8000 && (last_state == KOOPA_RED_STATE_DIE || last_state == KOOPA_RED_STATE_DIE_UP || last_state==KOOPA_RED_STATE_HOLDING||last_state==KOOPA_RED_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
+	else if (id_koopa = KOOPA_GREEN)
 	{
-		Mario->isHolding = false;
-		if (last_state == KOOPA_RED_STATE_DIE || last_state==KOOPA_RED_STATE_HOLDING)
-			SetState(KOOPA_RED_STATE_REVIVE);
-		else if (last_state == KOOPA_RED_STATE_DIE_UP || last_state==KOOPA_RED_STATE_HOLDING_UP)
-			SetState(KOOPA_RED_STATE_REVIVE_UP);		
-	}
-	if (GetTickCount64() - timetorevive > 10000 && (last_state == KOOPA_RED_STATE_REVIVE || last_state==KOOPA_RED_STATE_REVIVE_UP ))
-	{
-		SetState(KOOPA_RED_STATE_WALKING_RIGHT);
-		timetorevive = 0;		
+		if (hasWing)
+		{
+			if (GetTickCount64() - timeToFly > 1000)
+			{
+				SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT);
+				timeToFly = GetTickCount64();
+			}
+		}
+		else
+		{
+			if (!Mario->isHolding && (last_state == KOOPA_GREEN_STATE_HOLDING || last_state == KOOPA_GREEN_STATE_HOLDING_UP))//de khi tha mai rua ra thi mai rua bi da
+			{
+				nx = Mario->nx;
+				if (last_state == KOOPA_GREEN_STATE_HOLDING)
+					SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE);
+				else if (last_state == KOOPA_GREEN_STATE_HOLDING_UP)
+					SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE_UP);
+				hitByTail = false;
+			}
+			if (GetTickCount64() - timeToRevive > 8000 && (last_state == KOOPA_GREEN_STATE_DIE || last_state == KOOPA_GREEN_STATE_DIE_UP || last_state == KOOPA_GREEN_STATE_HOLDING || last_state == KOOPA_GREEN_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
+			{
+				Mario->isHolding = false;
+				if (last_state == KOOPA_GREEN_STATE_DIE || last_state == KOOPA_GREEN_STATE_HOLDING)
+					SetState(KOOPA_GREEN_STATE_REVIVE);
+				else if (last_state == KOOPA_GREEN_STATE_DIE_UP || last_state == KOOPA_GREEN_STATE_HOLDING_UP)
+					SetState(KOOPA_GREEN_STATE_REVIVE_UP);
+			}
+			if (GetTickCount64() - timeToRevive > 10000 && (last_state == KOOPA_GREEN_STATE_REVIVE || last_state == KOOPA_GREEN_STATE_REVIVE_UP))
+			{
+				SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
+				timeToRevive = 0;
+			}
+		}
 	}
 	//
 	// TO-DO: make sure Koopas can interact with the world and to each of them too!
@@ -112,7 +190,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CGameObject::Update(dt);
-	if(state!=KOOPA_RED_STATE_HOLDING && state!=KOOPA_RED_STATE_HOLDING_UP)
+	if(state!=KOOPA_RED_STATE_HOLDING && state!=KOOPA_RED_STATE_HOLDING_UP && state!=KOOPA_GREEN_STATE_HOLDING && KOOPA_GREEN_STATE_HOLDING_UP)
 		vy += 0.0005f * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -141,7 +219,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		if (ny != 0)
 			vy = 0;
-		if (ny != 0 && (state == KOOPA_RED_STATE_DIE_UP || state==KOOPA_RED_STATE_REVIVE_UP))
+		if (ny != 0 && (state == KOOPA_RED_STATE_DIE_UP || state==KOOPA_RED_STATE_REVIVE_UP || state==KOOPA_GREEN_STATE_REVIVE_UP || state==KOOPA_GREEN_STATE_DIE_UP))
 		{
 			vx = 0;
 		}
@@ -151,39 +229,69 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CColorBox*>(e->obj))
+			if (id_koopa == KOOPA_RED)
 			{
-				CColorBox* colorbox = dynamic_cast<CColorBox*>(e->obj);
-				if (e->nx != 0)
-				{					
-					x += dx;
-				}
-				else if (e->ny < 0)
-				{					
-					if (x<=colorbox->x)
-					{
-						x = colorbox->x;
-						SetState(KOOPA_RED_STATE_WALKING_RIGHT);
-					}
-					else if (x >= colorbox->x + 16 * colorbox->width - KOOPAS_BBOX_WIDTH)
-					{
-						x = colorbox->x + 16 * colorbox->width - KOOPAS_BBOX_WIDTH;
-						SetState(KOOPA_RED_STATE_WALKING_LEFT);
-					}
-				}
-				
-			}
-			else
-			{
-				if (e->nx != 0  )
+				if (dynamic_cast<CColorBox*>(e->obj))
 				{
-					vx = -vx;
-					if (GetState() != KOOPA_RED_STATE_DIE_AND_MOVE && GetState() != KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+					CColorBox* colorbox = dynamic_cast<CColorBox*>(e->obj);
+					if (e->nx != 0)
 					{
-						if (vx > 0)
+						x += dx;
+					}
+					else if (e->ny < 0 && GetState()!=KOOPA_RED_STATE_DIE_AND_MOVE && GetState()!=KOOPA_RED_STATE_DIE_AND_MOVE_UP )
+					{
+						if (x <= colorbox->x)
+						{
+							x = colorbox->x;
 							SetState(KOOPA_RED_STATE_WALKING_RIGHT);
-						else
+						}
+						else if (x >= colorbox->x + 16 * colorbox->width - KOOPAS_BBOX_WIDTH)
+						{
+							x = colorbox->x + 16 * colorbox->width - KOOPAS_BBOX_WIDTH;
 							SetState(KOOPA_RED_STATE_WALKING_LEFT);
+						}
+					}
+
+				}
+				else
+				{
+					if (e->nx != 0)
+					{
+						vx = -vx;
+						if (GetState() != KOOPA_RED_STATE_DIE_AND_MOVE && GetState() != KOOPA_RED_STATE_DIE_AND_MOVE_UP && GetState()!= KOOPA_RED_STATE_DIE_UP)
+						{
+							if (vx > 0)
+								SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+							else
+								SetState(KOOPA_RED_STATE_WALKING_LEFT);
+						}
+					}
+				}
+			}
+			else if (id_koopa == KOOPA_GREEN)
+			{
+				if (dynamic_cast<CColorBox*>(e->obj))
+				{
+					if (e->nx != 0)
+					{
+						x += dx;
+					}						
+				}
+				else
+				{
+					if (!hasWing)
+					{
+						if (e->nx != 0)
+						{
+							vx = -vx;
+							if (GetState() != KOOPA_GREEN_STATE_DIE_AND_MOVE && GetState() != KOOPA_GREEN_STATE_DIE_AND_MOVE_UP && GetState() != KOOPA_GREEN_STATE_DIE_UP)
+							{
+								if (vx > 0)
+									SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
+								else
+									SetState(KOOPA_GREEN_STATE_WALKING_LEFT);
+							}
+						}
 					}
 				}
 			}
@@ -205,6 +313,7 @@ void CKoopas::Render()
 	{
 		listEffect[i]->Render();
 	}
+	//DebugOut(L"gia tri state %d \n", state);
 	RenderBoundingBox();
 }
 
@@ -216,7 +325,7 @@ void CKoopas::SetState(int State)
 	case KOOPA_RED_STATE_DIE:
 		vx = 0;
 		vy = 0;
-		timetorevive = GetTickCount64();
+		timeToRevive = GetTickCount64();
 		last_state = KOOPA_RED_STATE_DIE;
 		break;
 	case KOOPA_RED_STATE_DIE_UP:
@@ -224,13 +333,14 @@ void CKoopas::SetState(int State)
 			vx = 0.05;
 		else
 			vx = -0.05;
-		vy = -0.05;
-		timetorevive = GetTickCount64();
+		if (last_state != KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+			vy = -0.05;		
+		timeToRevive = GetTickCount64();
 		last_state = KOOPA_RED_STATE_DIE_UP;
 		break;
 	case KOOPA_RED_STATE_WALKING_RIGHT:
-		if (last_state == KOOPA_RED_STATE_REVIVE || last_state == KOOPA_RED_STATE_REVIVE_UP)
-			y -= KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_DIE;
+		/*if (last_state == KOOPA_RED_STATE_REVIVE || last_state == KOOPA_RED_STATE_REVIVE_UP)
+			y -= KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_DIE;*/
 		vx = KOOPAS_WALKING_SPEED;
 		last_state = KOOPA_RED_STATE_WALKING_RIGHT;
 		break;
@@ -238,9 +348,9 @@ void CKoopas::SetState(int State)
 		vx = -KOOPAS_WALKING_SPEED;
 		last_state = KOOPA_RED_STATE_WALKING_LEFT;
 		break;
-	case KOOPA_RED_STATE_DIE_AND_MOVE:
-		last_state = KOOPA_RED_STATE_DIE_AND_MOVE;
+	case KOOPA_RED_STATE_DIE_AND_MOVE:		
 		vx = 0.1 * nx;
+		last_state = KOOPA_RED_STATE_DIE_AND_MOVE;
 		break;	
 	case KOOPA_RED_STATE_REVIVE:
 		last_state = KOOPA_RED_STATE_REVIVE;
@@ -257,6 +367,57 @@ void CKoopas::SetState(int State)
 		break;
 	case KOOPA_RED_STATE_HOLDING_UP:
 		last_state = KOOPA_RED_STATE_HOLDING_UP;
+		break;
+	case KOOPA_GREEN_STATE_WALKING_RIGHT:
+		vx = KOOPAS_WALKING_SPEED;
+		last_state = KOOPA_GREEN_STATE_WALKING_RIGHT;
+		break;
+	case KOOPA_GREEN_STATE_WALKING_LEFT:
+		vx = -KOOPAS_WALKING_SPEED;
+		last_state = KOOPA_GREEN_STATE_WALKING_LEFT;
+		break;
+	case KOOPA_GREEN_STATE_DIE:
+		vx = 0;
+		vy = 0;
+		timeToRevive = GetTickCount64();
+		last_state = KOOPA_GREEN_STATE_DIE;
+		break;
+	case KOOPA_GREEN_STATE_DIE_AND_MOVE:
+		last_state = KOOPA_GREEN_STATE_DIE_AND_MOVE;
+		vx = 0.1 * nx;
+		break;
+	case KOOPA_GREEN_STATE_DIE_UP:
+		if (Mario->nx > 0)
+			vx = 0.05;
+		else
+			vx = -0.05;
+		if(last_state!=KOOPA_GREEN_STATE_DIE_AND_MOVE_UP)
+			vy = -0.05;
+		timeToRevive = GetTickCount64();
+		last_state = KOOPA_GREEN_STATE_DIE_UP;
+		break;
+	case KOOPA_GREEN_STATE_DIE_AND_MOVE_UP:
+		last_state = KOOPA_GREEN_STATE_DIE_AND_MOVE_UP;
+		vx = 0.1 * nx;
+		break;
+	case KOOPA_GREEN_STATE_REVIVE:
+		last_state = KOOPA_GREEN_STATE_REVIVE;
+		break;
+	case KOOPA_GREEN_STATE_REVIVE_UP:
+		last_state = KOOPA_GREEN_STATE_REVIVE_UP;
+		break;
+	case KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT:
+		DebugOut(L"bbbbbbb");
+		//vy = -0.17;
+		break;
+	case KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT:
+		//vy = -0.17;
+		break;
+	case KOOPA_GREEN_STATE_HOLDING:
+		last_state = KOOPA_GREEN_STATE_HOLDING;
+		break;
+	case KOOPA_GREEN_STATE_HOLDING_UP:
+		last_state = KOOPA_GREEN_STATE_HOLDING_UP;
 		break;
 	}
 

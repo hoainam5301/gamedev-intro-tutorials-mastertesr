@@ -72,7 +72,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				
 				SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
 				readyToFlyHigh = GetTickCount64();
-				countFly = 1;
+				countFly ++;
 			}
 			else if (countFly != 0 && GetTickCount64()-readyToFlyHigh>200 && countFly < 4 && isGrounded) 
 			{

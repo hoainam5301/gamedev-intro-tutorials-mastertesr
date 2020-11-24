@@ -59,14 +59,17 @@ public:
 
 	float vx;
 	float vy;
-	int id_items;
-	int id_goomba;  //dung de phan biet goomba do vs goomba binh thuong
+	
 	//bool isDestroyed;
 	int nx;	
 	int ny;
 	bool isExplode;
-	int id_broken_state; //set trang thai cua broken brick luc moi khoi tao
 	bool isHolding;
+
+	int id_broken_state; //set trang thai cua broken brick luc moi khoi tao
+	int id_items;		
+	int id_koopa;		//dung de phan biet koopa red va koopa green
+	int id_goomba;		//dung de phan biet goomba do vs goomba binh thuong
 	int id_brick_items;	//id cua gach co items(idgachranam)
 	int id_giantpiranha;// id cua giant piranha, dung de phan biet mau xanh vs do ban dan
 

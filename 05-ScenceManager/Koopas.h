@@ -10,6 +10,9 @@
 #define KOOPAS_BBOX_HEIGHT 27
 #define KOOPAS_BBOX_HEIGHT_DIE 16
 
+#define KOOPA_RED 1
+#define KOOPA_GREEN 2
+
 #define KOOPA_RED_STATE_WALKING_LEFT	 0
 #define KOOPA_RED_STATE_WALKING_RIGHT	 1
 #define KOOPA_RED_STATE_DIE				 2
@@ -31,8 +34,8 @@
 #define KOOPA_GREEN_STATE_REVIVE_UP		 17
 #define KOOPA_GREEN_STATE_HOLDING		 18
 #define KOOPA_GREEN_STATE_HOLDING_UP	 19
-#define KOOPA_GREEN_STATE_HAS_WING_WALKING_LEFT	20
-#define KOOPA_GREEN_STATE_HAS_WING_WALKING_RIGHT 21
+#define KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT	20
+#define KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT 21
 
 class CKoopas : public CGameObject
 {
@@ -42,10 +45,13 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	vector <LPGAMEOBJECT> listEffect;
-	DWORD timetorevive;
-	bool hitbytail;
+	DWORD timeToRevive;
+	DWORD timeToFly;
+	bool hitByTail;
+	bool hasWing=true;
+	bool hitByWeapon;
 	int startx, widthtogo;
-	CKoopas(CMario* mario);
+	CKoopas(CMario* mario,int id_Koopa);
 	int last_state;
 	CMario* Mario;
 	virtual void SetState(int state);

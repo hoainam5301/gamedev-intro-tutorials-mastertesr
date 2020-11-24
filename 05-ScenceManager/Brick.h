@@ -22,7 +22,7 @@ public:
 	int bottom_coll, created_item, bouncing;    //vachamday,taoitemroi,
 	bool move;
 	int width, height;
-	bool hitbytail;	
+	bool hitByTail;	
 	CBrick(float width, float height);
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
