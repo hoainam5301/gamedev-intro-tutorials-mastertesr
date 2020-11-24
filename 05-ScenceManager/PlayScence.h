@@ -28,15 +28,15 @@ protected:
 	//CWeapon* weapon;
 	TileMap* map;
 	CRaccoonTail* tail=new CRaccoonTail();
-	
+	CCoin* coin =NULL;
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
 	// *gachthuong;
 	//CBrick* gachthuong;
 	vector<LPGAMEOBJECT> objects;
-
 	vector<LPGAMEOBJECT> listitems;
 	vector<LPGAMEOBJECT> listweapon;
+	//vector<LPGAMEOBJECT> listbrokenbrick;
 
 	CItems* MadeItems(float x, float y)
 	{

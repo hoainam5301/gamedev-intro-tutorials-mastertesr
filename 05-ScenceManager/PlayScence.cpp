@@ -167,6 +167,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 
 	CGameObject* obj = NULL;
+	CGameObject* brokenBrick = NULL;
 
 	switch (object_type)
 	{
@@ -210,7 +211,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj->id_giantpiranha = atoi(tokens[4].c_str());
 		break;
 	}
-	case OBJECT_TYPE_BROKEN_BRICK:obj = new CBrokenBrick(); break;
+	case OBJECT_TYPE_BROKEN_BRICK:
+	{
+		int id_state = atoi(tokens[4].c_str());
+		obj = new CBrokenBrick(id_state); 
+		//obj->id_broken_state= atoi(tokens[4].c_str());
+		break;
+	}
 	case OBJECT_TYPE_COIN:obj = new CCoin(); break;
 	case OBJECT_TYPE_PIRANHA_BITE:obj = new CGiantPiranhaPlantBite(); break;
 	case OBJECT_TYPE_PORTAL:
@@ -241,12 +248,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 
 	// General object setup
-	obj->SetPosition(x, y);
-
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-
-	obj->SetAnimationSet(ani_set);
-	objects.push_back(obj);
+	/*if (obj)
+	{*/
+		obj->SetPosition(x, y);
+		obj->SetAnimationSet(ani_set);
+		objects.push_back(obj);
+	/*}
+	else if(brokenBrick)
+		{ }*/
+	/*brokenBrick->SetPosition(x, y);
+	brokenBrick->SetAnimationSet(ani_set);
+	listbrokenbrick.push_back(brokenBrick);*/
 }
 int CPlayScene::RandomItems()
 {
@@ -261,6 +274,7 @@ int CPlayScene::RandomItems()
 		return FIRE_FLOWER;
 	else if (player->level == MARIO_FIRE)
 		return Tree_Leaf;
+	
 	//DebugOut(L"radomitem %d \n", RandomItems());
 }
 void CPlayScene::Load()
@@ -348,11 +362,57 @@ void CPlayScene::Update(DWORD dt)
 			{
 				gach->created_item = 1;
 				listitems.push_back(MadeItems(gach->x, gach->y));
+			}	
+		}
+		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_TIEN) 
+		{
+			CBrick* gach = dynamic_cast<CBrick*>(a);
+
+			if (gach->created_item == 0 && gach->bottom_coll == 1 && gach->bouncing == 1)
+			{
+				coin = new CCoin();
+				gach->created_item = 1;
+				coin->SetPosition(gach->x+3, gach->y);
 			}
-			//DebugOut(L"gach bi danh boi duoi %d \n", gach->hitbytail);
+		}
+		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_SWITCH_P)
+		{
+			CBrick* gach = dynamic_cast<CBrick*>(a);
+
+			if (gach->created_item == 0 && gach->bottom_coll == 1 && gach->bouncing == 1)
+			{				
+				gach->created_item = 1;
+				CItems* item = new CItems(gach->x,gach->y);
+				item->id_items = SWITCH_P_ON;
+				item->SetState(SWITCH_P_OFF);
+				item->SetPosition(gach->x, gach->y - 16);
+				listitems.push_back(item);
+			}
+		}		
+		if (coin != NULL)
+		{
+			coin->Update(dt, &coObjects);
 		}
 	}
 	
+	for (int i = 0; i < listitems.size(); i++)
+	{
+		if (listitems[i]->GetState() == SWITCH_P_OFF)
+		{
+			for (int i = 0; i < objects.size(); i++)
+			{
+				LPGAMEOBJECT broken = objects[i];
+				if (dynamic_cast<CBrokenBrick*>(broken))
+				{
+					CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
+					brokenbrick->tranformation = true;
+					//DebugOut(L"aaaaaaa");
+				}
+			}
+			//DebugOut(L"abbbbbbb");
+		}
+	}
+
 	if (player->use_Weapon && !player->isdone)
 	{
 		if (player->nx > 0)
@@ -385,6 +445,8 @@ void CPlayScene::Update(DWORD dt)
 	}
 	for (int i = 0; i < listitems.size(); i++)
 		listitems[i]->Update(dt, &coObjects);
+
+	
 	if (listweapon.size() != 0)
 	{
 		for (int i = 0; i < listweapon.size(); i++)
@@ -438,7 +500,8 @@ void CPlayScene::Render()
 		objects[i]->Render();
 	if (tail != NULL)
 		tail->Render();
-	
+	if (coin != NULL)
+		coin->Render();
 	/*if (listweapon.size() > 2)
 	{
 		for (int i = 0; i < listweapon.size(); i++)
@@ -495,8 +558,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		if (mario->isJumping)
 			mario->isFalling = true;
 		if (mario->isFalling)
-		{
-		
+		{		
 			if (mario->level == MARIO_RACCOON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )																			//neu khong phai la lan tha phim space dau tien thi ao trang thai quay duoi 
 			{				
 				if (!mario->isSitting)
@@ -573,19 +635,20 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		
-		if ( mario->level == MARIO_RACCOON && mario->isJumping && !mario->isFlying)
+		if (mario->isFalling)
 		{
-			if (!mario->isSitting)
+			if (mario->level == MARIO_RACCOON && mario->isJumping && !mario->isFlying)
 			{
-				if (mario->nx > 0)
- 					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
-				else
-					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
-				//mario->vy = (-0.0006 * 1.2 *mario-> dt);
+				if (!mario->isSitting)
+				{
+					if (mario->nx > 0)
+						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
+					else
+						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
+					//mario->vy = (-0.0006 * 1.2 *mario-> dt);
+				}
 			}
 		}
-		
 		if (mario->isJumping)
 			return;
 		mario->is_Grounded = false;

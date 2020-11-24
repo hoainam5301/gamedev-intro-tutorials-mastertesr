@@ -42,7 +42,7 @@ public:
 	//DWORD timetomovedown;
 	CMario* Mario;
 	bool moveup = true;
-	bool not_in_pipeline = false;
+	//bool not_in_pipeline = false;
 	bool fight;
 	float delta_x, delta_y;
 	CGiantPiranhaPlant(CMario* mario);

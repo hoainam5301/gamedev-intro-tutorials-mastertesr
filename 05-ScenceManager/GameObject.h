@@ -65,6 +65,7 @@ public:
 	int nx;	
 	int ny;
 	bool isExplode;
+	int id_broken_state; //set trang thai cua broken brick luc moi khoi tao
 	bool isHolding;
 	int id_brick_items;	//id cua gach co items(idgachranam)
 	int id_giantpiranha;// id cua giant piranha, dung de phan biet mau xanh vs do ban dan

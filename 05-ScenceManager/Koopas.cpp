@@ -86,7 +86,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
 		
 	}
-	if (GetTickCount64() - timetorevive > 200000 && (last_state == KOOPA_RED_STATE_DIE || last_state == KOOPA_RED_STATE_DIE_UP || last_state==KOOPA_RED_STATE_HOLDING||last_state==KOOPA_RED_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
+	if (GetTickCount64() - timetorevive > 8000 && (last_state == KOOPA_RED_STATE_DIE || last_state == KOOPA_RED_STATE_DIE_UP || last_state==KOOPA_RED_STATE_HOLDING||last_state==KOOPA_RED_STATE_HOLDING_UP))//koopas vao trang thai chuan bi hoi sinh
 	{
 		Mario->isHolding = false;
 		if (last_state == KOOPA_RED_STATE_DIE || last_state==KOOPA_RED_STATE_HOLDING)
@@ -94,7 +94,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (last_state == KOOPA_RED_STATE_DIE_UP || last_state==KOOPA_RED_STATE_HOLDING_UP)
 			SetState(KOOPA_RED_STATE_REVIVE_UP);		
 	}
-	if (GetTickCount64() - timetorevive > 200000 && (last_state == KOOPA_RED_STATE_REVIVE || last_state==KOOPA_RED_STATE_REVIVE_UP ))
+	if (GetTickCount64() - timetorevive > 10000 && (last_state == KOOPA_RED_STATE_REVIVE || last_state==KOOPA_RED_STATE_REVIVE_UP ))
 	{
 		SetState(KOOPA_RED_STATE_WALKING_RIGHT);
 		timetorevive = 0;		

@@ -39,6 +39,7 @@ public:
 	virtual void Render();
 	void SetSpeed();
 	CGoomba(float width, float height);
+	void SetDirection();
 	DWORD timeRenderAniDie;
 	CGoomba(CMario* mario);
 	virtual void SetState(int state);

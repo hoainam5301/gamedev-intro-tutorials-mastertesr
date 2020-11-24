@@ -12,10 +12,10 @@ CGoomba::CGoomba(CMario* mario)
 		readyToFlyHigh = GetTickCount64();
 	}
 	Mario = mario;
-	if (mario->x - this->x > 0)
-		this->nx = -1;
+	if (Mario->x - x > 0)
+		nx = -1;
 	else
-		this->nx = 1;		
+		nx = 1;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -65,6 +65,8 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		if (hasWing)
 		{
+			if (GetTickCount64() - sulkyMario < 5000 && sulkyMario!=0)
+				SetDirection();
 			if (countFly == 0 && isGrounded && GetTickCount64()-readyToFlyHigh>1000)
 			{
 				
@@ -241,6 +243,13 @@ void CGoomba::SetSpeed()
 	if (nx < 0)
 		vx = -GOOMBA_WALKING_SPEED;	
 }
+void CGoomba::SetDirection()
+{
+	if (Mario->x - x > 0)
+		nx = 1;
+	else
+		nx = -1;
+}
 
 void CGoomba::SetState(int state)
 {
@@ -252,7 +261,7 @@ void CGoomba::SetState(int state)
 			vy = 0;
 			break;
 		case GOOMBA_STATE_WALKING: 
-			vx = -GOOMBA_WALKING_SPEED;
+			SetSpeed();
 			break;
 		case GOOMBA_STATE_DIE_FLY:
 			vx = -vx;

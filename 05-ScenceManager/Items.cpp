@@ -43,11 +43,13 @@ void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				vy = 0.35;
 				vx = 0.3 * pow(35, vy);
+				SetState(Tree_Leaf_move_right);
 			}
 			if (x >= maxRight)
 			{
 				vy = 0.35;
 				vx = -0.3 * pow(35, vy);
+				SetState(Tree_Leaf_move_left);
 			}
 		}
 		if (makeEffect)
@@ -178,6 +180,10 @@ void CItems::SetState(int state)
 	case Tree_Leaf_move_left:
 		break;
 	case Tree_Leaf_move_right:
+		break;
+	case SWITCH_P_ON:
+		break;
+	case SWITCH_P_OFF:
 		break;
 	}
 }

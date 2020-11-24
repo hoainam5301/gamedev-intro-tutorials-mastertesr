@@ -35,18 +35,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	 //Simple fall down
-	/*if (gravity_raccon)
-	{
-		DebugOut(L"Im here\n");
-		vy += 0.0003 * dt;
-
-	}
-	else
-	{*/
-		vy += MARIO_GRAVITY * dt;
-	//}
-
-	//DebugOut(L"vy = %f\n", vy);
+	
+	vy += MARIO_GRAVITY * dt;
+	
+	//DebugOut(L"vx = %f \n", vx);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -113,8 +105,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (nx != 0)
 		{
 			vx = last_vx;
-			/*if (isRunning)
-				vx = 0;	*/		
+			if (isRunning)
+				vx = 0;			
 		}
 
 		if (ny != 0)
@@ -385,12 +377,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				isFalling = false;
 				CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
-				if (e->ny > 0 && Brick->id_brick_items == ID_GACH_RA_ITEMS)
+				if (e->ny > 0 )
 				{
 					Brick->bottom_coll = 1;				
-				}
-				/*else if (e->nx != 0)
-					vx = 0;*/
+				}				
+				else if (e->nx != 0)
+					vx = 0;
 			} //if NAm
 			else if (dynamic_cast<CPortal*>(e->obj))
 			{
@@ -401,8 +393,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0)
 					isFalling = false;
-				/*else if (e->nx != 0)
-					vx = 0;*/
+				else if (e->nx != 0)
+					vx = 0;
 				/*else if (e->nx != 0)*/
 					//DebugOut(L"Aaaaaaa");
 			}
@@ -674,8 +666,9 @@ void CMario::SetState(int State)
 			nx = 1;
 			return;
 		}
-		if (isRunning)
+		if (isRunning && !isFalling)
 		{
+			
 			vx += MARIO_RUNNING_ACC * dt;
 			if (vx > MARIO_RUNNING_SPEED)
 			{
@@ -734,7 +727,7 @@ void CMario::SetState(int State)
 			nx = -1;
 			return;
 		}
-		if (isRunning)
+		if (isRunning && !isFalling)
 		{
 			vx -= MARIO_RUNNING_ACC * dt;
 			if (vx < -MARIO_RUNNING_SPEED)

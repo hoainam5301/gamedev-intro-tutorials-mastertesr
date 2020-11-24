@@ -4,9 +4,10 @@
 #define Mushroom	0
 #define	Tree_Leaf	1
 #define FIRE_FLOWER	2
-
 #define Tree_Leaf_move_left 3
 #define Tree_Leaf_move_right 4
+#define SWITCH_P_ON	5
+#define SWITCH_P_OFF 6
 
 
 #define NAM_DUNG_YEN 0
