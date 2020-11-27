@@ -6,7 +6,7 @@ CCoin::CCoin()
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(13));
 	//this->SetAnimationSet(CAnimationSets::GetInstance()->Get(8));
 }
-void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CCoin::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 	if (start_y == 0)

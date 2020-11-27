@@ -26,7 +26,7 @@ public:
 	bool move;
 	//bool chamsan;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	CItems(float start_x,float start_y);
 	virtual void SetState(int state);

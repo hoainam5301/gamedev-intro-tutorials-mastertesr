@@ -29,7 +29,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->y = y;
 }
 
-void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
@@ -38,7 +38,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	
 	vy += MARIO_GRAVITY * dt;
 	
-	//DebugOut(L"vx = %f \n", vx);
+	DebugOut(L"vx = %f \n", vx);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -72,6 +72,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		x += dx;
 		y += dy;
+		mDy += dy;
+		if (mDy > 1)
+		{
+			isJumping = true;
+		}
 	}
 	else
 	{
@@ -100,7 +105,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//}
 
 		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.1f;
+		/*for (int i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+			if(!dynamic_cast<CGoomba*>(e->obj)&&!dynamic_cast<CKoopas*>(e->obj) && e->ny>0)*/
+				y += min_ty * dy + ny * 0.1f;
+		//}
 
 		if (nx != 0)
 		{
@@ -117,6 +127,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				is_Grounded = true;
 				isFlying = false;
 				Firstspaceup = true;
+				canNotWalking = false;				
+				mDy = 0;
+				//DebugOut(L"%f", mDy);
 			}
 			vy = 0;
 		}
@@ -592,7 +605,7 @@ void CMario::Render()
 	if (untouchable) alpha = 128;
 	//DebugOut(L"stataaaaaa %d\n", state);
 	animation_set->at(state)->Render(x, y, alpha);	
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 
@@ -610,13 +623,11 @@ void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 			if (e->id_items == Mushroom)
 			{
 				e->isdone = true;
-				e->makeEffect = true;
-				y -= 20;
+				e->makeEffect = true;				
 				level = MARIO_LEVEL_BIG;
 			}
 			else if (e->id_items == Tree_Leaf)
-			{
-				y -= 5;
+			{				
 				e->isdone = true;
 				e->makeEffect = true;
 				level = MARIO_RACCOON;
@@ -626,6 +637,10 @@ void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 				e->isdone = true;
 				e->makeEffect=true;
 				level = MARIO_FIRE;
+			}
+			else if (e->id_items == SWITCH_P_ON)
+			{
+				e->SetState(SWITCH_P_OFF);
 			}
 		}
 	}
@@ -1076,7 +1091,8 @@ void CMario::SetState(int State)
 		break;
 	case MARIO_STATE_IDLE:
 		isRunning = false;
-		isSitting = false;
+		if(!isJumping)
+			isSitting = false;
 		if (level == MARIO_LEVEL_BIG)
 		{
 			if (vx > 0) {
@@ -1258,7 +1274,10 @@ void CMario::SetState(int State)
 	case MARIO_FIRE_STATE_STOP_LEFT:
 	case MARIO_RACCOON_STATE_STOP_LEFT:
 	case MARIO_RACCOON_STATE_STOP_RIGHT:		
-		SubRunningAcc();
+		if(vx>-0.15&&vx<0.15)
+			SubRunningAcc();
+		else 
+			SubRunningMaxAcc();
 		ResetAni();
 		isWaitingForAni = true;
 		break;
@@ -1306,6 +1325,8 @@ void CMario::SetState(int State)
 	case MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT:
 		if (isHolding)
 			state = MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_RIGHT;
+		if (isSitting)
+			state = MARIO_RACCOON_STATE_SITTING_RIGHT;
 		ResetAni();
 		isWaitingForAni = true;
 		vy = -MARIO_GRAVITY * dt / 2;
@@ -1314,6 +1335,8 @@ void CMario::SetState(int State)
 	case MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT:	
 		if (isHolding)
 			state = MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_LEFT;
+		if (isSitting)
+			state = MARIO_RACCOON_STATE_SITTING_LEFT;
 		ResetAni();
 		isWaitingForAni = true;
 		vy = -MARIO_GRAVITY*dt/2;		
@@ -1400,6 +1423,23 @@ void CMario::SubRunningAcc()
 			vx = 0;
 	}
 }
+
+void CMario::SubRunningMaxAcc()
+{
+	if (vx > 0) {
+		vx -= MARIO_SUB_RUNNING_MAX_ACC * dt;
+		last_vx = vx;
+		if (vx < 0)
+			vx = 0;
+	}
+	else if (vx < 0) {
+		vx += MARIO_SUB_RUNNING_MAX_ACC * dt;
+		last_vx = vx;
+		if (vx > 0)
+			vx = 0;
+	}
+}
+
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 

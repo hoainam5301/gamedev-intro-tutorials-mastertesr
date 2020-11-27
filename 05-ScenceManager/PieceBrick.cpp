@@ -8,7 +8,7 @@ CPieceBrick::CPieceBrick(D3DXVECTOR2 position, int nx, int deflectFactorY)
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(11));
 }
 
-void CPieceBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CPieceBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 

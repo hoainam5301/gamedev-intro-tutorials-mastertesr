@@ -54,7 +54,7 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 	}
 }
 
-void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	//
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!

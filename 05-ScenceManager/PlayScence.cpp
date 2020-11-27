@@ -340,7 +340,7 @@ void CPlayScene::Load()
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
-void CPlayScene::Update(DWORD dt)
+void CPlayScene::Update(ULONGLONG dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
@@ -389,7 +389,7 @@ void CPlayScene::Update(DWORD dt)
 				gach->created_item = 1;
 				CItems* item = new CItems(gach->x,gach->y);
 				item->id_items = SWITCH_P_ON;
-				item->SetState(SWITCH_P_OFF);
+				item->SetState(SWITCH_P_ON);
 				item->SetPosition(gach->x, gach->y - 16);
 				listitems.push_back(item);
 			}
@@ -410,10 +410,14 @@ void CPlayScene::Update(DWORD dt)
 				if (dynamic_cast<CBrokenBrick*>(broken))
 				{
 					CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
-					brokenbrick->tranformation = true;
-					//DebugOut(L"aaaaaaa");
+					if (!brokenbrick->hasTranformation)
+					{
+						brokenbrick->tranformation = true;
+						brokenbrick->timeTranformation = GetTickCount64();
+					}
 				}
 			}
+			
 			//DebugOut(L"abbbbbbb");
 		}
 	}
@@ -483,8 +487,8 @@ void CPlayScene::Update(DWORD dt)
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
 		CGame::GetInstance()->cam_x = cx;
-		//cy= player->y - (SCREEN_HEIGHT );
-		//CGame::GetInstance()->cam_y = player->y-200;
+		/*cy= player->y - (SCREEN_HEIGHT );
+		CGame::GetInstance()->cam_y = player->y-200;*/
 	}
 }
 
@@ -539,7 +543,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_SPACE:
+	case DIK_S:
 		
 		if (mario->is_Grounded)
 		{
@@ -566,13 +570,10 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		{		
 			if (mario->level == MARIO_RACCOON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )																			//neu khong phai la lan tha phim space dau tien thi ao trang thai quay duoi 
 			{				
-				if (!mario->isSitting)
-				{
-					if (mario->nx > 0)
-						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
-					else
-						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
-				}
+				if (mario->nx > 0)
+					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
+				else
+					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
 			}
 			else
 			{
@@ -635,28 +636,26 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
-
+	//DebugOut(L"aaaaaa \n");
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-	switch (KeyCode)
+ 	switch (KeyCode)
 	{
-	case DIK_SPACE:
+	case DIK_S:
 		if (mario->isFalling)
 		{
 			if (mario->level == MARIO_RACCOON && mario->isJumping && !mario->isFlying)
 			{
-				if (!mario->isSitting)
-				{
-					if (mario->nx > 0)
-						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
-					else
-						mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
-					//mario->vy = (-0.0006 * 1.2 *mario-> dt);
-				}
+				if (mario->nx > 0)
+					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_RIGHT);
+				else
+					mario->SetState(MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT);
+				//mario->vy = (-0.0006 * 1.2 *mario-> dt);									
 			}
 		}
 		if (mario->isJumping)
 			return;
 		mario->is_Grounded = false;
+		//mario->canNotWalking = false;
 		mario->isJumping = true;
 		//mario->firstspaceup = true;
 		if (!mario->isFlying) 
@@ -677,14 +676,15 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			}
 			else if (mario->level == MARIO_RACCOON)
 			{
-				if (mario->isMaxSpeed && !mario->isFlying)
+  				if (mario->isMaxSpeed && !mario->isFlying)
 				{
 					//DebugOut(L"huong nx %d \n", mario->nx);
 					if (mario->nx > 0)
 						mario->SetState(MARIO_RACCOON_STATE_FLYING_RIGHT);
 					else
-						mario->SetState(MARIO_RACCOON_STATE_FLYING_LEFT);
-					mario->isFlying = true;
+    					mario->SetState(MARIO_RACCOON_STATE_FLYING_LEFT);
+ 					mario->isFlying = true;
+					mario->isSitting = false;
 				}
 				else 
 				{
@@ -708,15 +708,6 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_Z:
 		mario->Reset();
 		CGame::GetInstance()->cam_x = 0;
-		break;
-	case DIK_S:
-		if (mario->level == MARIO_RACCOON && !mario->isHolding)
-		{
-			if (mario->nx > 0)
-				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT);
-			else
-				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT);
-		}
 		break;
 	case DIK_Q:
 		if (mario->level == MARIO_LEVEL_SMALL)
@@ -751,8 +742,11 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->level = MARIO_FIRE;
 		break;
 	case DIK_A:
+		
 		if (mario->level == MARIO_FIRE)
 		{
+			if (mario->isSitting)
+				break;
 			if (mario->loadFireball)
 				return;
 			mario->use_Weapon = true;			
@@ -771,6 +765,16 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 					mario->SetState(MARIO_FIRE_STATE_FIGHT_LEFT);
 			}
 		}
+		if (mario->level == MARIO_RACCOON && !mario->isHolding)
+		{
+			if (mario->isSitting)
+				break;
+			if (mario->nx > 0)
+				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT);
+			else
+				mario->SetState(MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT);
+		}
+		break;
 		//mario->isHolding = true;
 
 	}
@@ -786,6 +790,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	if (mario->GetState() == MARIO_ANI_DIE)
 		return;
 	if (mario->isWaitingForAni)
+		return;
+	if (mario->canNotWalking)
 		return;
 	if (game->IsKeyDown(DIK_A))
 	{
@@ -821,7 +827,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 					mario->SetState(MARIO_FIRE_STATE_RUNNING_LEFT);
 			}
 		}
-	}
+	}	
 	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT))
 	{
 		mario->SetState(MARIO_STATE_IDLE);
@@ -850,8 +856,10 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->SetState(MARIO_FIRE_STATE_WALK_LEFT);
 		mario->lastnx = -1;
 	}
-	else if (game->IsKeyDown(DIK_DOWN) && !mario->isHolding) // giu koopas ko ngoi dc
+	else if (game->IsKeyDown(DIK_DOWN) && !mario->isHolding && mario->level!=MARIO_LEVEL_SMALL && !mario->isFlying) // giu koopas ko ngoi dc
 	{
+		if (mario->isFlying)
+			return;
 		if (mario->level == MARIO_LEVEL_BIG)
 		{
 			if (mario->nx > 0)
@@ -872,6 +880,11 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->SetState(MARIO_FIRE_STATE_SITTING_RIGHT);
 			else
 				mario->SetState(MARIO_FIRE_STATE_SITTING_LEFT);
+		}
+		if (game->IsKeyDown(DIK_UP) && game->IsKeyDown(DIK_DOWN) && !mario->canNotWalking)
+		{
+			mario->SetState(MARIO_STATE_IDLE);
+			mario->canNotWalking = true;
 		}
 	}
 	else
@@ -903,6 +916,31 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			}
 		if (mario->isJumping)
 		{
+			if (mario->isSitting)
+			{
+				if (mario->level == MARIO_LEVEL_BIG)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_BIG_STATE_SITTING_RIGHT;
+					else
+						mario->state = MARIO_BIG_STATE_SITTING_LEFT;
+				}				
+				else if (mario->level == MARIO_RACCOON)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_RACCOON_STATE_SITTING_RIGHT;
+					else
+						mario->state = MARIO_RACCOON_STATE_SITTING_LEFT;
+				}
+				else if (mario->level == MARIO_FIRE)
+				{
+					if (mario->nx > 0)
+						mario->state = MARIO_FIRE_STATE_SITTING_RIGHT;
+					else
+						mario->state = MARIO_FIRE_STATE_SITTING_LEFT;
+				}
+				return;
+			}
 			if (mario->vy < 0) // de mario roi va nhay len co dang hang
 			{
 				if (mario->level == MARIO_LEVEL_BIG)
@@ -993,7 +1031,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			return;
 		}
 		mario->SetState(MARIO_STATE_IDLE);
-		mario->isSitting = false;
+		/*if(!mario->isJumping)
+			mario->isSitting = false;*/
 	}
 	//DebugOut(L"bbbbbbbbbbbb %d\n", mario->isWaitingForAni);
 }

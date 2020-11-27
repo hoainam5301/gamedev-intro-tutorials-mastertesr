@@ -42,11 +42,12 @@ class CKoopas : public CGameObject
 
 public:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
+	void CheckCollisionWithBrick(vector<LPGAMEOBJECT>* coObjects);
 	vector <LPGAMEOBJECT> listEffect;
-	DWORD timeToRevive;
-	DWORD timeToFly;
+	ULONGLONG timeToRevive;
+	ULONGLONG timeToFly;
 	bool hitByTail;
 	bool hasWing=true;
 	bool hitByWeapon;

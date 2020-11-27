@@ -12,7 +12,7 @@ CGameObject::CGameObject()
 	animation_set = NULL;
 }
 
-void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+void CGameObject::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	this->dt = dt;
 	dx = vx*dt;

@@ -7,7 +7,7 @@ CMonneyEffect::CMonneyEffect()
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(15));
 	
 }
-void CMonneyEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CMonneyEffect::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (!isdone)
 	{

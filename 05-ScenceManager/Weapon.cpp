@@ -14,7 +14,7 @@ CWeapon::CWeapon(float start_x, float start_y,int marionx)
 	this->nx = marionx;
 }
 
-void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	/*CMario* a = new CMario();
 	DebugOut(L"hiiiiiiiiiiiii %d \n", a->GetState());
@@ -122,9 +122,12 @@ void CWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			   CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 			 /*  if (koopas->GetState() != KOOPA_RED_STATE_DIE || koopas->GetState()!=KOOPA_RED_STATE_DIE_UP)
 			   {*/
+			   if (koopas->id_koopa == KOOPA_RED)
 				   koopas->SetState(KOOPA_RED_STATE_DIE_UP);
-				   koopas->hitByWeapon = true;
-				   SetState(FIRE_BALL_EXPLODE);
+			   else if (koopas->id_koopa == KOOPA_GREEN)
+				   koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
+			   koopas->hitByWeapon = true;
+			   SetState(FIRE_BALL_EXPLODE);
 			  // }
 		   }
 		   else if (dynamic_cast<CBrick*>(e->obj))

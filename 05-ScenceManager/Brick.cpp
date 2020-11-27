@@ -9,7 +9,7 @@ CBrick::CBrick(float width, float height)
 	this->height = height;
 }
 
-void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
 	if (bottom_coll == 1)

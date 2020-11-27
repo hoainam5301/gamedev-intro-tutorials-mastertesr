@@ -5,8 +5,9 @@
 #define MARIO_RUNNING_ACC		0.0001f
 #define MARIO_WALKING_ACC		0.0002f
 #define MARIO_RUNNING_SPEED		0.2f
-#define MARIO_SUB_WALKING_ACC	0.0005f
-#define MARIO_SUB_RUNNING_ACC	0.012f
+#define MARIO_SUB_WALKING_ACC	0.000685f
+#define MARIO_SUB_RUNNING_ACC	0.0012f
+#define MARIO_SUB_RUNNING_MAX_ACC 0.00855f
 #define MARIO_MIN_SPEED_TO_STOP 0.06f
 
 #define MARIO_JUMP_SPEED_Y		0.275f
@@ -177,18 +178,20 @@ class CMario : public CGameObject
 	
 	
 	int untouchable;
-	DWORD untouchable_start;
+	ULONGLONG untouchable_start;
 	
 
 	float start_x;			// initial position of Mario at scene
 	float start_y; 
+	float mDy = 0;
 public: 
-	//DWORD Start_on_Key;
+	//ULONGLONG Start_on_Key;
 	bool is_Grounded;
 	bool isMaxSpeed;
 	bool Firstspaceup;
+	bool canNotWalking;
 	//bool gravity_raccon;
-	DWORD timestartfly;
+	ULONGLONG timestartfly;
 	int level;
 	bool isJumping, isSitting;// isFalling;
 	bool isFlying,isRunning;
@@ -198,7 +201,7 @@ public:
 	bool isWaitingForAni;
 	bool isFalling;
 	CMario(float x = 0.0f, float y = 0.0f);
-	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
+	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	void Render();
 
 	virtual void Collision_items(vector<LPGAMEOBJECT>* listitem);
@@ -210,6 +213,7 @@ public:
 	//bool Istimeout() { return GetTickCount64() - Start_on_Key >= 100; }
 	void Reset();
 	void SubRunningAcc();
+	void SubRunningMaxAcc();
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 };

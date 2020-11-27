@@ -25,7 +25,7 @@ void CItems::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		bottom = y + 16;		
 	}	
 }
-void CItems::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	
 	 if (id_items == Tree_Leaf)

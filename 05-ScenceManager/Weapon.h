@@ -14,7 +14,7 @@ public:
 	float start_x;
 	float start_y;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	virtual void SetState(int state);
 	CWeapon(float docaonhatdinh, float dorongnhatdinh,int marionx);

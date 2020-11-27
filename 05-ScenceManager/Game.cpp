@@ -185,7 +185,7 @@ void CGame::ProcessKeyboard()
 	}
 
 	// Scan through all buffered events, check if the key is pressed or released
-	for (DWORD i = 0; i < dwElements; i++)
+	for (ULONGLONG i = 0; i < dwElements; i++)
 	{
 		int KeyCode = keyEvents[i].dwOfs;
 		int KeyState = keyEvents[i].dwData;

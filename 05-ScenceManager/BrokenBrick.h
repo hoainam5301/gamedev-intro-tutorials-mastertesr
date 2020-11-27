@@ -11,7 +11,9 @@ class CBrokenBrick : public CGameObject
 {
 public:
 	vector<LPGAMEOBJECT> listPiece;
+	ULONGLONG timeTranformation;
 	bool vanish;
+	bool hasTranformation;
 	bool isDestroyed;
 	bool tranformation;
 	/*CBrokenBrickPiece* topLeftPiece;
@@ -20,7 +22,7 @@ public:
 	CBrokenBrickPiece* bottomRightPiece;*/
 
 	CBrokenBrick(int id_state);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
 	virtual void SetState(int state);

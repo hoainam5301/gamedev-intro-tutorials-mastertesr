@@ -10,7 +10,7 @@ CRaccoonTail::CRaccoonTail()
 	 //Mario = mario;
 }
 
-void CRaccoonTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CRaccoonTail::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {	
 	//
 	// TO-DO: make sure Koopas can interact with the world and to each of them too!

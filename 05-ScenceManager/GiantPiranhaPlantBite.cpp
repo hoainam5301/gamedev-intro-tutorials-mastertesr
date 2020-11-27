@@ -8,7 +8,7 @@ CGiantPiranhaPlantBite::CGiantPiranhaPlantBite() : CGameObject()
 }
 
 
-void CGiantPiranhaPlantBite::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CGiantPiranhaPlantBite::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 
 	CGameObject::Update(dt, coObjects);

@@ -8,7 +8,7 @@ CGiantPiranhaPlant::CGiantPiranhaPlant(CMario* mario) : CGameObject()
 }
 
 
-void CGiantPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	
 	CGameObject::Update(dt, coObjects);

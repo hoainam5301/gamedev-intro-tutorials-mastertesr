@@ -15,8 +15,8 @@ public:
 	float start_x;			// initial position of Mario at scene
 	float start_y;
 	vector <LPGAMEOBJECT> listFireBall;
-	DWORD timewaittoshoot = GetTickCount64();
-	//DWORD timetomovedown;
+	ULONGLONG timewaittoshoot = GetTickCount64();
+	//ULONGLONG timetomovedown;
 	//CMario* Mario;
 	bool moveup = true;
 	//bool not_in_pipeline = false;
@@ -25,7 +25,7 @@ public:
 	CGiantPiranhaPlantBite();
 	virtual void SetState(int state);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
 };

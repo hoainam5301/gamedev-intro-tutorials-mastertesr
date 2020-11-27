@@ -2,6 +2,8 @@
 #include "ColorBox.h"
 #include "Floor.h"
 #include "MonneyEffect.h"
+#include "BrokenBrick.h"
+#include "Brick.h"
 
 CKoopas::CKoopas(CMario* mario,int id_Koopa)
 {
@@ -15,7 +17,7 @@ CKoopas::CKoopas(CMario* mario,int id_Koopa)
 		timeToFly = GetTickCount64();
 		
 	}
-	
+	DebugOut(L"aaaaaaa \n");
 }
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -75,22 +77,19 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 			bottom = top + KOOPAS_BBOX_HEIGHT;
 		}
 		else if (state == KOOPA_GREEN_STATE_DIE_UP)
-		{
-			/*if (!hitByTail)
-			{
-				left = right;
-				top = bottom;
-			}*/
+		{			
 			if (hitByWeapon)
-				left = top = right = bottom = 0;
-			
+				left = top = right = bottom = 0;			
 		}
 	}
 }
 
-void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (GetState() == KOOPA_RED_STATE_HOLDING || GetState()== KOOPA_RED_STATE_HOLDING_UP || GetState() == KOOPA_GREEN_STATE_HOLDING || GetState() == KOOPA_GREEN_STATE_HOLDING_UP)
+	if (GetState() == KOOPA_RED_STATE_HOLDING || 
+		GetState() == KOOPA_RED_STATE_HOLDING_UP || 
+		GetState() == KOOPA_GREEN_STATE_HOLDING || 
+		GetState() == KOOPA_GREEN_STATE_HOLDING_UP)
 	{
 		if (Mario->level == MARIO_RACCOON)
 		{
@@ -104,7 +103,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (Mario->nx > 0)
 				SetPosition(Mario->x + 19, Mario->y + 2);
 			else
-				SetPosition(Mario->x - 1, Mario->y +2);
+				SetPosition(Mario->x - 1, Mario->y + 2);
 		}
 		else
 		{
@@ -139,13 +138,14 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			SetState(KOOPA_RED_STATE_WALKING_RIGHT);
 			timeToRevive = 0;
+			Mario->isHolding = false;
 		}
 	}
 	else if (id_koopa = KOOPA_GREEN)
 	{
 		if (hasWing)
 		{
-			if (GetTickCount64() - timeToFly > 1000)
+			if (GetTickCount64() - timeToFly > 900 && !hitByWeapon)
 			{
 				SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT);
 				timeToFly = GetTickCount64();
@@ -190,7 +190,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CGameObject::Update(dt);
-	if(state!=KOOPA_RED_STATE_HOLDING && state!=KOOPA_RED_STATE_HOLDING_UP && state!=KOOPA_GREEN_STATE_HOLDING && KOOPA_GREEN_STATE_HOLDING_UP)
+	if(state!=KOOPA_RED_STATE_HOLDING && 
+		state!=KOOPA_RED_STATE_HOLDING_UP && 
+		state!=KOOPA_GREEN_STATE_HOLDING && 
+		state!=KOOPA_GREEN_STATE_HOLDING_UP)
 		vy += 0.0005f * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -238,20 +241,31 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						x += dx;
 					}
-					else if (e->ny < 0 && GetState()!=KOOPA_RED_STATE_DIE_AND_MOVE && GetState()!=KOOPA_RED_STATE_DIE_AND_MOVE_UP )
+					else if (e->ny < 0 && GetState()!=KOOPA_RED_STATE_DIE_AND_MOVE && GetState()!=KOOPA_RED_STATE_DIE_AND_MOVE_UP  )
 					{
 						if (x <= colorbox->x)
 						{
 							x = colorbox->x;
-							SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+ 							SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+							
 						}
 						else if (x >= colorbox->x + 16 * colorbox->width - KOOPAS_BBOX_WIDTH)
 						{
 							x = colorbox->x + 16 * colorbox->width - KOOPAS_BBOX_WIDTH;
 							SetState(KOOPA_RED_STATE_WALKING_LEFT);
-						}
+						}	
 					}
 
+				}
+				else if (dynamic_cast<CBrokenBrick*>(e->obj))
+				{
+					if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+					{
+						CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);
+						brokenbrick->isDestroyed = true;
+						brokenbrick->SetState(STATE_DESTROYED);
+						vx = -vx;
+					}
 				}
 				else
 				{
@@ -264,6 +278,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								SetState(KOOPA_RED_STATE_WALKING_RIGHT);
 							else
 								SetState(KOOPA_RED_STATE_WALKING_LEFT);
+
 						}
 					}
 				}
@@ -276,6 +291,16 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						x += dx;
 					}						
+				}
+				else if (dynamic_cast<CBrokenBrick*>(e->obj))
+				{
+					if (GetState() == KOOPA_GREEN_STATE_DIE_AND_MOVE || GetState() == KOOPA_GREEN_STATE_DIE_AND_MOVE_UP)
+					{
+						CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);
+						brokenbrick->isDestroyed=true;
+						brokenbrick->SetState(STATE_DESTROYED);						
+						vx = -vx;
+					}
 				}
 				else
 				{
@@ -303,7 +328,27 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		listEffect[i]->Update(dt, coObjects);
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	CheckCollisionWithBrick(coObjects);
+}
 
+void CKoopas::CheckCollisionWithBrick(vector<LPGAMEOBJECT>* coObjects)
+{	
+	float l_brick, t_brick, r_brick, b_brick, l_koopa, t_koopa, r_koopa, b_koopa;
+	GetBoundingBox(l_koopa, t_koopa, r_koopa, b_koopa);
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		LPGAMEOBJECT e = coObjects->at(i);
+		if (dynamic_cast<CBrick*>(e) && GetState()==KOOPA_GREEN_STATE_DIE_AND_MOVE)
+		{
+			CBrick* brick = dynamic_cast<CBrick*>(e);
+			brick->GetBoundingBox(l_brick, t_brick, r_brick, b_brick);
+			if (CGameObject::CheckAABB(l_brick, t_brick, r_brick, b_brick, l_koopa, t_koopa, r_koopa, b_koopa))
+			{				
+				SetState(KOOPA_GREEN_STATE_DIE_UP);
+				hitByWeapon = true;
+			}
+		}
+	}
 }
 
 void CKoopas::Render()
@@ -406,12 +451,13 @@ void CKoopas::SetState(int State)
 	case KOOPA_GREEN_STATE_REVIVE_UP:
 		last_state = KOOPA_GREEN_STATE_REVIVE_UP;
 		break;
-	case KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT:
-		DebugOut(L"bbbbbbb");
-		//vy = -0.17;
+	case KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT:	
+		vx = KOOPAS_WALKING_SPEED+0.01;
+		//vy = -0.18;
 		break;
 	case KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT:
-		//vy = -0.17;
+		vx = -KOOPAS_WALKING_SPEED+0.01;
+		//vy = -0.18;
 		break;
 	case KOOPA_GREEN_STATE_HOLDING:
 		last_state = KOOPA_GREEN_STATE_HOLDING;
