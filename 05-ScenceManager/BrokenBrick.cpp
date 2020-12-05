@@ -1,17 +1,13 @@
 #include "BrokenBrick.h"
 
-
-
-
-
 CBrokenBrick::CBrokenBrick(int id_state)
 {
 	
 	id_broken_state = id_state;
 	if (this->id_broken_state == 1)
 		SetState(STATE_BRICK_NORMAL);
-	else if (this->id_brick_items == 2)
-		SetState(STATE_COIN_NO_ROTATE);
+	else if (this->id_broken_state == 2)
+		SetState(STATE_COIN_ROTATE);
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(12));
 	//DebugOut(L"Gia tri cua state %d \n", id_broken_state);
 
@@ -44,6 +40,8 @@ void CBrokenBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		timeTranformation = 0;
 		if (GetState() == STATE_BRICK_NORMAL)
 			SetState(STATE_COIN_NO_ROTATE);
+		else if (GetState() == STATE_COIN_ROTATE)
+			SetState(STATE_BRICK_NORMAL);
 		else if (GetState() == STATE_COIN_NO_ROTATE)
 			SetState(STATE_BRICK_NORMAL);
 	}

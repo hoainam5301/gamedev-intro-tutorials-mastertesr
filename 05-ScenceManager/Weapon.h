@@ -18,6 +18,7 @@ public:
 	virtual void Render();
 	virtual void SetState(int state);
 	CWeapon(float docaonhatdinh, float dorongnhatdinh,int marionx);
+	void CheckCollision(vector<LPGAMEOBJECT>* cocoObjects);
 	//virtual void SetState(int state);
 };
 

@@ -5,7 +5,7 @@
 #define MARIO_RUNNING_ACC		0.0001f
 #define MARIO_WALKING_ACC		0.0002f
 #define MARIO_RUNNING_SPEED		0.2f
-#define MARIO_SUB_WALKING_ACC	0.000685f
+#define MARIO_SUB_WALKING_ACC	0.00075f
 #define MARIO_SUB_RUNNING_ACC	0.0012f
 #define MARIO_SUB_RUNNING_MAX_ACC 0.00855f
 #define MARIO_MIN_SPEED_TO_STOP 0.06f
@@ -168,7 +168,7 @@
 #define MARIO_SIT_BBOX				8
 
 #define MARIO_UNTOUCHABLE_TIME 3000
-#define MARIO_TIME_FLY		   3500
+#define MARIO_TIME_FLY		   6500
 
 
 
@@ -208,6 +208,7 @@ public:
 
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
+	int GetLevel();
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 	//void startOnKey() {Start_on_Key = GetTickCount64(); }
 	//bool Istimeout() { return GetTickCount64() - Start_on_Key >= 100; }

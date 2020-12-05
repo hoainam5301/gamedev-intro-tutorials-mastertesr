@@ -9,15 +9,17 @@ protected:
 	CKeyEventHandler * key_handler;
 	int id;
 	LPCWSTR sceneFilePath;
-
+	//int backUpLevel;
 public: 
+	bool isLoad = false;
 	CScene(int id, LPCWSTR filePath);
-
+	
 	CKeyEventHandler * GetKeyEventHandler() { return key_handler; }
 	virtual void Load() = 0;
 	virtual void Unload() = 0;
 	virtual void Update(ULONGLONG dt) = 0;
 	virtual void Render() = 0; 
+	//void SetBackUpMario(int level) { backUpLevel = level; }
 };
 typedef CScene * LPSCENE;
 

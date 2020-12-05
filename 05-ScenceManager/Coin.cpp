@@ -31,7 +31,7 @@ void CCoin::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				y = start_y - 20;
 				if (!isdone)
 					makeEffect = true;
-				isdone = true;
+				isdone = true;		//da xong cac viec di chuyen cua coin va hieu ung monneyeffect
 							
 			}
 		}

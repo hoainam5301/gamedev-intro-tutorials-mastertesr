@@ -139,6 +139,7 @@
     <ClCompile Include="PieceBrick.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />
+    <ClCompile Include="StatusBar.cpp" />
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="PieceBrick.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="RaccoonTail.h" />
+    <ClInclude Include="StatusBar.h" />
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Game.h" />

@@ -19,6 +19,7 @@
 #include "ColorBox.h"
 #include "GiantPiranhaPlantBite.h"
 #include "MonneyEffect.h"
+#include "StatusBar.h"
 
 class CPlayScene: public CScene
 {
@@ -29,6 +30,7 @@ protected:
 	TileMap* map;
 	CRaccoonTail* tail=new CRaccoonTail();
 	CCoin* coin =NULL;
+	StatusBar* statusBar;
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
 	// *gachthuong;
@@ -73,6 +75,8 @@ public:
 	virtual void Update(ULONGLONG dt);
 	virtual void Render();
 	virtual void Unload();
+
+	//int GetLeverPlayer();
 
 	CMario * GetPlayer() { return player; } 
 	CItems* GetItems()	 { return items; }

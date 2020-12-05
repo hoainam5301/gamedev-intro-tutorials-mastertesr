@@ -7,7 +7,7 @@
 #define GRAVITY 0.3f
 #define BRICK_AFTER 1
 #define QUESTION_BRICK 0
-#define BRICK_MAKE_LIFE 3
+#define BRICK_MAKE_LIFE 2
 
 #define	ID_GACH_RA_ITEMS	2
 #define ID_GACH_RA_TIEN		1

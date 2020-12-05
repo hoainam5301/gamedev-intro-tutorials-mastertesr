@@ -176,10 +176,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
-		}
-		obj = new CMario(x, y);
+		}		
+		obj = new CMario(x, y);		
 		player = (CMario*)obj;
-
+		//player->SetLevel(backUpLevel);
+		statusBar = new StatusBar(player);
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
 	case OBJECT_TYPE_GOOMBA:
@@ -284,6 +285,7 @@ int CPlayScene::RandomItems()
 }
 void CPlayScene::Load()
 {
+	isLoad = true;
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
 	ifstream f;
@@ -363,11 +365,7 @@ void CPlayScene::Update(ULONGLONG dt)
 				gach->created_item = 1;
 				listitems.push_back(MadeItems(gach->x, gach->y));
 			}
-			else if (gach->created_item == 0 && gach->hitByTail)
-			{
-				gach->created_item = 1;
-				listitems.push_back(MadeItems(gach->x, gach->y));
-			}	
+
 		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_TIEN) 
 		{
@@ -383,17 +381,31 @@ void CPlayScene::Update(ULONGLONG dt)
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_SWITCH_P)
 		{
 			CBrick* gach = dynamic_cast<CBrick*>(a);
+			if (gach->created_item == 0 && gach->hitByTail)
+			{
+				gach->created_item = 1;
+				CItems* item = new CItems(gach->x, gach->y);
+				item->id_items = SWITCH_P_ON;
+				item->SetState(SWITCH_P_ON);
+				item->SetPosition(gach->x, gach->y - 16);
+				listitems.push_back(item);
+			}							
+			//gach->created_item = 1;
+		}
+		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_BONUS)
+		{
+			CBrick* gach = dynamic_cast<CBrick*>(a);
 
 			if (gach->created_item == 0 && gach->bottom_coll == 1 && gach->bouncing == 1)
-			{				
-				gach->created_item = 1;
-				CItems* item = new CItems(gach->x,gach->y);
+			{
+				gach->created_item=1;
+				CItems* item = new CItems(gach->x, gach->y);
 				item->id_items = SWITCH_P_ON;
 				item->SetState(SWITCH_P_ON);
 				item->SetPosition(gach->x, gach->y - 16);
 				listitems.push_back(item);
 			}
-		}		
+		}
 		if (coin != NULL)
 		{
 			coin->Update(dt, &coObjects);
@@ -427,8 +439,8 @@ void CPlayScene::Update(ULONGLONG dt)
 		if (player->nx > 0)
 			listweapon.push_back(MadeWeapon(player->x + 10, player->y + 6, player->nx));
 		else
-			listweapon.push_back(MadeWeapon(player->x - 6, player->y + 6, player->nx));
-		player->isdone = true;
+			listweapon.push_back(MadeWeapon(player->x +5, player->y + 6, player->nx));
+		player->isdone = true; //mario da ban dan roi
 	}
 	if (player->level == MARIO_RACCOON && (player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT))
 	{
@@ -469,11 +481,24 @@ void CPlayScene::Update(ULONGLONG dt)
 	}
 	else
 		player->loadFireball = false;
+	/*for (int i = 0; i < objects.size(); i++)
+	{
+		LPGAMEOBJECT a = objects[i];
+		if (dynamic_cast<CBrokenBrick*>(a))
+		{
+			CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(a);
+			if(brokenbrick->isDestroyed)
+				objects.erase(objects.begin() + i);
+		}
+	}*/
 	//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
+	//statusBar->Update(dt, CGame::GetInstance()->cam_x= player->x - (SCREEN_WIDTH / 4), CGame::GetInstance()->cam_y=200);
 	// Update camera to follow mario
 	float cx, cy;
+	cx = player->x - (SCREEN_WIDTH / 4);
+	
 	//player->GetPosition(cx, cy);
 
 	/*CGame* game = CGame::GetInstance();
@@ -490,12 +515,14 @@ void CPlayScene::Update(ULONGLONG dt)
 		/*cy= player->y - (SCREEN_HEIGHT );
 		CGame::GetInstance()->cam_y = player->y-200;*/
 	}
+	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
 }
 
 void CPlayScene::Render()
 {
 	
 	map->Draw();
+	statusBar->Render();
 	for (int i = 0; i < listweapon.size(); i++)
 	{
 		if(!listweapon[i]->isExplode)
@@ -590,7 +617,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		{
 
 			mario->use_Weapon = false;
-			mario->isdone = false;
+			mario->isdone = false;			//mario chua ban dan
 		}
 
 		if (mario->isHolding)
@@ -1036,3 +1063,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	//DebugOut(L"bbbbbbbbbbbb %d\n", mario->isWaitingForAni);
 }
+
+//int CPlayScene::GetLeverPlayer() {
+//	return player->GetLevel();
+//}

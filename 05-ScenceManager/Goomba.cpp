@@ -67,7 +67,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			if (GetTickCount64() - sulkyMario < 5000 && sulkyMario!=0)
 				SetDirection();
-			if (countFly == 0 && isGrounded && GetTickCount64()-readyToFlyHigh>1000)
+			if (countFly == 0 && isGrounded /*&& GetTickCount64()-readyToFlyHigh>1000*/)
 			{
 				
 				SetState(GOOMBA_RED_STATE_HAS_WING_WALK);

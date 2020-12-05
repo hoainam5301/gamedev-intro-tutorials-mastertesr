@@ -385,7 +385,9 @@ void CGame::Load(LPCWSTR gameFile)
 void CGame::SwitchScene(int scene_id)
 {
 	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
-
+	/*int lv = 1;
+	if(scenes[current_scene]->isLoad == true)
+	  lv= static_cast<CPlayScene*> (scenes[current_scene])->GetLeverPlayer();*/
 	scenes[current_scene]->Unload();;
 
 	CTextures::GetInstance()->Clear();
@@ -395,5 +397,7 @@ void CGame::SwitchScene(int scene_id)
 	current_scene = scene_id;
 	LPSCENE s = scenes[scene_id];
 	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+	//static_cast<CPlayScene>(s)
+	//s->SetBackUpMario(lv);
 	s->Load();	
 }

@@ -36,7 +36,12 @@ void CBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 void CBrick::Render()
 {	
 	if (!created_item)
-		animation_set->at(QUESTION_BRICK)->Render(x, y);
+	{
+		if (id_brick_items == ID_GACH_RA_ITEMS || id_brick_items == ID_GACH_RA_TIEN)
+			animation_set->at(QUESTION_BRICK)->Render(x, y);
+		else if (id_brick_items == ID_GACH_SWITCH_P || id_brick_items == ID_GACH_BONUS)
+			animation_set->at(BRICK_MAKE_LIFE)->Render(x, y);
+	}
 	else
 		animation_set->at(BRICK_AFTER)->Render(x, y);
 	//RenderBoundingBox();

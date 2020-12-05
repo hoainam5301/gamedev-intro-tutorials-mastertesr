@@ -18,7 +18,7 @@ void CMonneyEffect::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		//DebugOut(L"gia tri y %f \n", y);
 		vy = -0.1;
 		if (start_y - y > 30)
-			isdone = true;
+			isdone = true;		// da xuat hien hieu ung tien va bay len xong roi
 		x += dx;
 		y += dy;
 	}

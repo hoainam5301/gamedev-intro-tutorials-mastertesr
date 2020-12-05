@@ -13,6 +13,7 @@
 #include "GiantPiranhaPlant.h"
 #include "Floor.h"
 #include "ColorBox.h"
+#include "BrokenBrick.h"
 
 
 
@@ -38,7 +39,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	
 	vy += MARIO_GRAVITY * dt;
 	
-	DebugOut(L"vx = %f \n", vx);
+	//DebugOut(L"vx = %f \n", vx);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -47,7 +48,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	// turn off collision when die 
 	if (state != MARIO_ANI_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
-
+	//aabb
 	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
@@ -73,7 +74,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		x += dx;
 		y += dy;
 		mDy += dy;
-		if (mDy > 1)
+		if (mDy > 0.5)
 		{
 			isJumping = true;
 		}
@@ -128,8 +129,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				isFlying = false;
 				Firstspaceup = true;
 				canNotWalking = false;				
-				mDy = 0;
-				//DebugOut(L"%f", mDy);
+				mDy = 0;				
 			}
 			vy = 0;
 		}
@@ -589,8 +589,30 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 					
 				}
 			}
-			
+			else if (dynamic_cast<CBrokenBrick*>(e->obj))
+			{
+				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);
+				if (e->nx != 0 )
+				{
+					if (brokenbrick->GetState() == STATE_COIN_NO_ROTATE || brokenbrick->GetState() == STATE_COIN_ROTATE)
+					{
+						brokenbrick->isDestroyed = true;
+						x += dx;
+					}
+					else
+						vx = 0;
+				}
+				else if (e->ny != 0)
+				{
+					if (brokenbrick->GetState() == STATE_COIN_NO_ROTATE || brokenbrick->GetState() == STATE_COIN_ROTATE)
+					{
+						brokenbrick->isDestroyed = true;
+						y += dy;
+					}
+				}
+			}
 		}
+		
 	}
 	//DebugOut(L"isWaitingForAni = %d\n", isWaitingForAni);
 	// clean up collision events
@@ -1539,6 +1561,10 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		}
 	}
 
+}
+int CMario::GetLevel()
+{
+	return level;
 }
 
 /*

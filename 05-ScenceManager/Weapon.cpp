@@ -32,6 +32,7 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 		vy += (MARIO_GRAVITY * dt);
 	}
+	CheckCollision(coObjects);
 	CGameObject::Update(dt);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -75,72 +76,83 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 			//doihuong *= -1;
-		if (nx != 0) this->isdone=true;
-
-		/*if (ny==0 && nx!=0)
-		{
-			doihuong *= -1;
-			x += nx * 2;
-		}*/
-
-
-
+		//if (nx != 0) this->isdone=true;
+		
+		CheckCollision(coObjects);
 		//Collision logic with other objects
 
-   	for (UINT i = 0; i < coEventsResult.size(); i++)
-	   {
-
-		   LPCOLLISIONEVENT e = coEventsResult[i];
-		   if (dynamic_cast<CFloor*>(e->obj))
-		   {
-			   if (e->nx != 0)
-				   SetState(FIRE_BALL_EXPLODE);
-		   }
-		   else if (dynamic_cast<CGoomba*>(e->obj))
-		   {
-			   CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-			   if (goomba->id_goomba == GOOMBA_NORMAL)
-			   {
-				   if (goomba->GetState() != GOOMBA_STATE_DIE)
-				   {
-					   goomba->SetState(GOOMBA_STATE_DIE_FLY);
-					   SetState(FIRE_BALL_EXPLODE);
-				   }
-			   }
-			   else if (goomba->id_goomba == GOOMBA_RED)
-			   {
-				   if (goomba->GetState() != GOOMBA_RED_STATE_NO_WING_DIE)
-				   {
-					   goomba->SetState(GOOMBA_STATE_DIE_FLY);
-					   goomba->hasWing = false;
-					   SetState(FIRE_BALL_EXPLODE);
-				   }
-			   }
-		   }
-		   else if (dynamic_cast<CKoopas*>(e->obj))
-		   {
-			   CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
-			 /*  if (koopas->GetState() != KOOPA_RED_STATE_DIE || koopas->GetState()!=KOOPA_RED_STATE_DIE_UP)
-			   {*/
-			   if (koopas->id_koopa == KOOPA_RED)
-				   koopas->SetState(KOOPA_RED_STATE_DIE_UP);
-			   else if (koopas->id_koopa == KOOPA_GREEN)
-				   koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
-			   koopas->hitByWeapon = true;
-			   SetState(FIRE_BALL_EXPLODE);
-			  // }
-		   }
-		   else if (dynamic_cast<CBrick*>(e->obj))
-		   {
-			   if (e->nx != 0)
-				   SetState(FIRE_BALL_EXPLODE);
-		   }
-		  
-	   }
+  
 	}
 
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
+
+void CWeapon::CheckCollision(vector<LPGAMEOBJECT>* coObjects)
+{
+	float l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon;
+	GetBoundingBox(l_weapon, t_weapon, r_weapon, b_weapon);
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		LPGAMEOBJECT e = coObjects->at(i);
+		if (dynamic_cast<CGoomba*>(e))
+		{
+			CGoomba* goomba = dynamic_cast<CGoomba*>(e);
+			goomba->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
+			{
+				if (goomba->id_goomba == GOOMBA_NORMAL)
+				{
+					if (goomba->GetState() != GOOMBA_STATE_DIE)
+					{
+						goomba->SetState(GOOMBA_STATE_DIE_FLY);
+						SetState(FIRE_BALL_EXPLODE);
+					}
+				}
+				else if (goomba->id_goomba == GOOMBA_RED)
+				{
+					if (goomba->GetState() != GOOMBA_RED_STATE_NO_WING_DIE)
+					{
+						goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
+						goomba->hasWing = false;
+						SetState(FIRE_BALL_EXPLODE);
+					}
+				}
+			}
+		}
+		else if (dynamic_cast<CKoopas*>(e))
+		{
+			CKoopas* koopas = dynamic_cast<CKoopas*>(e);
+			koopas->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
+			{
+				if (koopas->id_koopa == KOOPA_RED)
+					koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+				else if (koopas->id_koopa == KOOPA_GREEN)
+					koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
+				koopas->hitByWeapon = true;
+				SetState(FIRE_BALL_EXPLODE);
+			}
+		}
+		else if (dynamic_cast<CFloor*>(e))
+		{
+			CFloor* floor = dynamic_cast<CFloor*>(e);
+			floor->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
+			{
+				SetState(FIRE_BALL_EXPLODE);
+			}
+		}
+		else if (dynamic_cast<CBrick*>(e)) 
+		{ 
+			CBrick* brick = dynamic_cast<CBrick*>(e); brick->GetBoundingBox(l_ene, t_ene, r_ene, b_ene); 
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon)) 
+			{
+				SetState(FIRE_BALL_EXPLODE); 
+			} 
+		}
+	}
+}
+
 void CWeapon::Render()
 {
 	if(state==FIRE_BALL_MOVE)
