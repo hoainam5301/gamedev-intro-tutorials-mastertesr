@@ -85,6 +85,7 @@
 #define MARIO_RACCOON_STATE_HOLDING_TURTLE_IDLE_RIGHT	57
 #define MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_RIGHT	58
 #define MARIO_RACCOON_STATE_HOLDING_TURTLE_RUNNING_RIGHT	59
+#define MARIO_RACCOON_STATE_MOVE_IN_PIPE		105
 
 #define MARIO_RACCOON_STATE_IDLE_LEFT			60
 #define MARIO_RACCOON_STATE_WALK_LEFT			61
@@ -183,7 +184,7 @@ class CMario : public CGameObject
 
 	float start_x;			// initial position of Mario at scene
 	float start_y; 
-	float mDy = 0;
+	
 public: 
 	//ULONGLONG Start_on_Key;
 	bool is_Grounded;
@@ -192,14 +193,29 @@ public:
 	bool canNotWalking;
 	//bool gravity_raccon;
 	ULONGLONG timestartfly;
-	int level;
+	int level;	
 	bool isJumping, isSitting;// isFalling;
 	bool isFlying,isRunning;
 	bool use_Weapon;
+	
+	bool standOnCloudBrick;
+	bool inHighArea;
+	bool inHiddenArea;
+	float topOfMario;  //top cua bbox
+
+	bool standOnPipe;
+	bool moveInPipeDown;
+	bool moveInPipeUp;
+	float topOfPipeIn;
+	float topOfPipeGoOut;
+	float topOfPipeOut = 357;
+	ULONGLONG waitGoOutPipe;
+	
 	int lastnx;
 	float last_vx;
 	bool isWaitingForAni;
 	bool isFalling;
+	float mDy = 0;				//xac dinh mario roi
 	CMario(float x = 0.0f, float y = 0.0f);
 	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	void Render();

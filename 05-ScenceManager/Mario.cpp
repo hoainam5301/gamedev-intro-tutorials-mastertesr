@@ -14,6 +14,8 @@
 #include "Floor.h"
 #include "ColorBox.h"
 #include "BrokenBrick.h"
+#include "Pipe.h"
+
 
 
 
@@ -36,10 +38,53 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	 //Simple fall down
+	if (!moveInPipeDown && !moveInPipeUp)
+		vy += MARIO_GRAVITY * dt;
+	else
+		y += dy;
+	if (moveInPipeDown)
+	{
+		if (topOfMario < topOfPipeIn)
+			SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+		else if (topOfMario >= topOfPipeIn)
+		{
+			moveInPipeDown = false;
+			SetPosition(2100, 479);
+			inHiddenArea = true;
+		}
+	}
+	if (moveInPipeUp)
+	{
+		DebugOut(L"aaaaaaaaa \n");
+		if (topOfMario > topOfPipeGoOut && topOfPipeGoOut != 0 )
+		{	
+			vy = -0.01;
+			SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+			waitGoOutPipe = GetTickCount64();
+		}
+		else if (topOfMario <= topOfPipeGoOut)
+		{
+			inHiddenArea = false;
+			DebugOut(L"ccccccc \n");
+			vy = 0;
+			if (GetTickCount64() - waitGoOutPipe > 1000)
+			{				
+				SetPosition(2320, 384);
+				topOfPipeGoOut = 0;	//khong bi phai set vi tri lien tuc nhieu lan	
+			}		
+		}
+		else if (topOfMario > topOfPipeOut)
+		{
+			vy = -0.01;
+			SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+		}
+		else if (topOfMario <= topOfPipeOut)
+		{
+			moveInPipeUp = false;
+			SetState(MARIO_STATE_IDLE);
+		}
+	}
 	
-	vy += MARIO_GRAVITY * dt;
-	
-	//DebugOut(L"vx = %f \n", vx);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -77,6 +122,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		if (mDy > 0.5)
 		{
 			isJumping = true;
+			is_Grounded = false;	
 		}
 	}
 	else
@@ -128,7 +174,9 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				is_Grounded = true;
 				isFlying = false;
 				Firstspaceup = true;
-				canNotWalking = false;				
+				canNotWalking = false;	
+				//standOnCloudBrick = false;
+				standOnPipe = false;
 				mDy = 0;				
 			}
 			vy = 0;
@@ -144,6 +192,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->ny < 0)
 				{
 					isFalling = false;
+					inHighArea = false;
 				}
 				if (e->nx != 0)
 				{
@@ -547,12 +596,17 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<CBrick*>(e->obj))
 			{
-				isFalling = false;
+				
 				CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
 				if (e->ny > 0 )
 				{
 					Brick->bottom_coll = 1;				
-				}				
+				}
+				else if (e->ny < 0)
+				{
+					isFalling = false;	
+					inHighArea = false;
+				}
 				else if (e->nx != 0)
 					vx = 0;
 			} //if NAm
@@ -564,11 +618,43 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<CFloor*>(e->obj))
 			{
 				if (e->ny < 0)
+				{
 					isFalling = false;
+					inHighArea = false;
+				}
 				else if (e->nx != 0)
 					vx = 0;
 				/*else if (e->nx != 0)*/
 					//DebugOut(L"Aaaaaaa");
+			}
+			else if (dynamic_cast<CPipe*>(e->obj))
+			{
+				CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
+				if (e->ny < 0 && CGame::GetInstance()->IsKeyDown(DIK_DOWN))
+				{
+					if (pipe->pypeType == 2)
+					{
+						topOfPipeIn = pipe->y;
+						moveInPipeDown = true;
+						vy = 0.01;
+						isSitting = false;
+						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);												
+					}
+				}
+				else if (e->ny>0 && CGame::GetInstance()->IsKeyDown(DIK_UP))
+				{			
+					topOfPipeGoOut = pipe->y;
+					moveInPipeUp = true;					
+					//SetPosition(2320, 384);
+					vy = -0.01;
+					SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+				}
+				else if (e->ny < 0)
+				{
+					isFalling = false;
+					inHighArea = false;
+					standOnPipe = true;
+				}
 			}
 			else if (dynamic_cast<CGiantPiranhaPlant*>(e->obj))
 			{
@@ -602,6 +688,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 					else
 						vx = 0;
 				}
+				else if (e->ny < 0)
+				{
+					isFalling = false;	
+					inHighArea = false;
+				}
 				else if (e->ny != 0)
 				{
 					if (brokenbrick->GetState() == STATE_COIN_NO_ROTATE || brokenbrick->GetState() == STATE_COIN_ROTATE)
@@ -614,10 +705,8 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		
 	}
-	//DebugOut(L"isWaitingForAni = %d\n", isWaitingForAni);
 	// clean up collision events
-	//DebugOut(L"isfallinggggggggggggggggggg = %d\n", isFalling);
-	//DebugOut(L"gia tri vx %f\n", vx);
+	//DebugOut(L"gia tri  %d \n", standOnPipe);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
@@ -1422,6 +1511,11 @@ void CMario::SetState(int State)
 		ResetAni();
 		isWaitingForAni = true;
 		break;
+	case MARIO_RACCOON_STATE_MOVE_IN_PIPE:
+		ResetAni();
+		isWaitingForAni = true;
+		//vy = 0.01;
+		break;
 	case MARIO_BIG_STATE_HOLDING_TURTLE_WALK_RIGHT:
 	case MARIO_BIG_STATE_HOLDING_TURTLE_WALK_LEFT:
 		ResetAni();
@@ -1478,6 +1572,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	{
 		left = x;
 		top = y+3;
+		topOfMario = top;
 		bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		if (nx > 0)
 		{
@@ -1499,6 +1594,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		{
 			top = y + MARIO_SIT_BBOX+3;
 			bottom = top + MARIO_BIG_SIT_BBOX_HEIGHT;
+			topOfMario = top;
 		}
 	}
 	else if (level == MARIO_LEVEL_SMALL)
@@ -1507,17 +1603,20 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		top = y+14;
 		right = left + MARIO_SMALL_BBOX_WIDTH-3;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
+		topOfMario = top;
 	}
 	else if (level == MARIO_RACCOON)
 	{
 		left = x;
 		top = y+2;
 		bottom = top + MARIO_RACCOON_BBOX_HEIGHT;
-		right = left + MARIO_RACCOON_BBOX_WIDTH;						
+		right = left + MARIO_RACCOON_BBOX_WIDTH;	
+		topOfMario = top;
 		if (isSitting)
 		{
 			top = y + MARIO_RACCOON_BBOX_SIT+2;
 			bottom = top + MARIO_RACCOON_SIT_BBOX_HEIGHT;
+			topOfMario = top;
 		}
 		if (nx > 0)
 		{
@@ -1540,6 +1639,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		top = y+3;
 		right = left + MARIO_FIRE_BBOX_WIDTH;
 		bottom = top + MARIO_FIRE_BBOX_HEIGHT;
+		topOfMario = top;
 		if (nx > 0)
 		{
 			left = x + MARIO_SIT_BBOX + 3;
@@ -1558,6 +1658,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		{
 			top = y + MARIO_SIT_BBOX+3;
 			bottom = top + MARIO_FIRE_SIT_BBOX_HEIGHT;
+			topOfMario = top;
 		}
 	}
 

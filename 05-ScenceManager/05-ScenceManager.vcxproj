@@ -137,6 +137,7 @@
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="MonneyEffect.cpp" />
     <ClCompile Include="PieceBrick.cpp" />
+    <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />
     <ClCompile Include="StatusBar.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="MonneyEffect.h" />
     <ClInclude Include="PieceBrick.h" />
+    <ClInclude Include="Pipe.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="RaccoonTail.h" />
     <ClInclude Include="StatusBar.h" />

@@ -10,7 +10,8 @@ CGiantPiranhaPlant::CGiantPiranhaPlant(CMario* mario) : CGameObject()
 
 void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	
+	if (Mario->standOnPipe)
+		return;
 	CGameObject::Update(dt, coObjects);
 	y += dy;
 	if (start_y == 0) start_y = y;

@@ -20,6 +20,7 @@
 #include "GiantPiranhaPlantBite.h"
 #include "MonneyEffect.h"
 #include "StatusBar.h"
+#include "Pipe.h"
 
 class CPlayScene: public CScene
 {
@@ -75,9 +76,9 @@ public:
 	virtual void Update(ULONGLONG dt);
 	virtual void Render();
 	virtual void Unload();
-
+	void SetCamSpeedY(ULONGLONG dt);
 	//int GetLeverPlayer();
-
+	float camY;
 	CMario * GetPlayer() { return player; } 
 	CItems* GetItems()	 { return items; }
 	

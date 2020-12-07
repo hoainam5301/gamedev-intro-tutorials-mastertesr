@@ -38,7 +38,7 @@ public:
 	void Render(float x, float y, int alpha = 255);
 	void SetAniStartTime(ULONGLONG t) { aniStartTime = t; }
 	bool IsOver() { return GetTickCount64() - aniStartTime >= totalFrameTime; }
-	bool IsReadyToFight() { return GetTickCount64() - aniStartTime >= totalFrameTime - 150; }
+	//bool IsReadyToFight() { return GetTickCount64() - aniStartTime >= totalFrameTime - 150; }
 };
 
 typedef CAnimation *LPANIMATION;

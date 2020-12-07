@@ -10,7 +10,7 @@ CGiantPiranhaPlantBite::CGiantPiranhaPlantBite() : CGameObject()
 
 void CGiantPiranhaPlantBite::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
+	
 	CGameObject::Update(dt, coObjects);
 	y += dy;
 	if (start_y == 0) start_y = y;

@@ -1,2 +1,2 @@
 [TileMap]
-10	textures\map1.png	textures\out.txt	27	176	10	32	16	16	1	0	0	
+10	textures\map1.png	textures\out.txt	29	176	11	32	16	16	1	0	0	

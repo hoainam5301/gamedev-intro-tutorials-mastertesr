@@ -44,6 +44,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_COIN			10
 #define OBJECT_TYPE_PIRANHA_BITE 11
 #define OBJECT_TYPE_MOONEY_EFFECT 12
+#define OBJECT_TYPE_PIPE		13
 
 
 #define MAX_SCENE_LINE 1024
@@ -241,6 +242,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CFloor(width, height);
 		break;
 	}
+	case OBJECT_TYPE_PIPE:
+	{
+		float width = atof(tokens[4].c_str());
+		float height = atof(tokens[5].c_str());
+		int pipeType = atoi(tokens[6].c_str());
+		obj = new CPipe(width, height,pipeType);
+		break;
+	}
 	case OBJECT_TYPE_COLOR_BOX:
 	{
 		float width = atof(tokens[4].c_str());
@@ -341,6 +350,77 @@ void CPlayScene::Load()
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
+
+void CPlayScene::SetCamSpeedY(ULONGLONG dt)
+{
+	DebugOut(L"bbbbbbb \n");
+	float camSpeedY = 0;
+	if (camY == 0)
+		camY = 200;
+	if (player->inHiddenArea)
+	{
+		camY = 400;
+	}
+	else if (!player->inHiddenArea)
+	{
+		if (camY == 400 || camY == 0)
+			camY = 200;
+		if (player->is_Grounded)
+		{
+			camSpeedY = 0;
+			camY = 200;
+			if (player->topOfMario < camY)   //dung tren cuc gach tren cao va cloud brick
+			{
+				camY = player->topOfMario - 170;
+				player->standOnCloudBrick = true;
+				player->inHighArea = true;
+			}
+			if (player->topOfMario < 100 && player->standOnPipe)
+			{
+				camY = player->topOfMario - 50;
+			}
+			goto SetCam;
+		}
+		if (player->isFlying)
+		{
+			camSpeedY = player->vy;
+		}
+		else if (player->inHighArea)
+		{
+			if (player->standOnCloudBrick)
+			{
+				camSpeedY = player->vy;
+			}
+			else if (player->isJumping)
+			{
+				camSpeedY = player->vy;
+			}
+			else if (player->topOfMario > 200 && !player->isJumping)
+			{
+				camY = 200;
+			}
+		}
+		else if (player->isJumping)
+		{
+			if (player->topOfMario < camY + 5 /*|| player->vy < 0*/)
+			{
+				camSpeedY = player->vy;
+			}
+			else if (!player->standOnCloudBrick)
+			{
+				camY = 200;
+			}
+
+		}
+
+	SetCam:
+		camY += camSpeedY * dt;
+		if (camY <= 0 || camY > 200)
+			return;
+	}
+	CGame::GetInstance()->SetCamPosY(camY);
+	//player->standOnCloudBrick = false;
+}	
 
 void CPlayScene::Update(ULONGLONG dt)
 {
@@ -481,33 +561,19 @@ void CPlayScene::Update(ULONGLONG dt)
 	}
 	else
 		player->loadFireball = false;
-	/*for (int i = 0; i < objects.size(); i++)
-	{
-		LPGAMEOBJECT a = objects[i];
-		if (dynamic_cast<CBrokenBrick*>(a))
-		{
-			CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(a);
-			if(brokenbrick->isDestroyed)
-				objects.erase(objects.begin() + i);
-		}
-	}*/
+	
 	//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
-	//statusBar->Update(dt, CGame::GetInstance()->cam_x= player->x - (SCREEN_WIDTH / 4), CGame::GetInstance()->cam_y=200);
+	
 	// Update camera to follow mario
 	float cx, cy;
 	cx = player->x - (SCREEN_WIDTH / 4);
 	
 	//player->GetPosition(cx, cy);
-
-	/*CGame* game = CGame::GetInstance();
-	cx -= game->GetScreenWidth() / 2;
-	cy -= game->GetScreenHeight() / 1.2;
-
-
-	CGame::GetInstance()->SetCamPos(cx,100);*/
-	CGame::GetInstance()->cam_y = 200;
+	SetCamSpeedY(dt);
+	
+	//CGame::GetInstance()->cam_y = 200;
 	if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < map->GetWidthTileMap())
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
@@ -522,7 +588,7 @@ void CPlayScene::Render()
 {
 	
 	map->Draw();
-	statusBar->Render();
+	//statusBar->Render();
 	for (int i = 0; i < listweapon.size(); i++)
 	{
 		if(!listweapon[i]->isExplode)
@@ -592,7 +658,10 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			
 		}
 		if (mario->isJumping)
+		{
 			mario->isFalling = true;
+			mario->inHighArea = true;
+		}
 		if (mario->isFalling)
 		{		
 			if (mario->level == MARIO_RACCOON && mario->isJumping  && !mario->isFlying && !mario->Firstspaceup )																			//neu khong phai la lan tha phim space dau tien thi ao trang thai quay duoi 
@@ -682,6 +751,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		if (mario->isJumping)
 			return;
 		mario->is_Grounded = false;
+		mario->standOnCloudBrick = false;
 		//mario->canNotWalking = false;
 		mario->isJumping = true;
 		//mario->firstspaceup = true;
