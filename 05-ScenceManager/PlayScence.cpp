@@ -373,43 +373,54 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 				camY = player->topOfMario - 170;
 				player->standOnCloudBrick = true;
 				player->inHighArea = true;
+				//DebugOut(L"pppppppppppppp \n");
 			}
 			if (player->topOfMario < 100 && player->standOnPipe)
 			{
 				camY = player->topOfMario - 50;
+				//DebugOut(L"lllllllllllllllll \n");
 			}
 			goto SetCam;
 		}
 		if (player->isFlying)
 		{
-			camSpeedY = player->vy;
+			//camSpeedY = player->vy;
+			camY = player->topOfMario- 100;
+			//DebugOut(L"aaaaaaaaaa \n");
 		}
 		else if (player->inHighArea)
 		{
 			if (player->standOnCloudBrick)
 			{
 				camSpeedY = player->vy;
+				//camY = player->topOfMario - 100;
+				//DebugOut(L"bbbbbbbbb \n");
 			}
 			else if (player->isJumping)
 			{
-				camSpeedY = player->vy;
+				//camSpeedY = player->vy;
+				camY = player->topOfMario - 100;
+			//	DebugOut(L"cccccccc \n");
 			}
 			else if (player->topOfMario > 200 && !player->isJumping)
 			{
+				//DebugOut(L"eeeeeee \n");
 				camY = 200;
 			}
 		}
 		else if (player->isJumping)
 		{
-			if (player->topOfMario < camY + 5)
+			if (player->topOfMario < camY+5 )
 			{
 				camSpeedY = player->vy;
+				//camY = player->y - 100;
+				//DebugOut(L"dddddddd \n");
 			}
-			else if (!player->standOnCloudBrick)
+			/*else if (!player->standOnCloudBrick)
 			{
 				camY = 200;
-			}
-
+				DebugOut(L"vvvvvvvvvv \n");
+			}*/
 		}
 
 	SetCam:
@@ -677,7 +688,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		if (mario->isJumping)
 		{
 			mario->isFalling = true;
-			mario->inHighArea = true;
+			//mario->inHighArea = true;
 		}
 		if (mario->isFalling)
 		{		

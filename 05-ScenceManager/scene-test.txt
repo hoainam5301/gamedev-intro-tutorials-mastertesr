@@ -902,9 +902,9 @@
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4=Floor,5=Color Box,6=Piranha_flower_shot,7=BrokenBrick,10=Coin,11=Piranha_bite,13=Pipe
 # MARIO
 #0	17	300	1
-#0	700	300	1
+0	700	300	1
 #0	1900	300	1
-0	2256	80	1
+#0	2256	80	1
 #0	1488	0	1
 #GOOMBA
 #2	750	375	3	1
