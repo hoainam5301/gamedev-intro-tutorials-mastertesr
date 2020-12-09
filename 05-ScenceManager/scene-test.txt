@@ -17,6 +17,10 @@
 50	textures\mario-hold-shell-big.png	0	255	255
 51	textures\status_bar.png	255	0	255
 52	textures\power_state.png	175	232	226
+53	textures\blackfirst.png	255	255	195
+54	textures\blacksecond.png	255	255	195
+55	textures\blackthird.png	255	255	195
+56	textures\black.png	255	255	195
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -465,8 +469,11 @@
 2026	2	56	66	63	52
 # tier_7
 2027	2	65	66	72	52
-
-
+#========Turn Off Light=======
+2030	0	0	1800	831	53
+2031	0	0	1800	831	54
+2032	0	0	1800	831	55
+2033	0	0	1800	831	56
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -853,6 +860,8 @@
 
 #=====P_meter====
 773	2027	150	2026	150
+#=====Turn Off light======
+774	2030	50	2031	50	2032	50	2033	50
 
 #QUESTION BRICK AFTER
 3	2	100
@@ -1015,8 +1024,8 @@
 13	1857	368	22	2	3	1
 13	2256	368	22	2	3	1
 13	2256	112	22	2	13	2
-13	2320	384	22	2	2	1
-13	2320	464	22	2	2	3
+13	2320	384	22	2	2	3
+13	2320	464	22	2	2	1
 #Coin
 #10	100	400	13
 # --- SCENE PORTAL ----

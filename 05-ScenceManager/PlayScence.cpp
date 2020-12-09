@@ -353,7 +353,6 @@ void CPlayScene::Load()
 
 void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 {
-	DebugOut(L"bbbbbbb \n");
 	float camSpeedY = 0;
 	if (camY == 0)
 		camY = 200;
@@ -402,7 +401,7 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 		}
 		else if (player->isJumping)
 		{
-			if (player->topOfMario < camY + 5 /*|| player->vy < 0*/)
+			if (player->topOfMario < camY + 5)
 			{
 				camSpeedY = player->vy;
 			}
@@ -419,7 +418,6 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 			return;
 	}
 	CGame::GetInstance()->SetCamPosY(camY);
-	//player->standOnCloudBrick = false;
 }	
 
 void CPlayScene::Update(ULONGLONG dt)
@@ -610,6 +608,25 @@ void CPlayScene::Render()
 			delete listweapon[3];
 		return;
 	}*/
+	if (player->turnOffLight)
+	{
+		if (GetTickCount64() - player->waitGetOutOfPipe < 200 && player->countRender<6)
+		{
+			CAnimations::GetInstance()->Get(774)->Render(1000, 0, 200);
+			player->countRender++;
+			//DebugOut(L"gia tri count %d \n",player->countRender);
+		}
+		/*else if (GetTickCount64() - player->waitGetOutOfPipe >= 150 && GetTickCount64() - player->waitGetOutOfPipe < 200 && player->countRender>=4)
+		{
+			CSprites::GetInstance()->Get(2033)->Draw(1000, 0, 255);
+			DebugOut(L"bbbbbbbb \n");
+		}*/
+		/*else if (GetTickCount64() - player->waitGetOutOfPipe >= 200)
+		{
+			player->turnOffLight = false;
+			player->waitGetOutOfPipe = 0;
+		}*/
+	}
 
 }
 
@@ -748,7 +765,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 				//mario->vy = (-0.0006 * 1.2 *mario-> dt);									
 			}
 		}
-		if (mario->isJumping)
+		if (mario->isJumping || mario->getUpInPipe)
 			return;
 		mario->is_Grounded = false;
 		mario->standOnCloudBrick = false;
@@ -925,6 +942,19 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			}
 		}
 	}	
+	if (game->IsKeyDown(DIK_UP))
+	{
+		if (game->IsKeyDown(DIK_S))
+		{
+			if (mario->leftOfMario > 2321 && mario->leftOfMario < 2333)
+			{
+				mario->atEndOfPipeY = 464;
+				mario->getUpInPipe = true;					
+				//mario->vy = -0.01;
+				mario->SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+			}
+		}
+	}
 	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT))
 	{
 		mario->SetState(MARIO_STATE_IDLE);

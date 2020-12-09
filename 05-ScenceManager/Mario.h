@@ -202,14 +202,19 @@ public:
 	bool inHighArea;
 	bool inHiddenArea;
 	float topOfMario;  //top cua bbox
+	float leftOfMario;
+	float bottomOfMario;
+	float rightOfMario;
 
 	bool standOnPipe;
-	bool moveInPipeDown;
-	bool moveInPipeUp;
-	float topOfPipeIn;
-	float topOfPipeGoOut;
+	bool getDownInPipe;
+	bool getUpInPipe;
+	float startOfLongPipeY;
+	float atEndOfPipeY;
 	float topOfPipeOut = 357;
-	ULONGLONG waitGoOutPipe;
+	ULONGLONG waitGetOutOfPipe;
+	bool turnOffLight;
+	int countRender=0;
 	
 	int lastnx;
 	float last_vx;

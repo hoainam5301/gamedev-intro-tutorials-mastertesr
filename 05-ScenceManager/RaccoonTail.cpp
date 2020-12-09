@@ -77,7 +77,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 
 void CRaccoonTail::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CRaccoonTail::GetBoundingBox(float& l, float& t, float& r, float& b)

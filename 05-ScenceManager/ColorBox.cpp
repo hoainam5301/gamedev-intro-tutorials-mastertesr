@@ -9,7 +9,7 @@ CColorBox::CColorBox(int width, int height) : CGameObject::CGameObject()
 
 void CColorBox::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CColorBox::GetBoundingBox(float& l, float& t, float& r, float& b)
