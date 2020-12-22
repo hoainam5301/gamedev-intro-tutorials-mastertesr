@@ -21,6 +21,7 @@
 54	textures\blacksecond.png	255	255	195
 55	textures\blackthird.png	255	255	195
 56	textures\black.png	255	255	195
+58	textures\123.png	64	128	0
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -910,7 +911,7 @@
 #2	750	375	3	1
 2	950	300	3	2
 #KOOPAS
-3	40	372	4	2
+3	17	370	4	2
 #3	1925	384	4	2
 #3	272	305	4
 #3	512	357	4

@@ -3,14 +3,16 @@
 #include <d3dx9.h>
 #include "KeyEventHandler.h"
 
+
 class CScene
 {
 protected:
 	CKeyEventHandler * key_handler;
-	int id;
+	
 	LPCWSTR sceneFilePath;
 	//int backUpLevel;
 public: 
+	int id;
 	bool isLoad = false;
 	CScene(int id, LPCWSTR filePath);
 	

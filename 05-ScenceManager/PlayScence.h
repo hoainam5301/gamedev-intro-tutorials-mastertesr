@@ -1,5 +1,5 @@
 #pragma once
-#include "Game.h"
+
 #include "Textures.h"
 #include "Scence.h"
 #include "GameObject.h"
@@ -10,7 +10,7 @@
 #include "Koopas.h"
 #include "Items.h"
 #include "Weapon.h"
-#include "TileMap.h"
+//#include "TileMap.h"
 #include "RaccoonTail.h"
 #include "BrokenBrick.h"
 #include "Coin.h"
@@ -21,6 +21,7 @@
 #include "MonneyEffect.h"
 #include "StatusBar.h"
 #include "Pipe.h"
+#include "Grid.h"
 
 class CPlayScene: public CScene
 {
@@ -32,6 +33,14 @@ protected:
 	CRaccoonTail* tail=new CRaccoonTail();
 	CCoin* coin =NULL;
 	StatusBar* statusBar;
+
+	CGrid* gridObjMove;
+	CGrid* gridObjIdle;
+	vector<LPGAMEOBJECT> listAllObjMove;
+	vector<LPGAMEOBJECT> listAllObjIdle;
+	vector<LPGAMEOBJECT> listObjIdle;
+	vector<LPGAMEOBJECT> listObjMove;
+
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
 	// *gachthuong;
@@ -39,6 +48,7 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> listitems;
 	vector<LPGAMEOBJECT> listweapon;
+	vector<LPGAMEOBJECT> players;
 	//vector<LPGAMEOBJECT> listbrokenbrick;
 
 	CItems* MadeItems(float x, float y)
@@ -77,6 +87,7 @@ public:
 	virtual void Render();
 	virtual void Unload();
 	void SetCamSpeedY(ULONGLONG dt);
+	void InsertObjToGrid();
 	//int GetLeverPlayer();
 	float camY;
 	CMario * GetPlayer() { return player; } 

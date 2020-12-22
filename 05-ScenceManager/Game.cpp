@@ -5,6 +5,7 @@
 #include "Utils.h"
 
 #include "PlayScence.h"
+#include "SenceMap.h"
 
 CGame * CGame::__instance = NULL;
 
@@ -334,11 +335,15 @@ void CGame::_ParseSection_SCENES(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 2) return;
+	if (tokens.size() < 3) return;
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
-
-	LPSCENE scene = new CPlayScene(id, path);
+	int type_scene = atoi(tokens[2].c_str());
+	LPSCENE scene;
+	if (type_scene == 1)
+		 scene = new CSenceMap(id, path);	
+	else
+		 scene = new CPlayScene(id, path);
 	scenes[id] = scene;
 }
 
@@ -384,10 +389,8 @@ void CGame::Load(LPCWSTR gameFile)
 
 void CGame::SwitchScene(int scene_id)
 {
-	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
-	/*int lv = 1;
-	if(scenes[current_scene]->isLoad == true)
-	  lv= static_cast<CPlayScene*> (scenes[current_scene])->GetLeverPlayer();*/
+//	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
+
 	scenes[current_scene]->Unload();;
 
 	CTextures::GetInstance()->Clear();

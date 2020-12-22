@@ -1,0 +1,585 @@
+# id	file_path	transparent_color_r	g	b
+[TEXTURES]
+0	textures\mario.png	255	255	255
+999	textures\raccoon_3.png	255	255	255
+40	textures\raccoon_4.png	255	255	255
+41	textures\raccoon_5.png	255 	255	255
+50	textures\mario-hold-shell-big.png	0	255	255
+53	textures\blackfirst.png	255	255	195
+54	textures\blacksecond.png	255	255	195
+55	textures\blackthird.png	255	255	195
+56	textures\black.png	255	255	195
+57	textures\itemswordmap.png	0	128	0
+58	textures\123.png	64	128	0
+
+
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+# BIG MARIO 
+# idle right
+10000	205	240	230	270	0
+# walk
+10001	245	240	271	270	0
+10002	285	241	311	271	0
+#Running right
+10003	206	320	232	350	0
+10004	246	320	272	350	0
+10005	286	321	312	351	0
+#jump right
+10006	325	240	351	270	0
+#MARIO STOP RIGHT
+10007	165	281	191	311	0
+#sitting right
+10008	365	236	390	266	0
+#kick right
+10009	243	280	273	310	0
+#holding turtle right
+10010	319	320	345	350	0
+10011	345	320	371	350	0
+10012	7	4	33	33	50	#can lam lai
+
+# idle left
+10020	167	240	190	270	0
+#walk
+#10021	86	244	111	270	0
+#10022	126	243	151	270	0
+10021	126	240	151	270	0
+10022	86	241	111	271	0
+#jump left
+10023	46	240	71	270	0
+#running left
+10024	164	320	193	350	0
+10025	124	320	153	350	0
+10026	84	321	113	351	0
+#MARIO STOP LEFT
+10027	205	281	231	311	0
+#sitting left
+10028	7	236	30	266	0
+#kick left
+10029	129	280	154	310	0
+#hoding turtle left
+10030	55	320	75	350	0
+10031	29	320	50	350	0
+10032	42	4	64	33	50
+
+# die 
+10099	365	209	391	225	0
+
+# SMALL MARIO
+# idle small right
+10040	205	74	229	104	0
+# walk
+10041	246	75	271	105	0
+#10042	255	169	271	185	0
+#running small right
+10043	205	155	231	185	0
+10044	245	155	271	185	0
+#jump small right 
+10045	325	75	351	105	0
+#Stop right
+10046	204	115	230	145	0
+#10046	165	129	190	145	0
+#kick right
+10047	245	115	271	145	0
+#holding turtle right
+10048	325	155	350	185	0
+10049	366	155	391	185	0
+
+# idle small left
+10060	167	74	189	104	0
+# walk
+10061	126	75	150	105	0
+#10062	135	169	151	185	0
+#running small left
+10063	167	155	191	185	0
+10064	127	155	151	185	0
+#jump small left
+10065	46	75	71	105	0
+#stop left
+10066	168	115	190	145	0
+#10066	208	129	230	145	0
+#kick left
+10067	127	115	151	145	0
+#holding turtle left
+10068	45	155	70	185	0
+10069	4	155	30	185	0
+
+#======MARIO RACCON=======
+#idle right
+10100	208	441	233	471	0
+#walk right
+10101	259	441	284	471	0
+10102	289	441	314	471	0
+#running right
+10103	209	521	235	551	0
+10104	249	521	275	551	0
+10105	289	521	315	551	0
+#jump right
+10106	329	440	354	470	0
+#stop right
+10107	168	482	191	512	0
+#fight idle right
+10108	234	441	259	471	0
+10109	346	481	371	511	0
+10110	6	2	38	32	999
+10111	381	481	406	511	0
+#sitting right
+10112	369	436	394	466	0
+#falling and quay duoi right
+10113	209	601	234	631	0
+10114	249	601	274	631	0
+#flying right
+10115	291	601	315	631	0
+10116	331	601	355	631	0
+10117	371	601	395	631	0
+#kick right
+10118	239	481	269	511	0
+#holding turtle right
+10160	320	521	343	551	0
+10161	350	521	373	551	0
+10162	381	521	404	551	0
+
+#idle left
+#10120	160	443	194	471	0
+10120	6	1	36	31	41
+#walk left
+10121	11	1558	44	1588	0  # can lam lai -9
+10122	84	441	115	471	0
+#running left
+10123	162	521	195	551	0 
+10124	122	521	155	551	0
+10125	52	1560	85	1590	0	#can lam lai -9
+#jump left
+10126	44	440	75	470	0
+#stop left
+10127	208	482	231	512	0
+#fight idle left
+10128	6	2	38	32	999
+10129	346	481	371	511	0
+10130	234	441	259	471	0
+10131	381	481	406	511	0
+#sitting left
+10132	3	436	34	466	0
+#falling and quay duoi left
+10133	164	601	195	631	0
+10134	124	601	154	631	0
+#flying left
+10135	84	601	115	631	0
+10136	44	601	75	631	0
+10137	4	601	35	631	0
+#kick left
+10138	133	481	159	511	0
+#holding turtle left
+10139	63	521	84	551	0
+10140	33	521	55	551	0
+10141	2	521	25	551	0
+
+#====FIRE MARIO=======
+#idle right
+10200	205	680	230	710	0
+#walk right
+10201	245	680	271	710	0
+10202	285	681	311	711	0
+#running right
+10203	206	760	232	790	0
+10204	246	760	272	790	0
+10205	286	761	312	791	0
+#jump right
+10206	325	681	351	711	0
+#stop right
+10207	165	721	191	751	0
+#fight idle right	
+10208	355	800	380	830	0
+10209	79	1520	104	1550	0
+#fight while jumping right
+10210	327	800	352	830	0
+10211	288	800	312	830	0
+10212	247	800	272	830	0
+#sitting right
+10213	365	676	390	706	0
+#kick right
+10214	243	721	273	751	0
+#holding turtle right
+10215	319	760	345	790	0
+10216	345	760	371	790	0
+10217	115	1520	151	1550	0	#can lam lai
+
+#idle left
+10220	167	680	190	710	0
+#walk left
+10221	126	680	151	710	0
+10222	86	681	111	711	0
+#running left
+10223	164	760	193	790	0
+10224	124	760	153	790	0
+10225	84	761	113	791	0
+#jump left 
+10226	46	681	71	711	0
+#stop left
+10227	205	721	231	751	0
+#fight idle left
+10228	46	1520	69	1550	0
+10229	13	1520	36	1550	0	#can lam lai
+#fight while jumping left
+10230	45	800	73	830	0
+10231	84	800	112	830	0
+10232	125	800	153	830	0
+#sitting left
+10233	7	676	30	706	0
+#kick left
+10234	129	721	154	751	0
+#holding turtle left
+10235	55	760	75	790	0
+10236	29	760	50	790	0
+10237	4	761	26	791	0
+
+#Mario in word map
+#Small
+10238	2	15	27	44	58
+10239	29	15	54	44	58	
+
+#========Turn Off Light=======
+2030	0	0	1800	831	53
+2031	0	0	1800	831	54
+2032	0	0	1800	831	55
+2033	0	0	1800	831	56
+
+#========Shake tree=====
+2034	6	3	31	27	57
+2035	38	3	63	27	57
+2036	63	3	90	27	57
+#2037	52	17	68	32	57
+
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]
+# ==== MARIO =========
+#=====MARIO BIG=====
+#idle BIG right
+100	10000	100
+#walk right big
+101	10000	100	10001	100	10002	100	10001	100
+#running right BIG
+102	10003	25	10004	25	10005	25	10004	25
+#jump right big
+103	10006	100
+#sitting BIG right
+104	10008	100
+#STOP right
+105	10007	300
+#falling right big
+106	10002	100
+#kick right
+107	10009	100
+#hoding turtle walk right
+108	10010	100	10011	100	10012	100
+#holding turtle idle right
+109	10010	100
+#holding turtle jump right
+110	10012	100
+#holding turtle running right
+111	10010	25	10011	25	10012	25
+
+#idle BIG left
+120	10020	100
+#walk left big
+121	10020	100	10021	100	10022	100	10021	100
+#running Big Left
+122	10024	25	10025	25	10026	25	10025	25
+#jump left big
+123	10023	100
+#sitting left BIG
+124	10028	100
+#STOP LEFT
+125	10027	300
+#falling left big
+126	10022	100
+#kick	left
+127	10029	300
+#holding turtle walk left
+128	10030	100	10031	100	10032	100
+#hoding turtle idle left
+129	10030	100
+#holding turtle jump left
+130	10032	100
+#holding turtle running left
+131	10030	25	10031	25	10032	25
+
+#====MARIO SMALL===
+#idle small right
+140	10040	100
+#walk right small
+141	10040	100	10041	100
+#running right small
+142	10043	25	10044	25
+#jump right 
+143	10045	100
+#stop right
+144	10046	300
+#kick right
+145	10047	100
+#holding turtle walk right
+146	10048	100	10049	100
+#holding turtle idle right
+147	10048	100
+#holding turtle jump right
+148	10049	100
+#holding turtle running right
+149	10048	25	10049	25
+
+#idle small left
+160	10060	100
+#walk left small
+161	10060	100	10061	100
+#running left
+162	10063	25	10064	25
+#jump left
+163	10065	100
+#stop left
+164	10066	300
+#kick left
+165	10067	100
+#holding turtle walk left
+166	10068	100	10069	100
+#holding turtle idle left
+167	10068	100
+#holding turtle jump left
+168	10069	100
+#holding turtle running left
+169	10068	25	10069	25
+
+#die 
+#199	10099	100
+
+#====MARIO RACCON====
+#idle right
+200	10100	100
+#walk right
+201	10100	50	10101	100#	10102	100	10101	100
+#running right
+202	10103	25	10104	25#	10105	25	10104	25
+#jump right
+203	10106	100
+#stop right
+204	10107	300
+#fight idle right
+205	10108	75	10109	75	10110	75	10111	75	10108	75
+#sitting right
+206	10112	100
+#falling right 
+207	10113	100
+#Quay duoi right
+208	10114	50	10102	50	10113	50
+#flying right
+209	10115	50	10117	50	10116	50	10117	50	10115	50
+#flying
+210	10115	100
+#kick right
+211	10118	100
+#holding turtle walk right
+212	10160	100	10161	100	10162	100
+#holding turtle idle right
+213	10160	100
+#holding turtle jump and fly	right
+214	10162	100
+#holding turtle running right
+215	10160	25	10161	25	10162	25
+#move up and down pipe
+216	10109	200
+
+#idle left
+220	10120	100
+#walk left
+221	10120	100	10121	100	10122	100	10121	100
+#running left
+222	10123	25	10124	25	10125	25	10124	25
+#jump left
+223	10126	100
+#stop left
+224	10127	300
+#fight idle left
+225	10128	75	10129	75	10130	75	10131	75	10128	75
+#sitting left
+226	10132	100
+#falling left
+227	10133	100
+#quay duoi left
+228	10134	50	10122	50	10133	50
+#keep flying left
+229	10135	50	10137	50	10136	50	10137	50	10135	50
+#flying
+230	10135	100
+#kick left
+231	10138	100
+#holding turtle walk left
+232	10139	100	10140	100	10141	100
+#holding turtle idle left
+233	10139	100
+#holding turtle jump and fly
+234	10141	100
+#holding turtle running 
+235	10139	25	10140	25	10141	25
+
+
+#MARIO DIE
+#die
+599	10099	100
+
+#====FIRE MARIO===
+#idle right
+300	10200	100
+#walking right
+301	10200	100	10201	100	10202	100	10201	100
+#running right
+302	10203	25	10204	25	10205	25	10204	25
+#jump right
+303	10206	100
+#stop right
+304	10207	300
+#fight right
+305	10208	100	10209	100	10200	100
+#fight while jumping right
+306	10210	100	10211	100	10212	100
+#sitting right
+307	10213	100
+#falling right
+308	10202	100
+#kick right
+309	10214	100
+#holding turtle walk right
+310	10215	100	10216	100	10217	100
+#holding turtle idle right
+311	10215	100
+#holding turtle jump right
+312	10217	100
+#holding turtle running right
+313	10215	25	10216	25	10217	25
+
+#idle left
+320	10220	100
+#walking left
+321	10220	100	10221	100	10222	100	10221	100
+#running left
+322	10223	25	10224	25	10225	25	10224	25
+#jump left
+323	10226	100
+#stop left
+324	10227	300
+#fight left
+325	10228	100	10229	100	10220	100
+#fight while jumping left
+326	10230	100	10231	100	10232	100
+#sitting left
+327	10233	100
+#falling left
+328	10222	100
+#kick left
+329	10234	100
+#holding turtle walk left
+330	10235	100	10236	100	10237	100
+#holding turtle idle left
+331	10235	100
+#holding turtle jump left
+332	10237	100
+#holding turtle running left
+333	10235	25	10236	25	10237	25
+
+#Mario in Word map
+#Small
+334	10238	100	10239	100
+	
+#=====Turn Off light======
+774	2030	50	2031	50	2032	50	2033	50
+#======Shake tree
+775	2035	200	2034	200	2036	200	2034	200
+
+#
+# id	ani1	ani2	ani3
+#
+[ANIMATION_SETS]
+# MARIO													12												24										34										44																60																76														90														104
+1	100	101	102	103	104	105	106	107	108	109	110	111	120	121	122	123	124	125	126	127	128	129	130	131	140	141	142	143	144	145	146	147	148	149	160	161	162	163	164	165	166	167	168	169	200	201	202	203	204	205	206	207	208	209	210	211	212	213	214	215	220	221	222	223	224	225	226	227	228	229	230	231	232	233	234	235	300	301	302	303	304	305	306	307	308	309	310	311	312	313	320	321	322	323	324	325	326	327	328	329	330	331	332	333	599	216	334
+
+#Shake tree
+
+2	775
+
+[OBJECTS]
+# type	x	y	ani_set_id	extra_settings per object type
+# type: 0 = Mario , 1= Shake tree, 2=floor,3=Portal;
+# MARIO
+0	23	51	1
+#0	700	300	1
+#0	1900	300	1
+#0	2256	80	1
+#0	1488	0	1
+#Shake tree
+1	10	6	2
+1	35	6	2
+1	60	6	2
+1	10	32	2
+1	35	32	2
+1	60	32	2
+1	10	83	2
+1	35	83	2
+1	60	83	2
+1	10	109	2
+1	35	109	2
+1	60	109	2
+1	10	135	2
+1	108	32	2
+1	133	32	2
+1	158	32	2
+1	108	58	2
+1	133	58	2
+1	158	58	2
+1	108	83	2
+1	133	83	2
+1	158	83	2
+1	133	135	2
+1	158	135	2
+1	183	135	2
+1	209	32	2
+1	234	32	2
+1	259	32	2
+1	209	83	2
+1	234	83	2
+1	259	83	2
+1	283	83	2
+1	209	109	2
+1	234	109	2
+1	311	6	2
+1	336	6	2
+1	311	32	2
+1	336	32	2
+1	311	58	2
+1	336	58	2
+1	311	83	2
+1	336	83	2
+1	336	109	2
+1	336	135	2
+1	336	161	2
+1	336	187	2
+1	336	213	2
+# --- SCENE PORTAL ----
+#type	 id	x	y	is	l	t	r	b	state
+3	0	35	65	1	-1	-1	10	-1	0
+3	1	93	15	1	-1	-1	2	10	1
+3	2	193	15	0	1	-1	3	13	8
+3	3	240	15	0	2	-1	7	-1	8
+3	4	240	65	0	13	-1	8	-1	8
+3	5	93	215	1	-1	16	6	-1	5
+3	6	193	215	0	5	14	-1	-1	8
+3	7	295	15	1	3	-1	-1	8	2
+3	8	295	65	0	4	7	-1	-1	8
+3	9	146	115	1	16	-1	12	-1	7
+3	10	93	65	0	0	1	-1	-1	8
+3	11	93	90	1	-1	-1	-1	16	6
+3	12	193	115	1	9	13	-1	-1	3
+3	13	193	65	1	-1	2	4	12	4
+3	14	193	169	0	15	-1	-1	6	8
+3	15	166	169	0	-1	-1	14	-1	8
+3	16	93	115	0	-1	11	9	5	8
+[TILEMAP]
+10	textures\finalwordmap.png	textures\wordmap.txt	18	18	17	56	16	16
+
+

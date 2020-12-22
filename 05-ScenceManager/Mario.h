@@ -139,6 +139,9 @@
 //#define MARIO_RUNNING_LEFT					31
 
 #define MARIO_ANI_DIE				104
+#define MARIO_ANI_DIE				104
+
+#define MARIO_STATE_IN_WORD_MAP		106
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -176,14 +179,17 @@
 
 class CMario : public CGameObject
 {
+private:
 	
 	
 	int untouchable;
 	ULONGLONG untouchable_start;
+	static CMario* __instance;
 	
 
 	float start_x;			// initial position of Mario at scene
-	float start_y; 
+	float start_y;
+	CMario(float x = 0.0f, float y = 0.0f);
 	
 public: 
 	//ULONGLONG Start_on_Key;
@@ -215,22 +221,43 @@ public:
 	ULONGLONG waitGetOutOfPipe;
 	bool turnOffLight;
 	int countRender=0;
+
+	float posXOfNextPortalGoRight=0;
+	float posXOfNextPortalGoLeft=0;
+	float posYOfNextPortalGoUp=0;
+	float posYOfNextPortalGoDown=0;
+	float posXOfPortal=0;			//luu gia tri x cua cong khi khi len xuong
+	bool isAutoGoRight;
+	bool isAutoGoLeft;
+	bool isAutoGoTop;
+	bool isAutoGoDown;
+	bool isGoTo;
+	int sceneIdPresent;
+	int sceneIdGoToLeft;
+	int sceneIdGoToRight;
+	int sceneIdGoToUp;
+	int sceneIdGoToDown;
 	
 	int lastnx;
 	float last_vx;
 	bool isWaitingForAni;
 	bool isFalling;
+	bool hasFight;
 	float mDy = 0;				//xac dinh mario roi
-	CMario(float x = 0.0f, float y = 0.0f);
 	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	void Render();
 
+	void UpdateInScenceMap(ULONGLONG dt);
+
+
 	virtual void Collision_items(vector<LPGAMEOBJECT>* listitem);
+	virtual void Collision_coin(vector<LPGAMEOBJECT>* listitem);
 
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
 	int GetLevel();
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
+	static CMario* GetInstance();
 	//void startOnKey() {Start_on_Key = GetTickCount64(); }
 	//bool Istimeout() { return GetTickCount64() - Start_on_Key >= 100; }
 	void Reset();

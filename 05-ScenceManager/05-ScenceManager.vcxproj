@@ -133,6 +133,7 @@
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GiantPiranhaPlant.cpp" />
     <ClCompile Include="GiantPiranhaPlantBite.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Items.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="MonneyEffect.cpp" />
@@ -140,6 +141,8 @@
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />
+    <ClCompile Include="SenceMap.cpp" />
+    <ClCompile Include="ShakeTree.cpp" />
     <ClCompile Include="StatusBar.cpp" />
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -164,6 +167,7 @@
     <ClInclude Include="Floor.h" />
     <ClInclude Include="GiantPiranhaPlant.h" />
     <ClInclude Include="GiantPiranhaPlantBite.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Items.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="MonneyEffect.h" />
@@ -171,6 +175,8 @@
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="RaccoonTail.h" />
+    <ClInclude Include="SenceMap.h" />
+    <ClInclude Include="ShakeTree.h" />
     <ClInclude Include="StatusBar.h" />
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="Utils.h" />

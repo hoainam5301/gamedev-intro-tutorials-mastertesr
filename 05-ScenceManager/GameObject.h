@@ -9,6 +9,7 @@
 #include "Utils.h"
 #include "Game.h"
 #include "Textures.h"
+#include "TileMap.h"
 
 
 
@@ -65,6 +66,7 @@ public:
 	int ny;
 	bool isExplode;
 	bool isHolding;
+	bool checkOnCam;
 
 	int id_broken_state; //set trang thai cua broken brick luc moi khoi tao
 	int id_items;		

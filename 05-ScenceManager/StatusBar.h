@@ -13,15 +13,15 @@
 #define SPEED_X_TIRER_7 0.1875f
 #define SPEED_X_TIRER_8 0.2f
 
-#define Y 233
-#define X 3
+#define Y 233.0f
+#define X 3.0f
 
 class StatusBar
 {
 	//vector<LPSPRITE> pMeter;
 	LPSPRITE number;	
-	int posX;
-	int posY;
+	float posX;
+	float posY;
 	int score;
 	int money;
 	int word;
@@ -29,11 +29,11 @@ class StatusBar
 	int time;
 	int second;
 	void DrawBoard();
-	void DrawNumber(int x, int y, string a,int maxsize);
+	void DrawNumber(float x, float y, string a,int maxsize);
 	void DrawAllNumber();
 	void DrawPMeter();
 public:
-	void Update(ULONGLONG dt, int camX, int camY);
+	void Update(ULONGLONG dt, float camX, float camY);
 	void Render();
 	CMario* Mario;
 	StatusBar(CMario* mario);

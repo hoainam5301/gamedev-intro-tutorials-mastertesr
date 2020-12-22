@@ -5,7 +5,6 @@
 #include <fstream>
 #include<string>
 #include <sstream>
-#include"Game.h"
 
 class TileMap
 {

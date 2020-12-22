@@ -17,7 +17,6 @@ CKoopas::CKoopas(CMario* mario,int id_Koopa)
 		timeToFly = GetTickCount64();
 		
 	}
-	DebugOut(L"aaaaaaa \n");
 }
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -28,16 +27,6 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 	right = x + KOOPAS_BBOX_WIDTH;
 	if (id_koopa == KOOPA_RED)
 	{
-		/*if (state == KOOPA_RED_STATE_DIE)
-		{
-
-			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-		}
-		else if (state == KOOPA_RED_STATE_DIE_AND_MOVE || state == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-		{
-			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-		}
-		else*/
 		if (state == KOOPA_RED_STATE_REVIVE || state == KOOPA_RED_STATE_REVIVE_UP)
 		{
 			left = x;
@@ -50,24 +39,15 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 		}
 		else if (state == KOOPA_RED_STATE_DIE_UP)
 		{
-			/*if (!hitByTail)
-			{
-				left = right;
-				top = bottom;
-			}*/
 			if(hitByWeapon)
-				left = top = right = bottom = 0;
-			//bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
+				left = top = right = bottom = 0;		
 		}
-		/*else if (state == KOOPA_RED_STATE_HOLDING || state == KOOPA_RED_STATE_HOLDING_UP)
-		{
-			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
-		}*/
 	}
 	else if (id_koopa == KOOPA_GREEN)
 	{
 		if (state == KOOPA_GREEN_STATE_REVIVE || state == KOOPA_GREEN_STATE_REVIVE_UP)
 		{
+		//	DebugOut(L"aaaaa \n");
 			left = x;
 			bottom = top + KOOPAS_BBOX_HEIGHT_DIE;
 		}
@@ -75,11 +55,13 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 		{
 			top = y;
 			bottom = top + KOOPAS_BBOX_HEIGHT;
+		//	DebugOut(L"bbbbb\n");
 		}
 		else if (state == KOOPA_GREEN_STATE_DIE_UP)
 		{			
 			if (hitByWeapon)
-				left = top = right = bottom = 0;			
+				left = top = right = bottom = 0;	
+		//	DebugOut(L"ccccc \n");
 		}
 	}
 }
@@ -218,7 +200,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		// block every object first!
 
 		//x += min_tx * dx + nx * 0.5f;
-		y += min_ty * dy + ny * 0.5f;
+		//y += min_ty * dy + ny * 0.5f;
 
 		if (ny != 0)
 			vy = 0;
@@ -267,7 +249,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 						vx = -vx;
 					}
 				}
-				else
+				else if (!dynamic_cast<CMario*>(e->obj))
 				{
 					if (e->nx != 0)
 					{
@@ -302,7 +284,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 						vx = -vx;
 					}
 				}
-				else
+				else if(!dynamic_cast<CMario*>(e->obj))
 				{
 					if (!hasWing)
 					{
@@ -359,7 +341,7 @@ void CKoopas::Render()
 		listEffect[i]->Render();
 	}
 	//DebugOut(L"gia tri state %d \n", state);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CKoopas::SetState(int State)

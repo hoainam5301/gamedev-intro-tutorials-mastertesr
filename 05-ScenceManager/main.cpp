@@ -159,7 +159,7 @@ int Run()
 			frameStart = now;
 
 			game->ProcessKeyboard();
-			
+			//DebugOut(L"update\n");
 			Update(dt);
 			Render();
 		}

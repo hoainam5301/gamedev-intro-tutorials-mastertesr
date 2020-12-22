@@ -24,6 +24,7 @@ public:
 	float maxRight;
 	vector <LPGAMEOBJECT> listEffect;
 	bool move;
+	bool hasPress;
 	//bool chamsan;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);

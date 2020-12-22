@@ -34,8 +34,7 @@ void CBrokenBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		hasTranformation = true;
 	}
 	if(GetTickCount64()-timeTranformation>10000 && timeTranformation!=0)
-	{
-		
+	{		
 		tranformation = false;
 		timeTranformation = 0;
 		if (GetState() == STATE_BRICK_NORMAL)
@@ -45,6 +44,7 @@ void CBrokenBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (GetState() == STATE_COIN_NO_ROTATE)
 			SetState(STATE_BRICK_NORMAL);
 	}
+	//DebugOut(L"time tran %d \n", timeTranformation);
 }
 
 void CBrokenBrick::Render()

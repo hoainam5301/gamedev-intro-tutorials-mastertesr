@@ -7,7 +7,7 @@ StatusBar::StatusBar(CMario* mario)
 	time = 100;
 }
 
-void StatusBar::DrawNumber(int x, int y, string stringnumb,int maxsize)
+void StatusBar::DrawNumber(float x, float y, string stringnumb,int maxsize)
 {
 	stringnumb = string (maxsize - stringnumb.size(), '0').append(stringnumb);
 	for (int i = 0; i < stringnumb.size(); i++)
@@ -68,7 +68,7 @@ void StatusBar::DrawAllNumber()
 	DrawNumber(posX + 124, posY + Y + 15, to_string(time),3);//thoi gian
 }
 
-void StatusBar::Update(ULONGLONG dt, int camX, int camY)
+void StatusBar::Update(ULONGLONG dt, float camX, float camY)
 {
 	posX = camX;
 	posY = camY;

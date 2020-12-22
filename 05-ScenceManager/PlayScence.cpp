@@ -1,6 +1,6 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
-
+#include "Game.h"
 #include "PlayScence.h"
 //#include "Utils.h"
 //#include "Textures.h"
@@ -51,6 +51,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 
 void CPlayScene::_ParseSection_TileMap(string line)
 {
+	
 	vector<string> tokens = split(line);
 	if (tokens.size() < 9) return;
 	int ID = atoi(tokens[0].c_str());
@@ -62,6 +63,12 @@ void CPlayScene::_ParseSection_TileMap(string line)
 	int col_on_tile_map = atoi(tokens[6].c_str());
 	int tile_width = atoi(tokens[7].c_str());
 	int tile_height = atoi(tokens[8].c_str());
+	gridObjIdle = new CGrid();
+	gridObjIdle->Resize();
+	
+	gridObjMove = new CGrid();
+	gridObjMove->Resize();						///toi dayyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
 	//int texID = atoi(tokens[0].c_str());
 	map = new TileMap(ID, file_texture.c_str(), file_path.c_str(), row_on_textures, col_on_textures, row_on_tile_map, col_on_tile_map,  tile_width, tile_height);
 
@@ -166,9 +173,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	int ani_set_id = atoi(tokens[3].c_str());
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	// General object setup
+	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
 	CGameObject* obj = NULL;
-	CGameObject* brokenBrick = NULL;
+	//CMario* Player = NULL;
+	//CGameObject* brokenBrick = NULL;
 
 	switch (object_type)
 	{
@@ -178,16 +188,23 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
 		}		
-		obj = new CMario(x, y);		
-		player = (CMario*)obj;
-		//player->SetLevel(backUpLevel);
+		/*obj=CMario::GetInstance();
+		player = dynamic_cast<CMario*> (obj);
+		player = static_cast<CMario*>(obj);*/
+
+		player = CMario::GetInstance();
+		player->SetPosition(x, y);
+		player->SetAnimationSet(ani_set);
+		//listObjMove.push_back(player);
+		
 		statusBar = new StatusBar(player);
-		DebugOut(L"[INFO] Player object created!\n");
+		//DebugOut(L"[INFO] Player object created!\n");
 		break;
 	case OBJECT_TYPE_GOOMBA:
 	{
 		obj = new CGoomba(player);
-		obj->id_goomba= atoi(tokens[4].c_str());
+		obj->id_goomba = atoi(tokens[4].c_str());
+		listObjMove.push_back(obj);
 		//DebugOut(L"id gooombaaaaaa %d \n",obj->id_goomba);
 	}break;
 	case OBJECT_TYPE_ITEMS:
@@ -195,7 +212,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CItems(x, y);
 		//items = (CItems*)obj;
 	}break;
-	case OBJECT_TYPE_MOONEY_EFFECT:obj = new CMonneyEffect(); break;
+	case OBJECT_TYPE_MOONEY_EFFECT:
+	{
+		obj = new CMonneyEffect(); 
+		listObjMove.push_back(obj);
+		break;
+	}
 	case OBJECT_TYPE_WEAPON:
 	{
 		obj = new CWeapon(x, y, player->nx);		
@@ -203,19 +225,22 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BRICK:
 	{		
 		obj = new CBrick(x, y);
-		obj->id_brick_items = atoi(tokens[4].c_str());		
+		obj->id_brick_items = atoi(tokens[4].c_str());	
+		listObjMove.push_back(obj);
 	}
 	break;
 	case OBJECT_TYPE_KOOPAS: 
 	{
 		int id_koopa= atoi(tokens[4].c_str());
 		obj = new CKoopas(player,id_koopa );
+		listObjMove.push_back(obj);
 		break;
 	}
 	case OBJECT_TYPE_PIRANHA_FLOWER_SHOOT:
 	{
 		obj = new CGiantPiranhaPlant(player); 
 		obj->id_giantpiranha = atoi(tokens[4].c_str());
+		listObjMove.push_back(obj);
 		break;
 	}
 	case OBJECT_TYPE_BROKEN_BRICK:
@@ -223,23 +248,33 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int id_state = atoi(tokens[4].c_str());
 		obj = new CBrokenBrick(id_state); 
 		//obj->id_broken_state= atoi(tokens[4].c_str());
+		listObjMove.push_back(obj);
 		break;
 	}
-	case OBJECT_TYPE_COIN:obj = new CCoin(); break;
-	case OBJECT_TYPE_PIRANHA_BITE:obj = new CGiantPiranhaPlantBite(); break;
-	case OBJECT_TYPE_PORTAL:
+	case OBJECT_TYPE_COIN:
 	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
-		int scene_id = atoi(tokens[6].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
+		obj = new CCoin();
+		listObjMove.push_back(obj);
+		break;
 	}
-	break;
+	case OBJECT_TYPE_PIRANHA_BITE:
+	{
+		obj = new CGiantPiranhaPlantBite(); 
+		listObjMove.push_back(obj);
+		break;
+	}
 	case OBJECT_TYPE_FLOOR:
 	{
-		float width = atof(tokens[4].c_str());
-		float height = atof(tokens[5].c_str());
+		int width = atof(tokens[4].c_str());
+		int height = atof(tokens[5].c_str());
 		obj = new CFloor(width, height);
+		if (obj)
+		{
+			obj->SetPosition(x, y);
+			obj->SetAnimationSet(ani_set);
+			//objects.push_back(obj);
+			listObjIdle.push_back(obj);
+		}
 		break;
 	}
 	case OBJECT_TYPE_PIPE:
@@ -248,6 +283,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		float height = atof(tokens[5].c_str());
 		int pipeType = atoi(tokens[6].c_str());
 		obj = new CPipe(width, height,pipeType);
+		listObjIdle.push_back(obj);
 		break;
 	}
 	case OBJECT_TYPE_COLOR_BOX:
@@ -255,6 +291,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		float width = atof(tokens[4].c_str());
 		float height = atof(tokens[5].c_str());
 		obj = new CColorBox(width, height);
+		listObjIdle.push_back(obj);
 		break;
 	}
 	default:
@@ -262,19 +299,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		return;
 	}
 
-	// General object setup
-	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-	/*if (obj)
-	{*/
+
+	if (obj)
+	{
 		obj->SetPosition(x, y);
 		obj->SetAnimationSet(ani_set);
 		objects.push_back(obj);
-	/*}
-	else if(brokenBrick)
-		{ }*/
-	/*brokenBrick->SetPosition(x, y);
-	brokenBrick->SetAnimationSet(ani_set);
-	listbrokenbrick.push_back(brokenBrick);*/
+	}
 }
 int CPlayScene::RandomItems()
 {
@@ -353,7 +384,7 @@ void CPlayScene::Load()
 
 void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 {
-	float camSpeedY = 0;
+	float camSpeedY = 0.0f;
 	if (camY == 0)
 		camY = 200;
 	if (player->inHiddenArea)
@@ -385,7 +416,9 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 		if (player->isFlying)
 		{
 			//camSpeedY = player->vy;
-			camY = player->topOfMario- 100;
+
+			camY = player->y -100.0f;
+			
 			//DebugOut(L"aaaaaaaaaa \n");
 		}
 		else if (player->inHighArea)
@@ -410,17 +443,11 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 		}
 		else if (player->isJumping)
 		{
+			DebugOut(L"%.4f, %.4f\n", camY);
 			if (player->topOfMario < camY+5 )
 			{
 				camSpeedY = player->vy;
-				//camY = player->y - 100;
-				//DebugOut(L"dddddddd \n");
 			}
-			/*else if (!player->standOnCloudBrick)
-			{
-				camY = 200;
-				DebugOut(L"vvvvvvvvvv \n");
-			}*/
 		}
 
 	SetCam:
@@ -433,16 +460,23 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 
 void CPlayScene::Update(ULONGLONG dt)
 {
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
+	gridObjIdle->MakeObjOutOfCam(listObjIdle);
+	gridObjMove->MakeObjOutOfCam(listObjMove);
+
+	InsertObjToGrid();
+	
 	vector<LPGAMEOBJECT> coObjects;
+	player->Update(dt, &objects);
+	for (int i = 0; i < listObjIdle.size(); i++)
+		listObjIdle[i]->Update(dt);
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
+	//player->Update(dt, &coObjects);
 	for (size_t i = 0; i < objects.size(); i++)
 	{
+		//objects[i]->Update(dt, &listObjIdle);
 		objects[i]->Update(dt, &coObjects);
 		LPGAMEOBJECT a = objects[i];
 
@@ -500,36 +534,41 @@ void CPlayScene::Update(ULONGLONG dt)
 			coin->Update(dt, &coObjects);
 		}
 	}
-	
+
 	for (int i = 0; i < listitems.size(); i++)
 	{
 		if (listitems[i]->GetState() == SWITCH_P_OFF)
 		{
-			for (int i = 0; i < objects.size(); i++)
+			LPGAMEOBJECT a = listitems[i];
+			CItems* item = dynamic_cast<CItems*>(a);
+			if (!item->hasPress)
 			{
-				LPGAMEOBJECT broken = objects[i];
-				if (dynamic_cast<CBrokenBrick*>(broken))
+				for (int i = 0; i < objects.size(); i++)
 				{
-					CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
-					if (!brokenbrick->hasTranformation)
+					LPGAMEOBJECT broken = objects[i];
+					if (dynamic_cast<CBrokenBrick*>(broken))
 					{
-						brokenbrick->tranformation = true;
-						brokenbrick->timeTranformation = GetTickCount64();
+						CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
+						if (!brokenbrick->hasTranformation)
+						{
+							brokenbrick->tranformation = true;
+							brokenbrick->timeTranformation = GetTickCount64();
+						}
 					}
 				}
+				item->hasPress = true;
 			}
-			
 			//DebugOut(L"abbbbbbb");
 		}
 	}
 
-	if (player->use_Weapon && !player->isdone)
+	if (player->use_Weapon && !player->hasFight)
 	{
 		if (player->nx > 0)
 			listweapon.push_back(MadeWeapon(player->x + 10, player->y + 6, player->nx));
 		else
 			listweapon.push_back(MadeWeapon(player->x +5, player->y + 6, player->nx));
-		player->isdone = true; //mario da ban dan roi
+		player->hasFight = true; //mario da ban dan roi
 	}
 	if (player->level == MARIO_RACCOON && (player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_LEFT || player->GetState() == MARIO_RACCOON_STATE_FIGHT_IDLE_RIGHT))
 	{
@@ -544,6 +583,7 @@ void CPlayScene::Update(ULONGLONG dt)
 		tail->isFighting = false;
 
 	player->Collision_items(&listitems);
+	//player->Collision_coin(&coObjects);
 	if (listweapon.size() != 0)
 	{
 		if (listweapon.size() >= 2)
@@ -571,33 +611,30 @@ void CPlayScene::Update(ULONGLONG dt)
 	else
 		player->loadFireball = false;
 	
-	//DebugOut(L"LISEEEEEEE %d \n", listweapon.size());
-	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 	
 	// Update camera to follow mario
 	float cx, cy;
 	cx = player->x - (SCREEN_WIDTH / 4);
 	
-	//player->GetPosition(cx, cy);
-	SetCamSpeedY(dt);
-	
-	//CGame::GetInstance()->cam_y = 200;
-	if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < map->GetWidthTileMap())
+	if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2816)
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
 		CGame::GetInstance()->cam_x = cx;
-		/*cy= player->y - (SCREEN_HEIGHT );
-		CGame::GetInstance()->cam_y = player->y-200;*/
-	}
+	}	
+	SetCamSpeedY(dt);
 	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
+	
+	gridObjMove->ResetGrid(listObjMove);
 }
 
 void CPlayScene::Render()
 {
 	
 	map->Draw();
-	//statusBar->Render();
+	for (int i = 0; i < listObjIdle.size(); i++)	
+		listObjIdle[i]->Render();
+	statusBar->Render();
 	for (int i = 0; i < listweapon.size(); i++)
 	{
 		if(!listweapon[i]->isExplode)
@@ -613,34 +650,38 @@ void CPlayScene::Render()
 		tail->Render();
 	if (coin != NULL)
 		coin->Render();
-	/*if (listweapon.size() > 2)
-	{
-		for (int i = 0; i < listweapon.size(); i++)
-			delete listweapon[3];
-		return;
-	}*/
+
 	if (player->turnOffLight)
 	{
 		if (GetTickCount64() - player->waitGetOutOfPipe < 200 && player->countRender<6)
 		{
 			CAnimations::GetInstance()->Get(774)->Render(1000, 0, 200);
 			player->countRender++;
-			//DebugOut(L"gia tri count %d \n",player->countRender);
 		}
-		/*else if (GetTickCount64() - player->waitGetOutOfPipe >= 150 && GetTickCount64() - player->waitGetOutOfPipe < 200 && player->countRender>=4)
-		{
-			CSprites::GetInstance()->Get(2033)->Draw(1000, 0, 255);
-			DebugOut(L"bbbbbbbb \n");
-		}*/
-		/*else if (GetTickCount64() - player->waitGetOutOfPipe >= 200)
-		{
-			player->turnOffLight = false;
-			player->waitGetOutOfPipe = 0;
-		}*/
+	}
+	player->Render();
+}
+
+void CPlayScene::InsertObjToGrid()
+{
+	objects.clear();
+	listAllObjIdle.clear();
+	listAllObjMove.clear();
+	
+	gridObjMove->GetGrid(listAllObjMove);	
+	for(UINT i = 0; i < listAllObjMove.size(); i++)
+	{
+		objects.push_back(listAllObjMove[i]);
+	}
+	
+	gridObjIdle->GetGrid(listObjIdle);
+
+	for (UINT i = 0; i < listObjIdle.size(); i++)
+	{
+		objects.push_back(listObjIdle[i]);
 	}
 
 }
-
 /*
 	Unload current scene
 */
@@ -648,20 +689,21 @@ void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
-	/*for (int i = 0; i < listweapon.size(); i++)
-	{
-		if (listweapon[i]->GetState() == FIRE_BALL_EXPLODE)
-			delete listweapon[i];
-	}*/
 
+	listObjIdle.clear();
+	listObjMove.clear();
 	objects.clear();
+
+	gridObjIdle = NULL;
+	gridObjMove = NULL;
 	player = NULL;
 
-	//DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 {
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	CGame* game = CGame::GetInstance();
+	//CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	CMario* mario = CMario::GetInstance();
 	switch (KeyCode)
 	{
 	case DIK_S:
@@ -714,7 +756,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		{
 
 			mario->use_Weapon = false;
-			mario->isdone = false;			//mario chua ban dan
+			mario->hasFight = false;			//mario chua ban dan
 		}
 
 		if (mario->isHolding)
@@ -761,7 +803,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	//DebugOut(L"aaaaaa \n");
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	CGame* game = CGame::GetInstance();
+	//CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	CMario* mario = CMario::GetInstance();
  	switch (KeyCode)
 	{
 	case DIK_S:
@@ -908,8 +952,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-
+	//CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	CMario* mario = CMario::GetInstance();
 	// disable control key when Mario die 
 
 	if (mario->GetState() == MARIO_ANI_DIE)

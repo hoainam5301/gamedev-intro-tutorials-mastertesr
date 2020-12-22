@@ -183,7 +183,7 @@ void CItems::SetState(int state)
 		break;
 	case SWITCH_P_ON:
 		break;
-	case SWITCH_P_OFF:
+	case SWITCH_P_OFF:	
 		break;
 	}
 }

@@ -4,6 +4,7 @@
 
 CGoomba::CGoomba(CMario* mario)
 {
+	DebugOut(L"id goomba\n");
 	if (id_goomba == GOOMBA_NORMAL)
 		SetState(GOOMBA_STATE_WALKING);
 	else if (id_goomba == GOOMBA_RED)
@@ -39,8 +40,8 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 			{
 				left = x;
 				top = y;
-				right = x + 20;
-				bottom = y + 24;
+				right = left + 20;
+				bottom = top + 24;
 			}
 			else
 			{
@@ -59,7 +60,6 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 	//
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!
 	// 	
-	//DebugOut(L"id goomba %d \n",id_goomba);
 	//
 	if (id_goomba == 2)
 	{
