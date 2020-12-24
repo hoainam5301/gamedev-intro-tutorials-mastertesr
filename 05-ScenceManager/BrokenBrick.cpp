@@ -9,50 +9,26 @@ CBrokenBrick::CBrokenBrick(int id_state)
 	else if (this->id_broken_state == 2)
 		SetState(STATE_COIN_ROTATE);
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(12));
-	//DebugOut(L"Gia tri cua state %d \n", id_broken_state);
+	
 
 }
 
 void CBrokenBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//DebugOut(L"Gia tri cua state %d \n", id_broken_state);
-	/*if (isDestroyed)
-		DebugOut(L"dasdasdasdasda");*/
 	
 	for (int i=0;i<listPiece.size();i++)
-	{
-		listPiece[i]->Update(dt, coObjects);	
-	}
-	
-	if (tranformation && GetTickCount64()-timeTranformation<10000 && timeTranformation!=0 && !hasTranformation)
-	{
-		//DebugOut(L"aaaaaaaaaaaaa");
-		if (GetState() == STATE_BRICK_NORMAL)
-			SetState(STATE_COIN_NO_ROTATE);
-		else if (GetState() == STATE_COIN_ROTATE)
-			SetState(STATE_BRICK_NORMAL);
-		hasTranformation = true;
-	}
-	if(GetTickCount64()-timeTranformation>10000 && timeTranformation!=0)
 	{		
-		tranformation = false;
-		timeTranformation = 0;
-		if (GetState() == STATE_BRICK_NORMAL)
-			SetState(STATE_COIN_NO_ROTATE);
-		else if (GetState() == STATE_COIN_ROTATE)
-			SetState(STATE_BRICK_NORMAL);
-		else if (GetState() == STATE_COIN_NO_ROTATE)
-			SetState(STATE_BRICK_NORMAL);
-	}
-	//DebugOut(L"time tran %d \n", timeTranformation);
+		listPiece[i]->Update(dt, coObjects);	
+		if (listPiece[i]->isdone)
+			isdone = true;
+	}	
 }
 
 void CBrokenBrick::Render()
 {
 	//RenderBoundingBox();
-	if(!isDestroyed)
-		animation_set->at(state)->Render(x,y);
-	//DebugOut(L"Gia tri cua state %d \n", state);
+	if (!isDestroyed && !tranformation)
+		animation_set->at(state)->Render(x, y);
 	for (LPGAMEOBJECT piece : listPiece)
 	{
 		piece->Render();
@@ -60,12 +36,12 @@ void CBrokenBrick::Render()
 }
 void CBrokenBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
-	if (isDestroyed)
+	if (isDestroyed || tranformation)
 		return;
 	l = x;
 	t = y;
-	r = x + 16;
-	b = y + 16;
+	r = l + 16;
+	b = t + 16;
 }
 void CBrokenBrick::SetState(int State)
 {

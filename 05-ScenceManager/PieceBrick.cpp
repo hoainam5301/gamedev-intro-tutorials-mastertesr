@@ -17,13 +17,14 @@ void CPieceBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	x += dx;
 	y += dy;
 
-	/*if (y > CGame::GetInstance()->GetCamPosY() + SCREEN_HEIGHT / 2)
-		isFinishedUsing = true;*/
+	if (y > CGame::GetInstance()->GetCamPosY() + SCREEN_HEIGHT / 2)
+		isdone = true;
 }
 
 void CPieceBrick::Render()
 {
-	animation_set->at(0)->Render(x, y);
+	if(!isdone)
+		animation_set->at(0)->Render(x, y);
 }
 
 void CPieceBrick::GetBoundingBox(float& l, float& t, float& r, float& b)

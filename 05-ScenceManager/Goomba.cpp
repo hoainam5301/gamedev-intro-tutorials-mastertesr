@@ -4,7 +4,7 @@
 
 CGoomba::CGoomba(CMario* mario)
 {
-	DebugOut(L"id goomba\n");
+	//DebugOut(L"id goomba\n");
 	if (id_goomba == GOOMBA_NORMAL)
 		SetState(GOOMBA_STATE_WALKING);
 	else if (id_goomba == GOOMBA_RED)
@@ -129,6 +129,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	else
 	{
+		
 		float min_tx, min_ty, nx = 0, ny = 0;
 		float rdx = 0;
 		float rdy = 0;
@@ -138,7 +139,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 		// block every object first!
 
 
-		y += min_ty * dy + ny * 0.5f;
+		//y += min_ty * dy + ny * 0.5f;
 		x += min_tx * dx + nx * 0.5f;
 		
 		if (ny < 0)
@@ -229,7 +230,7 @@ void CGoomba::Render()
 	{
 		listEffect[i]->Render();
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 //CGoomba::CGoomba(float width, float height)
 //{
@@ -265,7 +266,7 @@ void CGoomba::SetState(int state)
 			break;
 		case GOOMBA_STATE_DIE_FLY:
 			vx = -vx;
-			vy = -0.15;
+			vy = -0.15f;
 			break;
 		case GOOMBA_RED_STATE_NO_WING_DIE:
 			vx = 0;
@@ -273,7 +274,7 @@ void CGoomba::SetState(int state)
 			break;
 		case GOOMBA_RED_STATE_NO_WING_DIE_FLY:
 			vx = -vx;
-			vy = -0.15;
+			vy = -0.15f;
 			break;
 		case GOOMBA_RED_STATE_HAS_WING_WALK:
 			SetSpeed();			
@@ -282,13 +283,13 @@ void CGoomba::SetState(int state)
 			SetSpeed();
 			break;
 		case GOOMBA_RED_STATE_HAS_WING_FLY_LOW:
-			vy = -0.05;
+			vy = -0.05f;
 			SetSpeed();
 			isGrounded = false;
 			break;
 		case GOOMBA_RED_STATE_HAS_WING_FLY_HIGH:
 			isGrounded = false;
-			vy = -0.15;
+			vy = -0.15f;
 			SetSpeed();
 			break;
 	}

@@ -72,8 +72,8 @@ void StatusBar::Update(ULONGLONG dt, float camX, float camY)
 {
 	posX = camX;
 	posY = camY;
-	score = 1000;
-	money = 99;
+	score = Mario->score;
+	money = Mario->dola;
 	word = 1;
 	life = 4;
 	second++;

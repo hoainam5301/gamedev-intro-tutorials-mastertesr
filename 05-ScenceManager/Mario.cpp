@@ -15,6 +15,7 @@
 #include "ColorBox.h"
 #include "BrokenBrick.h"
 #include "Pipe.h"
+#include "Coin.h"
 
 
 CMario* CMario::__instance = NULL;
@@ -32,8 +33,9 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->y = y;
 }
 
-void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
+void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGAMEOBJECT>* listObjIdle*/)
 {
+#pragma region Update Mario
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 
@@ -100,17 +102,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(MARIO_STATE_IDLE);
 		}
 	}
-	
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
 
-	coEvents.clear();
-
-	// turn off collision when die 
-	if (state != MARIO_ANI_DIE)
-		CalcPotentialCollisions(coObjects, coEvents);
-	//aabb
-	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
@@ -130,7 +122,16 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		isWaitingForAni = false;
 	}
-	// No collision occured, proceed normally
+
+#pragma endregion
+
+#pragma region	ObjMove
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	coEvents.clear();
+	if (state != MARIO_ANI_DIE)
+		CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -148,33 +149,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		float rdx = 0;
 		float rdy = 0;
 
-		// TODO: This is a very ugly designed function!!!!
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-		// how to push back Mario if collides with a moving objects, what if Mario is pushed this way into another object?
-		/*if (rdx != 0 && rdx!=dx)
-			x += nx*abs(rdx); */
-			// block every object first!
-		//if (min_tx < min_ty)
-		//{
-		//x += min_tx * dx + nx * 0.4f;
-		////CGameObject:: SweptAABBEx(coObjects);
-		////LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
-		//}
-		//else
-		//{
-		//	y += min_ty * dy + ny * 0.1f;
-		//	//CGameObject::SweptAABBEx(coObjects);
-		//	//LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
-		//}
-
+	
 		x += min_tx * dx + nx * 0.4f;
-		/*for (int i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if(!dynamic_cast<CGoomba*>(e->obj)&&!dynamic_cast<CKoopas*>(e->obj) && e->ny>0)*/
-				y += min_ty * dy + ny * 0.1f;
-		//}
+		y += min_ty * dy + ny * 0.1f;
+	
 
 		if (nx != 0)
 		{
@@ -192,7 +171,6 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				isFlying = false;
 				Firstspaceup = true;
 				canNotWalking = false;	
-				//standOnCloudBrick = false;
 				standOnPipe = false;
 				mDy = 0;				
 			}
@@ -214,14 +192,14 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				if (e->nx != 0)
 				{
-					vx = last_vx;
-					x += dx;
+					if (!isFlying)					
+						vx = last_vx;
+					x += dx;					
 				}
 			}
 			else if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-
 				// jump on top >> kill Goomba and deflect a bit 
 				if (e->ny < 0)
 				{
@@ -617,12 +595,13 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 			}
 			else if (dynamic_cast<CBrick*>(e->obj))
-			{
-				
-				CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
+			{				
+			CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
+			
 				if (e->ny > 0 )
 				{
-					Brick->bottom_coll = 1;				
+					Brick->bottom_coll = 1;
+				//	DebugOut(L"NNNNNNNNNNNNNNNNNNNNNNNNNNNNN\n");
 				}
 				else if (e->ny < 0)
 				{
@@ -631,45 +610,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (e->nx != 0)
 					vx = 0;
-			} //if NAm
-			else if (dynamic_cast<CPortal*>(e->obj))
-			{
-				CPortal* p = dynamic_cast<CPortal*>(e->obj);
-				CGame::GetInstance()->SwitchScene(p->GetSceneId());
-			}
-			else if (dynamic_cast<CFloor*>(e->obj))
-			{
-				if (e->ny < 0)
-				{
-					isFalling = false;
-					inHighArea = false;
-				}
-				else if (e->nx != 0)
-					vx = 0;
-				/*else if (e->nx != 0)*/
-					//DebugOut(L"Aaaaaaa");
-			}
-			else if (dynamic_cast<CPipe*>(e->obj))
-			{
-				CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
-				if (e->ny < 0 && CGame::GetInstance()->IsKeyDown(DIK_DOWN))
-				{
-					if (pipe->pypeType == 2)
-					{
-						startOfLongPipeY = pipe->y;
-						getDownInPipe = true;
-						vy = 0.01;
-						isSitting = false;
-						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);												
-					}
-				}
-				else if (e->ny < 0)
-				{
-					isFalling = false;
-					inHighArea = false;
-					standOnPipe = true;
-				}
-			}
+			} //if NAm		
 			else if (dynamic_cast<CGiantPiranhaPlant*>(e->obj))
 			{
 				if (untouchable == 0)
@@ -688,20 +629,64 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 					vy = 0;
 					
 				}
+			}			
+			else if (dynamic_cast<CFloor*>(e->obj))
+			{
+			if (e->ny < 0)
+			{
+				isFalling = false;
+				inHighArea = false;
+			}
+			else if (e->nx != 0)
+				vx = 0;
+			}
+			else if (dynamic_cast<CPipe*>(e->obj))
+			{
+				CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
+				if (e->ny < 0 && CGame::GetInstance()->IsKeyDown(DIK_DOWN))
+				{
+					if (pipe->pypeType == 2)
+					{
+						startOfLongPipeY = pipe->y;
+						getDownInPipe = true;
+						vy = 0.01;
+						isSitting = false;
+						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+					}
+				}
+				else if (e->ny < 0)
+				{
+					isFalling = false;
+					inHighArea = false;
+					standOnPipe = true;
+				}
 			}
 			else if (dynamic_cast<CBrokenBrick*>(e->obj))
 			{
 				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);	
-				if (e->ny < 0 && brokenbrick->GetState()==STATE_BRICK_NORMAL)
+				if (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState() == STATE_COIN_NO_ROTATE)
+				{
+					brokenbrick->isDestroyed = true;
+					brokenbrick->isdone = true;				
+					//y += dy;
+				}
+				else if (e->ny < 0 && (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState()==STATE_COIN_NO_ROTATE))
+				{
+					brokenbrick->isDestroyed = true;
+					brokenbrick->isdone = true;
+					x += dx;
+					y += dy;
+				}
+				else if (e->ny < 0 && brokenbrick->GetState()==STATE_BRICK_NORMAL)
 				{
 					isFalling = false;	
 					inHighArea = false;
 				}
-				else if(brokenbrick->GetState() != STATE_BRICK_NORMAL)
+				/*else if(brokenbrick->GetState() != STATE_BRICK_NORMAL)
 				{
 					brokenbrick->isDestroyed = true;
 					brokenbrick->isdone = true;
-				}				
+				}*/				
 			}
 		}
 		
@@ -709,6 +694,120 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	// clean up collision events
 	//DebugOut(L"gia tri  %f \n", vx);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+#pragma endregion
+
+#pragma region Collision IdleObj
+	/*vector<LPCOLLISIONEVENT> coObjIdlEvents;
+	vector<LPCOLLISIONEVENT> coObjIdleEventsResult;
+
+	coObjIdlEvents.clear();	
+	CalcPotentialCollisions(listObjIdle, coObjIdlEvents);
+
+	if (coObjIdlEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+		mDy += dy;
+		if (mDy > 0.5)
+		{
+			isJumping = true;
+			is_Grounded = false;
+		}
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
+
+		FilterCollision(coObjIdlEvents, coObjIdleEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.1f;
+
+		if (nx != 0)
+		{
+			vx = last_vx;
+			if (isRunning)
+				vx = 0;
+		}
+
+		if (ny != 0)
+		{
+			if (ny < 0)
+			{
+				isJumping = false;
+				is_Grounded = true;
+				isFlying = false;
+				Firstspaceup = true;
+				canNotWalking = false;
+				standOnPipe = false;
+				mDy = 0;
+			}
+			vy = 0;
+		}
+		//
+		// Collision logic with other objects
+		//
+		Collision_coin(coObjects);
+		for (UINT i = 0; i < coObjIdleEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coObjIdleEventsResult[i];
+			if (dynamic_cast<CColorBox*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					isFalling = false;
+					inHighArea = false;
+				}
+				if (e->nx != 0)
+				{
+					if(!isFlying)
+						vx = last_vx;
+					x += dx;
+				}
+			} 
+			else if (dynamic_cast<CFloor*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					isFalling = false;
+					inHighArea = false;
+				}
+				else if (e->nx != 0)
+					vx = 0;
+				//DebugOut(L"gia tri  %f \n", vy);
+			}
+			else if (dynamic_cast<CPipe*>(e->obj))
+			{
+				CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
+				if (e->ny < 0 && CGame::GetInstance()->IsKeyDown(DIK_DOWN))
+				{
+					if (pipe->pypeType == 2)
+					{
+						startOfLongPipeY = pipe->y;
+						getDownInPipe = true;
+						vy = 0.01;
+						isSitting = false;
+						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+					}
+				}
+				else if (e->ny < 0)
+				{
+					isFalling = false;
+					inHighArea = false;
+					standOnPipe = true;
+				}
+			}
+		}
+
+	}
+	// clean up collision events
+	//DebugOut(L"gia tri  %f \n", vx);
+	for (UINT i = 0; i < coObjIdlEvents.size(); i++) delete coObjIdlEvents[i];*/
+
+#pragma endregion
+	
 }
 
 void CMario::UpdateInScenceMap(ULONGLONG dt)
@@ -718,7 +817,7 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 	y += dy;
 	if (vx > 0)
 	{
-		if (leftOfMario > posXOfNextPortalGoRight)
+		/*if (leftOfMario > posXOfNextPortalGoRight)
 		{
 			vx = 0;
 			leftOfMario = posXOfNextPortalGoRight;
@@ -726,11 +825,20 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 			isAutoGoRight = false;
 			isGoTo = false;
 			sceneIdPresent = sceneIdGoToRight;
+		}*/
+		if (x > posXOfNextPortalGoRight)
+		{
+			vx = 0;
+			x = posXOfNextPortalGoRight-12;
+			//x = leftOfMario - 12;
+			isAutoGoRight = false;
+			isGoTo = false;
+			sceneIdPresent = sceneIdGoToRight;
 		}
 	}
 	else if (vx < 0)
 	{
-		if (leftOfMario < posXOfNextPortalGoLeft)
+		/*if (leftOfMario < posXOfNextPortalGoLeft)
 		{
 			vx = 0;
 			leftOfMario = posXOfNextPortalGoLeft;
@@ -738,11 +846,20 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 			isAutoGoLeft = false;
 			isGoTo = false;
 			sceneIdPresent = sceneIdGoToLeft;
+		}*/
+		if (x < posXOfNextPortalGoLeft)
+		{
+			vx = 0;
+			//leftOfMario = posXOfNextPortalGoLeft;
+			x = posXOfNextPortalGoLeft - 12;
+			isAutoGoLeft = false;
+			isGoTo = false;
+			sceneIdPresent = sceneIdGoToLeft;
 		}
 	}
 	else if (vy > 0)
 	{
-		if (topOfMario > posYOfNextPortalGoDown)
+		/*if (topOfMario > posYOfNextPortalGoDown)
 		{
 			vy = 0;
 			topOfMario = posYOfNextPortalGoDown;
@@ -752,11 +869,22 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 			leftOfMario = posXOfPortal;
 			x = leftOfMario - 12;
 			sceneIdPresent = sceneIdGoToDown;
+		}*/
+		if (y > posYOfNextPortalGoDown)
+		{
+			vy = 0;
+			y = posYOfNextPortalGoDown-14;
+			//y = topOfMario - 14;
+			isAutoGoDown = false;
+			isGoTo = false;
+			x = posXOfPortal-12;
+			//x = leftOfMario - 12;
+			sceneIdPresent = sceneIdGoToDown;
 		}
 	}
 	else if (vy < 0)
 	{
-		if (topOfMario < posYOfNextPortalGoUp)
+		/*if (topOfMario < posYOfNextPortalGoUp)
 		{
 			vy = 0;
 			topOfMario = posYOfNextPortalGoUp;
@@ -765,6 +893,17 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 			isGoTo = false;
 			leftOfMario = posXOfPortal;	
 			x = leftOfMario - 12;
+			sceneIdPresent = sceneIdGoToUp;
+		}*/
+		if (y < posYOfNextPortalGoUp)
+		{
+			vy = 0;
+			y = posYOfNextPortalGoUp-14;
+			//y = topOfMario - 14;
+			isAutoGoTop = false;
+			isGoTo = false;
+			x = posXOfPortal-12;
+			//x = leftOfMario - 12;
 			sceneIdPresent = sceneIdGoToUp;
 		}
 	}
@@ -777,7 +916,7 @@ void CMario::Render()
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	animation_set->at(state)->Render(x, y, alpha);	
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 
@@ -828,14 +967,16 @@ void CMario::Collision_coin(vector<LPGAMEOBJECT>* coObjects)
 		e->GetBoundingBox(ln, tn, rn, btn);
 		if (CGameObject::CheckAABB(l, t, r, b, ln, tn, rn, btn))
 		{
-			if (dynamic_cast<CBrokenBrick*>(e))
+			if (dynamic_cast<CCoin*>(e))
 			{
-				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e);
+				CCoin* brokenbrick = dynamic_cast<CCoin*>(e);
 				brokenbrick->GetBoundingBox(ln, tn, rn, btn);
 				if (CGameObject::CheckAABB(l, t, r, b, ln, tn, rn, btn))
 				{
-					if (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState() == STATE_COIN_NO_ROTATE)
-						brokenbrick->isDestroyed=true;
+					//if (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState() == STATE_COIN_NO_ROTATE)
+						brokenbrick->isdone=true;
+						dola++;
+						score += 100;
 				}
 			}
 			
@@ -1786,6 +1927,6 @@ void CMario::Reset()
 {
 	SetState(MARIO_STATE_IDLE);
 	SetLevel(MARIO_RACCOON);
-	SetPosition(start_x, 300);
+	SetPosition(2256, 80);
 	SetSpeed(0, 0);
 }

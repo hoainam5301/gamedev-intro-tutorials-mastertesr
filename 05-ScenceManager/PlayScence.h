@@ -23,6 +23,7 @@
 #include "Pipe.h"
 #include "Grid.h"
 
+
 class CPlayScene: public CScene
 {
 protected: 
@@ -40,6 +41,9 @@ protected:
 	vector<LPGAMEOBJECT> listAllObjIdle;
 	vector<LPGAMEOBJECT> listObjIdle;
 	vector<LPGAMEOBJECT> listObjMove;
+	vector<LPGAMEOBJECT> listCoin;
+
+
 
 	//CGiantPiranhaPlant* flower;
 	// A play scene has to have player, right? 
@@ -48,7 +52,9 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> listitems;
 	vector<LPGAMEOBJECT> listweapon;
-	vector<LPGAMEOBJECT> players;
+	vector<LPGAMEOBJECT> listcoin;
+
+	ULONGLONG timeTranformation;
 	//vector<LPGAMEOBJECT> listbrokenbrick;
 
 	CItems* MadeItems(float x, float y)

@@ -159,6 +159,7 @@ void CWeapon::Render()
 		animation_set->at(state)->Render(x, y);	
 	if(state==FIRE_BALL_EXPLODE && isWaitingForAni)
 		animation_set->at(state)->Render(x, y);
+	RenderBoundingBox();
 }
 void CWeapon::SetState(int state)
 {

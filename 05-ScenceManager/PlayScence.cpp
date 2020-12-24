@@ -254,7 +254,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_COIN:
 	{
 		obj = new CCoin();
-		listObjMove.push_back(obj);
+		//listObjMove.push_back(obj);
+		listCoin.push_back(obj);
 		break;
 	}
 	case OBJECT_TYPE_PIRANHA_BITE:
@@ -443,7 +444,7 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 		}
 		else if (player->isJumping)
 		{
-			DebugOut(L"%.4f, %.4f\n", camY);
+			//DebugOut(L"%.4f, %.4f\n", camY);
 			if (player->topOfMario < camY+5 )
 			{
 				camSpeedY = player->vy;
@@ -466,9 +467,9 @@ void CPlayScene::Update(ULONGLONG dt)
 	InsertObjToGrid();
 	
 	vector<LPGAMEOBJECT> coObjects;
-	player->Update(dt, &objects);
-	for (int i = 0; i < listObjIdle.size(); i++)
-		listObjIdle[i]->Update(dt);
+	player->Update(dt, &objects/*,&listObjIdle*/);
+	/*for (int i = 0; i < listObjIdle.size(); i++)
+		listObjIdle[i]->Update(dt);*/
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -499,6 +500,7 @@ void CPlayScene::Update(ULONGLONG dt)
 				coin = new CCoin();
 				gach->created_item = 1;
 				coin->SetPosition(gach->x+3, gach->y);
+				coin->SetState(COIN_STATE_CREATED);
 			}
 		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_SWITCH_P)
@@ -513,7 +515,6 @@ void CPlayScene::Update(ULONGLONG dt)
 				item->SetPosition(gach->x, gach->y - 16);
 				listitems.push_back(item);
 			}							
-			//gach->created_item = 1;
 		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_BONUS)
 		{
@@ -532,7 +533,20 @@ void CPlayScene::Update(ULONGLONG dt)
 		if (coin != NULL)
 		{
 			coin->Update(dt, &coObjects);
+			for (int i = 0; i < coin->listEffect.size(); i++)
+			{
+				coin->listEffect[i]->Update(dt,&coObjects);
+				if (coin->listEffect[i]->isdone)
+				{
+					coin->isdone = true;					
+				}
+			}
 		}
+	}
+		
+	for (int i = 0; i < listCoin.size(); i++)
+	{
+		listCoin[i]->Update(dt, &coObjects);
 	}
 
 	for (int i = 0; i < listitems.size(); i++)
@@ -549,18 +563,89 @@ void CPlayScene::Update(ULONGLONG dt)
 					if (dynamic_cast<CBrokenBrick*>(broken))
 					{
 						CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
-						if (!brokenbrick->hasTranformation)
+						if (!brokenbrick->isDestroyed)
 						{
 							brokenbrick->tranformation = true;
-							brokenbrick->timeTranformation = GetTickCount64();
-						}
+							timeTranformation = GetTickCount64();
+							CCoin* coin = new CCoin();
+							coin->SetPosition(brokenbrick->x, brokenbrick->y);
+							coin->SetState(COIN_STATE_NO_ROTATE);
+							listcoin.push_back(coin);
+						}						
 					}
 				}
+				//for (int j = 0; j < listCoin.size(); j++)
+				//{
+				//	LPGAMEOBJECT Coin = listCoin[j];
+				//	if (dynamic_cast<CCoin*>(Coin))
+				//	{
+				//		CCoin * coin = dynamic_cast<CCoin*>(Coin);
+				//		if (!coin->isdone /*&& coin->tranformation*/)
+				//		{
+				//			coin->tranformation = true;
+				//			timeTranformation = GetTickCount64();
+				//			CBrokenBrick * brokenbrick= new CBrokenBrick (1);
+				//			brokenbrick->SetPosition(coin->x, coin->y);
+				//			brokenbrick->SetState(STATE_BRICK_NORMAL);
+				//			listcoin.push_back(brokenbrick);
+				//		}
+				//	}
+				//}
 				item->hasPress = true;
 			}
-			//DebugOut(L"abbbbbbb");
 		}
 	}
+	if (GetTickCount64() - timeTranformation > 5000 && timeTranformation!=0)
+	{
+		for (int i = 0; i < objects.size(); i++)
+		{
+			LPGAMEOBJECT broken = objects[i];
+			if (dynamic_cast<CBrokenBrick*>(broken))
+			{
+				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
+				if (!brokenbrick->isDestroyed)
+				{				
+					for (int j = 0; j < listcoin.size(); j++)
+					{
+						if (listcoin[j]->y == brokenbrick->y && listcoin[j]->isdone && listcoin[j]->x== brokenbrick->x)
+							brokenbrick->isdone = true;
+						else
+							brokenbrick->tranformation = false;
+					}
+				}
+			}
+		}
+		//for (int j = 0; j < listcoin.size(); j++)
+		//{
+		//	LPGAMEOBJECT broken = listcoin[j];
+		//	if (dynamic_cast<CBrokenBrick*>(broken))
+		//	{
+		//		CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(broken);
+		//		if (!brokenbrick->isdone)
+		//		{				
+		//			for (int j = 0; j < listCoin.size(); j++)
+		//			{
+		//				if (listCoin[j]->y == brokenbrick->y/* && listCoin[j]->isdone &&*/&& listCoin[j]->x== brokenbrick->x)
+		//				{
+		//					CCoin* Coin = dynamic_cast<CCoin*>(listCoin[j]);
+		//					Coin->tranformation = false;
+		//				}
+		//				else
+		//				{
+		//					CCoin* Coin = dynamic_cast<CCoin*>(listCoin[j]);
+		//					Coin->tranformation = false;
+		//				}
+
+		//			}
+		//		}
+		//	}
+		//}
+		listcoin.clear();
+	}
+	/*for (int i = 0; i < listcoin.size(); i++)
+	{
+		listcoin[i]->Update(dt, &coObjects);
+	}*/
 
 	if (player->use_Weapon && !player->hasFight)
 	{
@@ -583,7 +668,8 @@ void CPlayScene::Update(ULONGLONG dt)
 		tail->isFighting = false;
 
 	player->Collision_items(&listitems);
-	//player->Collision_coin(&coObjects);
+	player->Collision_coin(&listcoin);
+	player->Collision_coin(&listCoin);
 	if (listweapon.size() != 0)
 	{
 		if (listweapon.size() >= 2)
@@ -635,6 +721,14 @@ void CPlayScene::Render()
 	for (int i = 0; i < listObjIdle.size(); i++)	
 		listObjIdle[i]->Render();
 	statusBar->Render();
+	for (int i = 0; i < listcoin.size(); i++)
+	{
+		listcoin[i]->Render();
+	}
+	for (int i = 0; i < listCoin.size(); i++)
+	{
+		listCoin[i]->Render();
+	}
 	for (int i = 0; i < listweapon.size(); i++)
 	{
 		if(!listweapon[i]->isExplode)

@@ -207,6 +207,7 @@ public:
 	bool standOnCloudBrick;
 	bool inHighArea;
 	bool inHiddenArea;
+	
 	float topOfMario;  //top cua bbox
 	float leftOfMario;
 	float bottomOfMario;
@@ -244,8 +245,13 @@ public:
 	bool isFalling;
 	bool hasFight;
 	float mDy = 0;				//xac dinh mario roi
-	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
+	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL/*,vector<LPGAMEOBJECT>*colliable_objidle=NULL*/);
 	void Render();
+
+	int score;
+	int dola;
+	int timeLife=300;
+
 
 	void UpdateInScenceMap(ULONGLONG dt);
 

@@ -10,12 +10,11 @@ CKoopas::CKoopas(CMario* mario,int id_Koopa)
 	Mario = mario;
 	id_koopa = id_Koopa;
 	if (id_koopa == KOOPA_RED)
-		SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+		SetState(KOOPA_RED_STATE_WALKING_LEFT);
 	else if (id_koopa == KOOPA_GREEN)
 	{
-		SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT);
-		timeToFly = GetTickCount64();
-		
+		SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT);
+		timeToFly = GetTickCount64();		
 	}
 }
 
@@ -123,13 +122,13 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			Mario->isHolding = false;
 		}
 	}
-	else if (id_koopa = KOOPA_GREEN)
+	else if (id_koopa == KOOPA_GREEN)
 	{
 		if (hasWing)
 		{
 			if (GetTickCount64() - timeToFly > 900 && !hitByWeapon)
 			{
-				SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT);
+				SetState(KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT);
 				timeToFly = GetTickCount64();
 			}
 		}
@@ -154,7 +153,10 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			if (GetTickCount64() - timeToRevive > 10000 && (last_state == KOOPA_GREEN_STATE_REVIVE || last_state == KOOPA_GREEN_STATE_REVIVE_UP))
 			{
-				SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
+				if (vx < 0)
+					SetState(KOOPA_GREEN_STATE_WALKING_LEFT);
+				else
+					SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
 				timeToRevive = 0;
 			}
 		}
@@ -199,7 +201,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 		// block every object first!
 
-		//x += min_tx * dx + nx * 0.5f;
+		x += min_tx * dx + nx * 0.5f;
 		//y += min_ty * dy + ny * 0.5f;
 
 		if (ny != 0)
@@ -290,7 +292,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (e->nx != 0)
 						{
-							vx = -vx;
+							//vx = -vx;
 							if (GetState() != KOOPA_GREEN_STATE_DIE_AND_MOVE && GetState() != KOOPA_GREEN_STATE_DIE_AND_MOVE_UP && GetState() != KOOPA_GREEN_STATE_DIE_UP)
 							{
 								if (vx > 0)
@@ -435,11 +437,11 @@ void CKoopas::SetState(int State)
 		break;
 	case KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT:	
 		vx = KOOPAS_WALKING_SPEED+0.01;
-		//vy = -0.18;
+		vy = -0.18;
 		break;
 	case KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT:
-		vx = -KOOPAS_WALKING_SPEED+0.01;
-		//vy = -0.18;
+		vx = -KOOPAS_WALKING_SPEED;
+		vy = -0.18;
 		break;
 	case KOOPA_GREEN_STATE_HOLDING:
 		last_state = KOOPA_GREEN_STATE_HOLDING;
