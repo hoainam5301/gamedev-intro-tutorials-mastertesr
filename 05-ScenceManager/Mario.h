@@ -251,6 +251,7 @@ public:
 	int score;
 	int dola;
 	int timeLife=300;
+	bool endGame;
 
 
 	void UpdateInScenceMap(ULONGLONG dt);

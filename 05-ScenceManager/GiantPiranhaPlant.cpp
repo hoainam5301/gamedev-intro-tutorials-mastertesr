@@ -47,7 +47,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (start_y - GIANT_BOX_HEIGHT - Mario->y < 0)
 					SetState(GIANT_STATE_SHOOT_45_RIGHT);
 			}
-			CFireball* fireball = new CFireball({ x,start_y - GIANT_BOX_HEIGHT }, 1);
+			CFireball* fireball = new CFireball({ x,start_y - GIANT_BOX_HEIGHT }, 1,Mario);
 			if (x - Mario->x > 0)
 				fireball->nx = -1;
 			else
@@ -94,7 +94,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (start_y - GIANT_GREEN_BOX_HEIGHT - Mario->y < 0)
 					SetState(GIANT_GREEN_STATE_SHOOT_45_RIGHT);
 			}
-			CFireball* fireball = new CFireball({ x,start_y - GIANT_GREEN_BOX_HEIGHT }, 1);
+			CFireball* fireball = new CFireball({ x,start_y - GIANT_GREEN_BOX_HEIGHT }, 1,Mario);
 			if (x - Mario->x > 0)
 				fireball->nx =-1 ;
 			else

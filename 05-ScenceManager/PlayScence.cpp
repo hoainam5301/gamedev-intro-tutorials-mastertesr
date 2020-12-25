@@ -470,11 +470,11 @@ void CPlayScene::Update(ULONGLONG dt)
 	player->Update(dt, &objects/*,&listObjIdle*/);
 	/*for (int i = 0; i < listObjIdle.size(); i++)
 		listObjIdle[i]->Update(dt);*/
-	for (size_t i = 1; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
-	//player->Update(dt, &coObjects);
+
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		//objects[i]->Update(dt, &listObjIdle);
@@ -592,7 +592,18 @@ void CPlayScene::Update(ULONGLONG dt)
 				//	}
 				//}
 				item->hasPress = true;
-			}
+			}			
+		}
+		LPGAMEOBJECT a = listitems[i];
+		CItems* item = dynamic_cast<CItems*>(a);
+		if (item->makeItemFly)
+		{
+			CItems* itemfly = new CItems(item->x, item->y);
+			itemfly->id_items = START_FLY_UP;
+			itemfly->SetState(START_FLY_UP);
+			itemfly->SetPosition(item->x, item->y);
+			listitems.push_back(itemfly);
+			item->makeItemFly = false;
 		}
 	}
 	if (GetTickCount64() - timeTranformation > 5000 && timeTranformation!=0)
@@ -646,6 +657,16 @@ void CPlayScene::Update(ULONGLONG dt)
 	{
 		listcoin[i]->Update(dt, &coObjects);
 	}*/
+
+	if (player->x > 2256 && !player->endGame)
+	{
+		CItems* item = new CItems(2689, 338);
+		item->id_items = ITEMS_END_GAME;
+		item->SetState(ITEMS_END_GAME);
+		item->SetPosition(2689, 338);
+		listitems.push_back(item);
+		player->endGame = true;
+	}
 
 	if (player->use_Weapon && !player->hasFight)
 	{
@@ -715,20 +736,18 @@ void CPlayScene::Update(ULONGLONG dt)
 }
 
 void CPlayScene::Render()
-{
-	
-	map->Draw();
-	for (int i = 0; i < listObjIdle.size(); i++)	
-		listObjIdle[i]->Render();
-	statusBar->Render();
+{	
+	map->Draw();	
 	for (int i = 0; i < listcoin.size(); i++)
 	{
 		listcoin[i]->Render();
 	}
+
 	for (int i = 0; i < listCoin.size(); i++)
 	{
 		listCoin[i]->Render();
 	}
+
 	for (int i = 0; i < listweapon.size(); i++)
 	{
 		if(!listweapon[i]->isExplode)
@@ -740,6 +759,7 @@ void CPlayScene::Render()
 
 	for (int i = objects.size()-1; i>=0; i--)
 		objects[i]->Render();
+
 	if (tail != NULL)
 		tail->Render();
 	if (coin != NULL)
@@ -753,7 +773,12 @@ void CPlayScene::Render()
 			player->countRender++;
 		}
 	}
+
 	player->Render();
+	for (int i = 0; i < listObjIdle.size(); i++)
+		listObjIdle[i]->Render();
+
+	statusBar->Render();
 }
 
 void CPlayScene::InsertObjToGrid()
@@ -761,20 +786,17 @@ void CPlayScene::InsertObjToGrid()
 	objects.clear();
 	listAllObjIdle.clear();
 	listAllObjMove.clear();
+	gridObjIdle->GetGrid(listObjIdle);
+	for (UINT i = 0; i < listObjIdle.size(); i++)
+	{
+		objects.push_back(listObjIdle[i]);
+	}
 	
 	gridObjMove->GetGrid(listAllObjMove);	
 	for(UINT i = 0; i < listAllObjMove.size(); i++)
 	{
 		objects.push_back(listAllObjMove[i]);
 	}
-	
-	gridObjIdle->GetGrid(listObjIdle);
-
-	for (UINT i = 0; i < listObjIdle.size(); i++)
-	{
-		objects.push_back(listObjIdle[i]);
-	}
-
 }
 /*
 	Unload current scene

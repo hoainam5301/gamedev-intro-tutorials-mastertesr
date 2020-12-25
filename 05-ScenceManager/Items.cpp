@@ -90,6 +90,15 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			 else
 				 vy = 0;
 		 }
+		 else if (id_items == ITEMS_END_GAME)
+		 {
+			 vx = 0;
+			 vy = 0;
+		 }
+		 else if (id_items == START_FLY_UP)
+		 {
+			 vy = -0.1;
+		 }
 		 if (makeEffect)
 		 {
 			 CMonneyEffect* monneyeffect = new CMonneyEffect();
@@ -184,6 +193,10 @@ void CItems::SetState(int state)
 	case SWITCH_P_ON:
 		break;
 	case SWITCH_P_OFF:	
+		break;
+	case ITEMS_END_GAME:
+		break;
+	case START_FLY_UP:
 		break;
 	}
 }

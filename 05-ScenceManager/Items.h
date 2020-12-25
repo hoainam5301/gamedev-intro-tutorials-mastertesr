@@ -8,6 +8,8 @@
 #define Tree_Leaf_move_right 4
 #define SWITCH_P_ON	5
 #define SWITCH_P_OFF 6
+#define START_FLY_UP 7
+#define ITEMS_END_GAME 8
 
 
 #define NAM_DUNG_YEN 0
@@ -25,6 +27,7 @@ public:
 	vector <LPGAMEOBJECT> listEffect;
 	bool move;
 	bool hasPress;
+	bool makeItemFly;
 	//bool chamsan;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);

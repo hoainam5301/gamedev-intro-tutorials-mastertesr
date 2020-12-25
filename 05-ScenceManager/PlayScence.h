@@ -41,7 +41,7 @@ protected:
 	vector<LPGAMEOBJECT> listAllObjIdle;
 	vector<LPGAMEOBJECT> listObjIdle;
 	vector<LPGAMEOBJECT> listObjMove;
-	vector<LPGAMEOBJECT> listCoin;
+	vector<LPGAMEOBJECT> listCoin;    //Coin xoay o dam may
 
 
 
@@ -52,7 +52,7 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> listitems;
 	vector<LPGAMEOBJECT> listweapon;
-	vector<LPGAMEOBJECT> listcoin;
+	vector<LPGAMEOBJECT> listcoin;  //coin do tranformation 
 
 	ULONGLONG timeTranformation;
 	//vector<LPGAMEOBJECT> listbrokenbrick;

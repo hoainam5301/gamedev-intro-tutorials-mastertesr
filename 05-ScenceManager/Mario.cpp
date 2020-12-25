@@ -645,7 +645,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 				CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
 				if (e->ny < 0 && CGame::GetInstance()->IsKeyDown(DIK_DOWN))
 				{
-					if (pipe->pypeType == 2)
+					if (pipe->pipeType == PIPE_WITH_LONG_ANI)
 					{
 						startOfLongPipeY = pipe->y;
 						getDownInPipe = true;
@@ -783,7 +783,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 				CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
 				if (e->ny < 0 && CGame::GetInstance()->IsKeyDown(DIK_DOWN))
 				{
-					if (pipe->pypeType == 2)
+					if (pipe->pipeType == 2)
 					{
 						startOfLongPipeY = pipe->y;
 						getDownInPipe = true;
@@ -952,6 +952,12 @@ void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 			else if (e->id_items == SWITCH_P_ON)
 			{
 				e->SetState(SWITCH_P_OFF);
+			}
+			else if (e->id_items == ITEMS_END_GAME)
+			{
+				CItems* items = dynamic_cast<CItems*>(e);
+				items->makeItemFly = true;
+				e->isdone = true;
 			}
 		}
 	}
