@@ -19,21 +19,21 @@ void CCoin::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (spawn)
 		{
-			if (y >= start_y - 60)
-				vy = -0.0025;
+			if (y >= start_y - DISTANCE_MOVE_UP)
+				vy = -MOVE_SPEED;
 			else spawn = false;
 		}
 		else
 		{
-			if (start_y - y > 20)
+			if (start_y - y > DISTANCE_MOVE_DOWN)
 			{
-				vy = 0.0025;
+				vy = MOVE_SPEED;
 
 			}
 			else
 			{
 				vy = 0;
-				y = start_y - 20;
+				y = start_y - DISTANCE_MOVE_DOWN;
 				if (!hasCreatMoneyEffect)
 				{
 					makeEffect = true;
@@ -76,8 +76,8 @@ void CCoin::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 	{
 		left = x;
 		top = y;
-		right = x + 16;
-		bottom = y + 16;
+		right = x + WIDTH_HEIGHT_COIN;
+		bottom = y + WIDTH_HEIGHT_COIN;
 	}
 	
 }
@@ -92,7 +92,7 @@ void CCoin::Render()
 	{
 		listEffect[i]->Render();
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CCoin::SetState(int state)

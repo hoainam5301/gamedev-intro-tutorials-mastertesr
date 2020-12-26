@@ -23,7 +23,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (id_giantpiranha == GIANT_PIRANHA_RED)
 	{
-		if (moveup && GetTickCount64() - timewaittoshoot > 1500)
+		if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP)
 		{
 			fight = false;
 			if (x - Mario->x > 0)
@@ -31,7 +31,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			else
 				SetState(GIANT_STATE_MOVE_UP_RIGHT);						
 		}
-		else if (GetTickCount64() - timewaittoshoot > 3000 && !fight)
+		else if (GetTickCount64() - timewaittoshoot > TIME_WAIT_TO_SHOT && !fight)
 		{
 			if (x - Mario->x > 0)
 			{
@@ -59,7 +59,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			listFireBall.push_back(fireball);
 			fight = true;
 		}
-		else if (GetTickCount64() - timewaittoshoot > 4000 && !moveup)
+		else if (GetTickCount64() - timewaittoshoot > TIME_MOVE_DOWN && !moveup)
 		{
 			if (x - Mario->x > 0)
 				SetState(GIANT_STATE_MOVE_DOWN_LEFT);
@@ -70,7 +70,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else if (id_giantpiranha == GIANT_PIRANHA_GREEN)
 	{
-		if (moveup && GetTickCount64() - timewaittoshoot > 1000)
+		if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP_GREEN)
 		{
 			fight = false;
 			if (x - Mario->x > 0)
@@ -78,7 +78,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			else
 				SetState(GIANT_GREEN_STATE_MOVE_UP_RIGHT);
 		}
-		else if (GetTickCount64() - timewaittoshoot > 1500 && !fight)
+		else if (GetTickCount64() - timewaittoshoot > TIME_WAIT_TO_SHOT_GREEN && !fight)
 		{
 			if (x - Mario->x > 0)
 			{
@@ -106,7 +106,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			listFireBall.push_back(fireball);
 			fight = true;
 		}
-		else if (GetTickCount64() - timewaittoshoot > 3000 && !moveup)
+		else if (GetTickCount64() - timewaittoshoot > TIME_MOVE_DOWN_GREEN && !moveup)
 		{
 			if (x - Mario->x > 0)
 				SetState(GIANT_GREEN_STATE_MOVE_DOWN_LEFT);
@@ -164,11 +164,11 @@ void CGiantPiranhaPlant::SetState(int state)
 	case GIANT_STATE_SHOOT_45_MORE_LEFT:
 		break;
 	case GIANT_STATE_MOVE_UP_LEFT:
-		vy = -0.15f;
+		vy = -MOVE_SPEED;
 		moveup = false;
 		break;
 	case GIANT_STATE_MOVE_DOWN_LEFT:
-		vy = 0.15f;
+		vy = MOVE_SPEED;
 		moveup = true;
 		break;
 	case GIANT_STATE_SHOOT_45_RIGHT:
@@ -176,11 +176,11 @@ void CGiantPiranhaPlant::SetState(int state)
 	case GIANT_STATE_SHOOT_45_MORE_RIGHT:
 		break;
 	case GIANT_STATE_MOVE_UP_RIGHT:
-		vy = -0.15f;
+		vy = -MOVE_SPEED;
 		moveup = false;
 		break;
 	case GIANT_STATE_MOVE_DOWN_RIGHT:
-		vy = 0.15f;
+		vy = MOVE_SPEED;
 		moveup = true;
 		break;
 	case GIANT_GREEN_STATE_SHOOT_45_LEFT:
@@ -188,11 +188,11 @@ void CGiantPiranhaPlant::SetState(int state)
 	case GIANT_GREEN_STATE_SHOOT_45_MORE_LEFT:
 		break;
 	case GIANT_GREEN_STATE_MOVE_UP_LEFT:
-		vy = -0.15f;
+		vy = -MOVE_SPEED;
 		moveup = false;
 		break;
 	case GIANT_GREEN_STATE_MOVE_DOWN_LEFT:
-		vy = 0.15f;
+		vy = MOVE_SPEED;
 		moveup = true;
 		break;
 	case GIANT_GREEN_STATE_SHOOT_45_RIGHT:
@@ -200,11 +200,11 @@ void CGiantPiranhaPlant::SetState(int state)
 	case GIANT_GREEN_STATE_SHOOT_45_MORE_RIGHT:
 		break;
 	case GIANT_GREEN_STATE_MOVE_UP_RIGHT:
-		vy = -0.15f;
+		vy = -MOVE_SPEED;
 		moveup = false;
 		break;
 	case GIANT_GREEN_STATE_MOVE_DOWN_RIGHT:
-		vy = 0.15f;
+		vy = MOVE_SPEED;
 		moveup = true;
 		break;
 	}

@@ -9,12 +9,15 @@
 #define MARIO_SUB_RUNNING_ACC	0.0012f
 #define MARIO_SUB_RUNNING_MAX_ACC 0.00855f
 #define MARIO_MIN_SPEED_TO_STOP 0.06f
+#define MARIO_MOVING_IN_PIPE_SPEED 0.01f
 
 #define MARIO_JUMP_SPEED_Y		0.275f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
 #define MARIO_GRAVITY			0.0006f
 #define MARIO_DIE_DEFLECT_SPEED	 0.2f
 #define MARIO_FLY_SPEED_Y		0.2f
+#define MARIO_BONUS_POS_X	12
+#define MARIO_BONUS_POS_Y	14
 
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	1
@@ -173,6 +176,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 3000
 #define MARIO_TIME_FLY		   6500
+#define MARIO_TIME_GO_IN_PIPE 200
 
 
 
@@ -245,7 +249,7 @@ public:
 	bool isFalling;
 	bool hasFight;
 	float mDy = 0;				//xac dinh mario roi
-	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL/*,vector<LPGAMEOBJECT>*colliable_objidle=NULL*/);
+	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL,vector<LPGAMEOBJECT>*colliable_objidle=NULL);
 	void Render();
 
 	int score;

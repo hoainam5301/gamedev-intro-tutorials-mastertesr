@@ -5,6 +5,13 @@
 #define  COIN_STATE_NO_ROTATE 2
 #define COIN_STATE_CREATED 1
 
+#define MOVE_SPEED 0.0025f
+
+#define DISTANCE_MOVE_UP 60
+#define DISTANCE_MOVE_DOWN 20
+
+#define WIDTH_HEIGHT_COIN 16
+
 class CCoin:public CGameObject
 {
 	

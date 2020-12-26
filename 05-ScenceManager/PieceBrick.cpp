@@ -3,8 +3,8 @@ CPieceBrick::CPieceBrick(D3DXVECTOR2 position, int nx, int deflectFactorY)
 {
 	x = position.x;
 	y = position.y;
-	vx = 0.07f * nx;
-	vy = -0.16f * deflectFactorY;
+	vx = MOVING_SPEED_X * nx;
+	vy = -MOVING_SPEED_Y * deflectFactorY;
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(11));
 }
 
@@ -12,7 +12,7 @@ void CPieceBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 
-	vy += 0.0009f * dt;
+	vy += GRAVITY * dt;
 
 	x += dx;
 	y += dy;

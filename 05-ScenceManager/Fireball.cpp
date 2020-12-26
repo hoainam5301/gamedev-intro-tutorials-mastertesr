@@ -6,13 +6,13 @@ CFireball::CFireball(D3DXVECTOR2 position, int nx,CMario* mario)
 
 	if (nx > 0)
 	{
-		x = position.x + 10;
-		y = position.y + 6;
+		x = position.x + BONUS_POS_X;
+		y = position.y + BONUS_POS_XY;
 	}
 	else
 	{
-		x = position.x - 6;
-		y = position.y + 6;
+		x = position.x - BONUS_POS_XY;
+		y = position.y + BONUS_POS_XY;
 	}
 	Mario = mario;
 	this->nx = nx;
@@ -22,31 +22,34 @@ CFireball::CFireball(D3DXVECTOR2 position, int nx,CMario* mario)
 void CFireball::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
-
+	if (y > 416)
+		isdone = true;
+	if (isdone)
+		return;
 	if (isbottom)
 	{
 		if (nx < 0)
 		{
-			vx = -0.1;
-			vy = 0.1;
+			vx = -MOVE_SPEED;
+			vy = MOVE_SPEED;
 		}
 		else
 		{
-			vx = 0.1;
-			vy = 0.1;
+			vx = MOVE_SPEED;
+			vy = MOVE_SPEED;
 		}
 	}
 	if (istop)
 	{
 		if (nx < 0)
 		{
-			vx = -0.1;
-			vy = -0.1;
+			vx = -MOVE_SPEED;
+			vy = -MOVE_SPEED;
 		}
 		else
 		{
-			vx = 0.1;
-			vy = -0.1;
+			vx = MOVE_SPEED;
+			vy = -MOVE_SPEED;
 		}
 	}
 	x += dx;
@@ -85,16 +88,19 @@ void CFireball::Collision_Mario(CMario* mario)
 
 void CFireball::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x;
-	top = y;
-	right = x + 8;
-	bottom = y + 8;
+	if (!isdone)
+	{
+		left = x;
+		top = y;
+		right = x + WIDTH_HEIGHT_FIREBALL;
+		bottom = y + WIDTH_HEIGHT_FIREBALL;
+	}
 }
 
 
 void CFireball::Render()
-{	
-	animation_set->at(0)->Render(x, y);	
+{	if(!isdone)
+		animation_set->at(0)->Render(x, y);	
 	//RenderBoundingBox();
 }
 

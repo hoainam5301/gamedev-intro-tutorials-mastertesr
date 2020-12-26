@@ -21,8 +21,8 @@ void CItems::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	{
 		left = x;
 		top = y;
-		right = x + 16;
-		bottom = y + 16;		
+		right = x + WIDTH_HEIGHT_ITEM;
+		bottom = y + WIDTH_HEIGHT_ITEM;
 	}	
 }
 void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
@@ -30,25 +30,25 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	
 	 if (id_items == Tree_Leaf)
 	{
-		maxRight = Start_y + 20;
+		maxRight = Start_y + DISTANCE_LEAF_MOVE_UP;
 		if (spawn) {
 
-			if (this->y >= Start_x - 20)
-				vy = -0.35;
+			if (this->y >= Start_x - DISTANCE_LEAF_MOVE_UP)
+				vy = -MOVE_UPSPEED;
 			else spawn = false;
 		}
 		else
 		{
 			if (x <= Start_y )
 			{
-				vy = 0.35;
-				vx = 0.3 * pow(35, vy);
+				vy = MOVE_UPSPEED;
+				vx = LEAF_MOVE_SPEED * pow(DISTANCE_LEAF_CHANGE_DIC, vy);
 				SetState(Tree_Leaf_move_right);
 			}
 			if (x >= maxRight)
 			{
-				vy = 0.35;
-				vx = -0.3 * pow(35, vy);
+				vy = MOVE_UPSPEED;
+				vx = -LEAF_MOVE_SPEED * pow(DISTANCE_LEAF_CHANGE_DIC, vy);
 				SetState(Tree_Leaf_move_left);
 			}
 		}
@@ -69,13 +69,13 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 {
 			 if (spawn) {
 
-				 if (this->y >= Start_x - 20)
-					 vy = -0.05;
+				 if (this->y >= Start_x - DISTANCE_MOVE_UP)
+					 vy = -MOVE_UP_SPEED;
 				 else spawn = false;
 			 }
 			 else
 			 {
-				 vx = 0.1 * change_direction;
+				 vx = MOVE_SPEED * change_direction;
 				 vy = GRAVITY;
 			 }
 		 }
@@ -83,8 +83,8 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 {
 			 if (spawn) {
 
-				 if (this->y >= Start_x - 15)
-					 vy = -0.05;
+				 if (this->y >= Start_x - DISTANCE_MOVE_UP)
+					 vy = -MOVE_UP_SPEED;
 				 else spawn = false;
 			 }
 			 else
@@ -97,7 +97,7 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 }
 		 else if (id_items == START_FLY_UP)
 		 {
-			 vy = -0.1;
+			 vy = -MOVE_SPEED;
 		 }
 		 if (makeEffect)
 		 {
@@ -172,7 +172,7 @@ void CItems::Render()
 	{
 		listEffect[i]->Render();
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CItems::SetState(int state)

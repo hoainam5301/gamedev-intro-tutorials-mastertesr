@@ -84,6 +84,6 @@ void CRaccoonTail::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = x;
 	t = y ;
-	r =	x+16;
-	b = y+6 ;
+	r =	x+ WIDTH_BBOX;
+	b = y+ HEIGHT_BBOX;
 }

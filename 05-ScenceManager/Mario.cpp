@@ -16,6 +16,7 @@
 #include "BrokenBrick.h"
 #include "Pipe.h"
 #include "Coin.h"
+#include "GiantPiranhaPlantBite.h"
 
 
 CMario* CMario::__instance = NULL;
@@ -33,7 +34,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->y = y;
 }
 
-void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGAMEOBJECT>* listObjIdle*/)
+void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects,vector <LPGAMEOBJECT>* listObjIdle)
 {
 #pragma region Update Mario
 	// Calculate dx, dy 
@@ -58,7 +59,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 			inHiddenArea = true;
 			if (waitGetOutOfPipe == 0)
 				waitGetOutOfPipe = GetTickCount64();
-			if (GetTickCount64() - waitGetOutOfPipe >= 200 /*&& waitGetOutOfPipe != 0*/)
+			if (GetTickCount64() - waitGetOutOfPipe >= MARIO_TIME_GO_IN_PIPE /*&& waitGetOutOfPipe != 0*/)
 			{
 				getDownInPipe = false;
 				SetPosition(2100, 479);
@@ -83,7 +84,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 			turnOffLight = true;
 			countRender = 0;
 			vy = 0;
-			if (GetTickCount64() - waitGetOutOfPipe >= 200)
+			if (GetTickCount64() - waitGetOutOfPipe >= MARIO_TIME_GO_IN_PIPE)
 			{
 				SetPosition(2320, 384);
 				atEndOfPipeY = 0;//khong bi phai set vi tri lien tuc nhieu lan
@@ -183,7 +184,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CColorBox*>(e->obj))
+			/*if (dynamic_cast<CColorBox*>(e->obj))
 			{
 				if (e->ny < 0)
 				{
@@ -197,7 +198,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 					x += dx;					
 				}
 			}
-			else if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
+			else*/ if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 				// jump on top >> kill Goomba and deflect a bit 
@@ -387,11 +388,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 							else if (level == MARIO_FIRE)
 								SetState(MARIO_FIRE_STATE_KICK_LEFT);
 
+							koopas->nx = -1;
 							if (koopas->last_state == KOOPA_RED_STATE_DIE)
 								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
 							else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
 								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
-							koopas->nx = -1;
 						}
 						else
 						{
@@ -404,11 +405,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 							else if (level == MARIO_FIRE)
 								SetState(MARIO_FIRE_STATE_KICK_RIGHT);
 
+							koopas->nx = 1;
 							if (koopas->last_state == KOOPA_RED_STATE_DIE)
 								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE);
 							else if (koopas->last_state == KOOPA_RED_STATE_DIE_UP)
 								koopas->SetState(KOOPA_RED_STATE_DIE_AND_MOVE_UP);
-							koopas->nx = 1;
 						}
 					}
 					else if (e->nx != 0)
@@ -543,11 +544,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 							else if (level == MARIO_FIRE)
 								SetState(MARIO_FIRE_STATE_KICK_LEFT);
 
+							koopas->nx = -1;
 							if (koopas->last_state == KOOPA_GREEN_STATE_DIE)
 								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE);
 							else if (koopas->last_state == KOOPA_GREEN_STATE_DIE_UP)
 								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE_UP);
-							koopas->nx = -1;
 						}
 						else
 						{
@@ -560,11 +561,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 							else if (level == MARIO_FIRE)
 								SetState(MARIO_FIRE_STATE_KICK_RIGHT);
 
+							koopas->nx = 1;
 							if (koopas->last_state == KOOPA_GREEN_STATE_DIE)
 								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE);
 							else if (koopas->last_state == KOOPA_GREEN_STATE_DIE_UP)
 								koopas->SetState(KOOPA_GREEN_STATE_DIE_AND_MOVE_UP);
-							koopas->nx = 1;
 						}
 					}
 					else if (e->nx != 0)
@@ -629,16 +630,35 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 					vy = 0;
 					
 				}
-			}			
-			else if (dynamic_cast<CFloor*>(e->obj))
+			}	
+			else if (dynamic_cast<CGiantPiranhaPlantBite*>(e->obj))
 			{
-			if (e->ny < 0)
-			{
-				isFalling = false;
-				inHighArea = false;
+				if (untouchable == 0)
+				{
+					if (level > MARIO_LEVEL_BIG)
+					{
+						level = MARIO_LEVEL_BIG;
+						StartUntouchable();
+					}
+					else if (level == MARIO_LEVEL_BIG)
+					{
+						level = MARIO_LEVEL_SMALL;
+						StartUntouchable();
+					}
+					vx = 0;
+					vy = 0;
+
+				}
 			}
-			else if (e->nx != 0)
-				vx = 0;
+		/*	else if (dynamic_cast<CFloor*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					isFalling = false;
+					inHighArea = false;
+				}
+				else if (e->nx != 0)
+					vx = 0;
 			}
 			else if (dynamic_cast<CPipe*>(e->obj))
 			{
@@ -649,7 +669,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 					{
 						startOfLongPipeY = pipe->y;
 						getDownInPipe = true;
-						vy = 0.01;
+						vy = MARIO_MOVING_IN_PIPE_SPEED;
 						isSitting = false;
 						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
 					}
@@ -660,7 +680,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 					inHighArea = false;
 					standOnPipe = true;
 				}
-			}
+			}*/
 			else if (dynamic_cast<CBrokenBrick*>(e->obj))
 			{
 				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);	
@@ -697,7 +717,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 #pragma endregion
 
 #pragma region Collision IdleObj
-	/*vector<LPCOLLISIONEVENT> coObjIdlEvents;
+	vector<LPCOLLISIONEVENT> coObjIdlEvents;
 	vector<LPCOLLISIONEVENT> coObjIdleEventsResult;
 
 	coObjIdlEvents.clear();	
@@ -804,7 +824,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 	}
 	// clean up collision events
 	//DebugOut(L"gia tri  %f \n", vx);
-	for (UINT i = 0; i < coObjIdlEvents.size(); i++) delete coObjIdlEvents[i];*/
+	for (UINT i = 0; i < coObjIdlEvents.size(); i++) delete coObjIdlEvents[i];
 
 #pragma endregion
 	
@@ -829,7 +849,7 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 		if (x > posXOfNextPortalGoRight)
 		{
 			vx = 0;
-			x = posXOfNextPortalGoRight-12;
+			x = posXOfNextPortalGoRight- MARIO_BONUS_POS_X;
 			//x = leftOfMario - 12;
 			isAutoGoRight = false;
 			isGoTo = false;
@@ -851,7 +871,7 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 		{
 			vx = 0;
 			//leftOfMario = posXOfNextPortalGoLeft;
-			x = posXOfNextPortalGoLeft - 12;
+			x = posXOfNextPortalGoLeft - MARIO_BONUS_POS_X;
 			isAutoGoLeft = false;
 			isGoTo = false;
 			sceneIdPresent = sceneIdGoToLeft;
@@ -873,11 +893,11 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 		if (y > posYOfNextPortalGoDown)
 		{
 			vy = 0;
-			y = posYOfNextPortalGoDown-14;
+			y = posYOfNextPortalGoDown- MARIO_BONUS_POS_Y;
 			//y = topOfMario - 14;
 			isAutoGoDown = false;
 			isGoTo = false;
-			x = posXOfPortal-12;
+			x = posXOfPortal- MARIO_BONUS_POS_X;
 			//x = leftOfMario - 12;
 			sceneIdPresent = sceneIdGoToDown;
 		}
@@ -898,11 +918,11 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 		if (y < posYOfNextPortalGoUp)
 		{
 			vy = 0;
-			y = posYOfNextPortalGoUp-14;
+			y = posYOfNextPortalGoUp- MARIO_BONUS_POS_Y;
 			//y = topOfMario - 14;
 			isAutoGoTop = false;
 			isGoTo = false;
-			x = posXOfPortal-12;
+			x = posXOfPortal- MARIO_BONUS_POS_X;
 			//x = leftOfMario - 12;
 			sceneIdPresent = sceneIdGoToUp;
 		}
@@ -1933,6 +1953,6 @@ void CMario::Reset()
 {
 	SetState(MARIO_STATE_IDLE);
 	SetLevel(MARIO_RACCOON);
-	SetPosition(2256, 80);
+	SetPosition(700,300 );
 	SetSpeed(0, 0);
 }

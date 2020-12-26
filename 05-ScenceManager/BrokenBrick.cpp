@@ -4,13 +4,9 @@ CBrokenBrick::CBrokenBrick(int id_state)
 {
 	
 	id_broken_state = id_state;
-	if (this->id_broken_state == 1)
+	if (this->id_broken_state == STATE_BRICK_NORMAL)
 		SetState(STATE_BRICK_NORMAL);
-	else if (this->id_broken_state == 2)
-		SetState(STATE_COIN_ROTATE);
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(12));
-	
-
 }
 
 void CBrokenBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
@@ -40,8 +36,8 @@ void CBrokenBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 		return;
 	l = x;
 	t = y;
-	r = l + 16;
-	b = t + 16;
+	r = l + WIDTH_HEIGHT_BROKENBRICK;
+	b = t + WIDTH_HEIGHT_BROKENBRICK;
 }
 void CBrokenBrick::SetState(int State)
 {
@@ -61,17 +57,6 @@ void CBrokenBrick::SetState(int State)
 		CPieceBrick* bottomLeftPiece = new CPieceBrick({ x - 1, y + 8 }, -1);
 		CPieceBrick* bottomRightPiece = new CPieceBrick({ x + 9, y +8 }, 1);
 		listPiece = { topLeftPiece, topRightPiece, bottomLeftPiece, bottomRightPiece };
-		break;
-	
-
-	}
-	/*if (State == STATE_BRICK_NORMAL)
-	{
-		
-	}
-	else if (State == STATE_COIN_NO_ROTATE)
-	{
-		
-	}*/
-	
+		break;	
+	}		
 }

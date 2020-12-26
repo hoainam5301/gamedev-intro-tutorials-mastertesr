@@ -4,6 +4,8 @@
 //#include "ColorBox.h"
 
 #define GOOMBA_WALKING_SPEED 0.05f;
+#define GOOMBA_FLY_HIGH_SPEED 0.15f
+#define GOOMBA_FLY_LOW_SPEED 0.05f
 
 #define GOOMBA_BBOX_WIDTH 16
 #define GOOMBA_BBOX_HEIGHT 15
@@ -22,6 +24,12 @@
 
 #define GOOMBA_NORMAL 1
 #define GOOMBA_RED 2
+
+#define TIME_READY_TO_SULKY 5000
+#define	TIME_RENDER_ANI_DIE 300
+#define TIME_READY_TO_FLY_HIGH	1000
+#define TIME_TO_FLY_LOW_AND_HIGH	200
+#define FLY_HIGH 4
 
 class CGoomba : public CGameObject
 {

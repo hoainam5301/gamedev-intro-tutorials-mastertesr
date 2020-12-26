@@ -4,7 +4,7 @@
 StatusBar::StatusBar(CMario* mario)
 {
 	Mario = mario;
-	time = 100;
+	time = 999;
 }
 
 void StatusBar::DrawNumber(float x, float y, string stringnumb,int maxsize)

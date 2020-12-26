@@ -6,6 +6,8 @@
 #define STATE_COIN_ROTATE  2
 #define STATE_COIN_NO_ROTATE 3
 
+#define WIDTH_HEIGHT_BROKENBRICK 16
+
 
 class CBrokenBrick : public CGameObject
 {

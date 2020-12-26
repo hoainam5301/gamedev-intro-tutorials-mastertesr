@@ -17,10 +17,10 @@ void CMonneyEffect::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		//DebugOut(L"gia tri start y %f \n", start_y);
 		//DebugOut(L"gia tri y %f \n", y);
 		if (coinFormBrick)
-			vy = -0.001;
+			vy = -MOVING_SPEED_FORM_BRICK;
 		else
-			vy = -0.1;
-		if (start_y - y > 40)
+			vy = -MOVE_SPEED;
+		if (start_y - y > DISTANCE_MOVE)
 			isdone = true;		// da xuat hien hieu ung tien va bay len xong roi
 		x += dx;
 		y += dy;		

@@ -2,6 +2,13 @@
 #include "GameObject.h"
 #include "Mario.h"
 
+#define BONUS_POS_X 10
+#define BONUS_POS_XY 6
+
+#define MOVE_SPEED 0.1f
+
+#define WIDTH_HEIGHT_FIREBALL 8
+
 
 class CFireball : public CGameObject
 {

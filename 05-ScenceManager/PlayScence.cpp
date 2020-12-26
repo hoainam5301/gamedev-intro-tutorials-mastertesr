@@ -232,7 +232,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_KOOPAS: 
 	{
 		int id_koopa= atoi(tokens[4].c_str());
-		obj = new CKoopas(player,id_koopa );
+		int hasWing = atoi(tokens[5].c_str());
+		obj = new CKoopas(player,id_koopa, hasWing);
 		listObjMove.push_back(obj);
 		break;
 	}
@@ -310,9 +311,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 }
 int CPlayScene::RandomItems()
 {
-	//CMario* a = new CMario();
-	//a = player;
-	//int random = rand()%2;
 	if (player->level == MARIO_LEVEL_SMALL)
 		return Mushroom;
 	else if (player->level == MARIO_LEVEL_BIG)
@@ -320,9 +318,7 @@ int CPlayScene::RandomItems()
 	else if (player->level == MARIO_RACCOON)
 		return FIRE_FLOWER;
 	else if (player->level == MARIO_FIRE)
-		return Tree_Leaf;
-	
-	//DebugOut(L"radomitem %d \n", RandomItems());
+		return Tree_Leaf;		
 }
 void CPlayScene::Load()
 {
@@ -467,7 +463,7 @@ void CPlayScene::Update(ULONGLONG dt)
 	InsertObjToGrid();
 	
 	vector<LPGAMEOBJECT> coObjects;
-	player->Update(dt, &objects/*,&listObjIdle*/);
+	player->Update(dt, &objects,&listObjIdle);
 	/*for (int i = 0; i < listObjIdle.size(); i++)
 		listObjIdle[i]->Update(dt);*/
 	for (size_t i = 0; i < objects.size(); i++)
@@ -489,7 +485,15 @@ void CPlayScene::Update(ULONGLONG dt)
 				gach->created_item = 1;
 				listitems.push_back(MadeItems(gach->x, gach->y));
 			}
-
+			else if (gach->collWithKoopa && gach->created_item==0)
+			{
+				gach->created_item = 1;
+				CItems* item = new CItems(gach->y, gach->x);
+				item->SetPosition(gach->x, gach->y);
+				item->id_items = Tree_Leaf;
+				item->SetState(Tree_Leaf);				
+				listitems.push_back(item);
+			}
 		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_TIEN) 
 		{
@@ -786,7 +790,7 @@ void CPlayScene::InsertObjToGrid()
 	objects.clear();
 	listAllObjIdle.clear();
 	listAllObjMove.clear();
-	gridObjIdle->GetGrid(listObjIdle);
+	//gridObjIdle->GetGrid(listObjIdle);
 	for (UINT i = 0; i < listObjIdle.size(); i++)
 	{
 		objects.push_back(listObjIdle[i]);
@@ -1025,6 +1029,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_4:
 		mario->level = MARIO_FIRE;
+	case DIK_9:
+		mario->SetLevel(MARIO_RACCOON);
+		mario->SetPosition(2256, 80);
 		break;
 	case DIK_A:
 		

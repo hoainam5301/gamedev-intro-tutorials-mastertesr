@@ -1,6 +1,9 @@
 #pragma once
 #include "GameObject.h"
 
+#define WIDTH_BBOX 16
+#define HEIGHT_BBOX 6
+
 class CRaccoonTail : public CGameObject
 {
 

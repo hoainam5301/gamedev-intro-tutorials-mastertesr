@@ -4,11 +4,19 @@
 #include "Mario.h"
 
 
-#define KOOPAS_WALKING_SPEED 0.03f;
+#define KOOPAS_WALKING_SPEED 0.03f
+#define KOOPAS_MOVING_SPEED 0.1f
+#define KOOPAS_FLYING_SPEED 0.18f
+#define GARVITY 0.0005f
 
 #define KOOPAS_BBOX_WIDTH 17
 #define KOOPAS_BBOX_HEIGHT 27
 #define KOOPAS_BBOX_HEIGHT_DIE 16
+
+#define TIME_TO_READY_REVIVE 8000
+#define TIME_REVIVE 10000
+#define TIME_READY_FLY 900
+
 
 #define KOOPA_RED 1
 #define KOOPA_GREEN 2
@@ -49,10 +57,10 @@ public:
 	ULONGLONG timeToRevive;
 	ULONGLONG timeToFly;
 	bool hitByTail;
-	bool hasWing=true;
+	bool hasWing;
 	bool hitByWeapon;
 	int startx, widthtogo;
-	CKoopas(CMario* mario,int id_Koopa);
+	CKoopas(CMario* mario,int id_Koopa,int hasWing);
 	int last_state;
 	CMario* Mario;
 	virtual void SetState(int state);

@@ -5,6 +5,7 @@
 #define BRICK_BBOX_HEIGHT 16
 
 #define GRAVITY 0.3f
+#define MOVE_UP_SPEED 0.05f
 #define BRICK_AFTER 1
 #define QUESTION_BRICK 0
 #define BRICK_MAKE_LIFE 2
@@ -20,6 +21,7 @@ class CBrick : public CGameObject
 {
 public:
 	int bottom_coll, created_item, bouncing;    //vachamday,taoitemroi,
+	bool collWithKoopa;
 	bool move;
 	int width, height;
 	bool hitByTail;	
