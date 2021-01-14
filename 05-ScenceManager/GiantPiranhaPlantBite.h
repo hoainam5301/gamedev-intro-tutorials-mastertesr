@@ -21,12 +21,12 @@ public:
 	vector <LPGAMEOBJECT> listFireBall;
 	ULONGLONG timewaittoshoot = GetTickCount64();
 	//ULONGLONG timetomovedown;
-	//CMario* Mario;
+	CMario* Mario;
 	bool moveup = true;
 	//bool not_in_pipeline = false;
 	//bool fight;
 	//float delta_x, delta_y;
-	CGiantPiranhaPlantBite();
+	CGiantPiranhaPlantBite(CMario* mario);
 	virtual void SetState(int state);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);

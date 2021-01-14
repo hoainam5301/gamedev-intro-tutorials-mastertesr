@@ -10,18 +10,19 @@
 #define SWITCH_P_OFF 6
 #define START_FLY_UP 7
 #define ITEMS_END_GAME 8
+#define GREEN_MUSHROOM 9
 
 #define NAM_DUNG_YEN 0
 #define NAM_DI_CHUYEN 0.05f
 
 #define WIDTH_HEIGHT_ITEM 16
 #define DISTANCE_MOVE_UP 15
-#define MOVE_UP_SPEED 0.05f
-#define MOVE_SPEED 0.1f
+#define MOVE_ITEM_UP_SPEED 0.05f
+#define MOVING_SPEED 0.05f
 
 #define DISTANCE_LEAF_MOVE_UP 20
 #define DISTANCE_LEAF_CHANGE_DIC 35
-#define MOVE_UPSPEED 0.35f
+#define MOVE_UPSPEED 0.45f
 #define LEAF_MOVE_SPEED 0.3f
 class CItems : public CGameObject
 {

@@ -1,5 +1,6 @@
 
 #include "Fireball.h"
+#include "Pipe.h"
 
 CFireball::CFireball(D3DXVECTOR2 position, int nx,CMario* mario)
 {
@@ -24,32 +25,37 @@ void CFireball::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 	if (y > 416)
 		isdone = true;
+	else if (Mario->standOnCloudBrick)
+	{
+		if (y < 300)
+			isdone = true;
+	}
 	if (isdone)
 		return;
 	if (isbottom)
 	{
 		if (nx < 0)
 		{
-			vx = -MOVE_SPEED;
-			vy = MOVE_SPEED;
+			vx = -MOVE_SPEED_X;
+			vy = MOVE_SPEED_Y;
 		}
 		else
 		{
-			vx = MOVE_SPEED;
-			vy = MOVE_SPEED;
+			vx = MOVE_SPEED_X;
+			vy = MOVE_SPEED_Y;
 		}
 	}
 	if (istop)
 	{
 		if (nx < 0)
 		{
-			vx = -MOVE_SPEED;
-			vy = -MOVE_SPEED;
+			vx = -MOVE_SPEED_X;
+			vy = -MOVE_SPEED_Y;
 		}
 		else
 		{
-			vx = MOVE_SPEED;
-			vy = -MOVE_SPEED;
+			vx = MOVE_SPEED_X;
+			vy = -MOVE_SPEED_Y;
 		}
 	}
 	x += dx;

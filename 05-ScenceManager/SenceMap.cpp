@@ -178,6 +178,7 @@ void CSenceMap::_ParseSection_OBJECTS(string line)
 			return;
 		}
 		player = CMario::GetInstance();
+		statusBar = new StatusBar(player);
 		player->SetPosition(x, y);
 		player->SetAnimationSet(ani_set);
 		DebugOut(L"[INFO] Player object created!\n");
@@ -305,7 +306,11 @@ void CSenceMap::Update(ULONGLONG dt)
 						CPortal* Portal = dynamic_cast<CPortal*>(p);
 						if (Portal->sceneid == portal->r)
 						{
+							if (Portal->isPortal)
+								player->isStandOnPortal = true;
 							player->posXOfNextPortalGoRight = Portal->x;
+							/*player->posXOfPortal = Portal->x;
+							player->posYOfPortal = Portal->y;*/
 						}
 					}
 					player->vx = 0.1;	
@@ -331,8 +336,11 @@ void CSenceMap::Update(ULONGLONG dt)
 						CPortal* Portal = dynamic_cast<CPortal*>(p);
 						if (Portal->sceneid == portal->t)
 						{
+							if (Portal->isPortal)
+								player->isStandOnPortal = true;
 							player->posYOfNextPortalGoUp = Portal->y;
 							player->posXOfPortal = Portal->x;
+							//player->posYOfPortal = Portal->y;
 						}
 					}
 					player->vy = -0.1;
@@ -358,7 +366,11 @@ void CSenceMap::Update(ULONGLONG dt)
 						CPortal* Portal = dynamic_cast<CPortal*>(p);
 						if (Portal->sceneid == portal->l)
 						{
+							if (Portal->isPortal)
+								player->isStandOnPortal = true;
 							player->posXOfNextPortalGoLeft = Portal->x;
+							/*player->posXOfPortal = Portal->x;
+							player->posYOfPortal = Portal->y;*/
 						}
 					}
 					player->vx = -0.1;
@@ -384,8 +396,11 @@ void CSenceMap::Update(ULONGLONG dt)
 						CPortal* Portal = dynamic_cast<CPortal*>(p);
 						if (Portal->sceneid == portal->b)
 						{
+							if (Portal->isPortal)
+								player->isStandOnPortal = true;
 							player->posYOfNextPortalGoDown = Portal->y;
 							player->posXOfPortal = Portal->x;
+						//	player->posYOfPortal= Portal->y;
 						}
 					}
 					player->vy = 0.1;
@@ -394,14 +409,26 @@ void CSenceMap::Update(ULONGLONG dt)
 			}
 		}
 	}
+	for (int j = 0; j < mapPortals.size(); j++)
+	{
+		LPGAMEOBJECT p = mapPortals[j];
+		CPortal* Portal = dynamic_cast<CPortal*>(p);
+		if (Portal->sceneid==player->sceneIdPresent)
+		{
+			player->posXOfPortal = Portal->x;
+			player->posYOfPortal = Portal->y;
+		}
+	}
 	player->SetState(MARIO_STATE_IN_WORD_MAP);
 	player->UpdateInScenceMap(dt);
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
+	
 	CGame::GetInstance()->cam_y = 0;
 	CGame::GetInstance()->cam_x = 0;
+	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y-40);
 }
 
 void CSenceMap::Render()
@@ -410,14 +437,17 @@ void CSenceMap::Render()
 	for (int i = objects.size() - 1; i >= 0; i--)
 		objects[i]->Render();
 	player->Render();
+	statusBar->Render();
 }
 
 void CSenceMap::Unload()
 {
-
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
+	/*for (int i = 0; i < mapPortals.size(); i++)
+		delete mapPortals[i];*/
+	mapPortals.clear();
 	objects.clear();
 	player = NULL;
 }
@@ -439,7 +469,12 @@ void CMapSceneKeyHandler::OnKeyDown(int keycode)
 	switch (keycode) {
 	case DIK_C:
 		mario->SetState(MARIO_STATE_IDLE);
-		CGame::GetInstance()->SwitchScene(3);
+		if (mario->isStandOnPortal && mario->vx == 0)
+		{
+			if (mario->sceneIdPresent == 4)
+				mario->inMapTwo = true;
+			CGame::GetInstance()->SwitchScene(mario->sceneIdPresent);
+		}
 		break;
 	case DIK_LEFT:
 		mario->isAutoGoLeft = true;

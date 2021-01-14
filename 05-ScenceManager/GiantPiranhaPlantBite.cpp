@@ -2,51 +2,51 @@
 #include "Utils.h"
 
 
-CGiantPiranhaPlantBite::CGiantPiranhaPlantBite() : CGameObject()
+CGiantPiranhaPlantBite::CGiantPiranhaPlantBite(CMario* mario) : CGameObject()
 {
-	
+	Mario = mario;
 }
 
 
 void CGiantPiranhaPlantBite::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	
 	CGameObject::Update(dt, coObjects);
 	y += dy;
 	if (start_y == 0) start_y = y;
+	if (start_x == 0) start_x = x;
 
 	////y += dy;
 	if (y > start_y - GIANT_BBOX_HEIGHT && y < start_y)
 		vy += MARIO_GRAVITY / 3 * dt;
 	else vy = 0;
 
+	if ((Mario->y < y && y == start_y && Mario->leftOfMario>(start_x - 8) && Mario->leftOfMario < (start_x + 24)) ||
+		(Mario->leftOfMario > (start_x - 25) && Mario->leftOfMario < (start_x + 30) && y == start_y))
+	{
+		timewaittoshoot = GetTickCount64();
+		return;
+	}
 	
-		if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP)
-		{
-			//fight = false;
-			SetState(GIANT_STATE_MOVE_UP);
-			
-		}	
-		else if (GetTickCount64() - timewaittoshoot > TIME_MOVE_DOWN && !moveup)
-		{
-			
-			timewaittoshoot = GetTickCount64();
-			SetState(GIANT_STATE_MOVE_DOWN);
-		}
+	if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP)
+	{
+		SetState(GIANT_STATE_MOVE_UP);
+	}
+	else if (GetTickCount64() - timewaittoshoot > TIME_MOVE_DOWN && !moveup)
+	{
+		timewaittoshoot = GetTickCount64();
+		SetState(GIANT_STATE_MOVE_DOWN);
+	}
 
 
-		if (y >= start_y && start_y != 0)
-		{
-			y = start_y;
+	if (y >= start_y && start_y != 0)
+	{
+		y = start_y;
 
-		}
-		if (y <= start_y - GIANT_BBOX_HEIGHT && start_y != 0)
-		{
-			y = start_y - GIANT_BBOX_HEIGHT;
-		}
-	
-	
-	
+	}
+	if (y <= start_y - GIANT_BBOX_HEIGHT && start_y != 0)
+	{
+		y = start_y - GIANT_BBOX_HEIGHT;
+	}	
 }
 void CGiantPiranhaPlantBite::Render()
 {

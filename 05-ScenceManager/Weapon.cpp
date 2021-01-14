@@ -4,6 +4,9 @@
 #include "Koopas.h"
 #include "Goomba.h"
 #include "Brick.h"
+#include "GiantPiranhaPlant.h"
+#include "GiantPiranhaPlantBite.h"
+#include "ColorBox.h"
 
 
 CWeapon::CWeapon(float start_x, float start_y,int marionx)
@@ -43,7 +46,10 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		isWaitingForAni = false;
 		isExplode = true;
 	}
-
+	if (x > CGame::GetInstance()->cam_x + 400 || x < CGame::GetInstance()->cam_x || y>448)
+	{
+		isExplode = true;
+	}
 	CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
@@ -64,6 +70,7 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 		y += min_ty * dy + ny * 0.5f;
 		x += min_tx * dx + nx * 0.5f;
+		CheckCollision(coObjects);
 		if (ny< 0)
 		{
 			vy = -MOVING_SPEED;
@@ -74,14 +81,7 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			x += dx;
 		}
-		else
-			//doihuong *= -1;
-		//if (nx != 0) this->isdone=true;
-		
-		CheckCollision(coObjects);
-		//Collision logic with other objects
 
-  
 	}
 
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -100,21 +100,26 @@ void CWeapon::CheckCollision(vector<LPGAMEOBJECT>* coObjects)
 			goomba->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
 			{
-				if (goomba->id_goomba == GOOMBA_NORMAL)
+				if (!goomba->hitByWeapon)
 				{
-					if (goomba->GetState() != GOOMBA_STATE_DIE)
+					goomba->makeEffect = true;
+					goomba->hitByWeapon = true;
+					if (goomba->id_goomba == GOOMBA_NORMAL)
 					{
-						goomba->SetState(GOOMBA_STATE_DIE_FLY);
-						SetState(FIRE_BALL_EXPLODE);
+						if (goomba->GetState() != GOOMBA_STATE_DIE)
+						{
+							goomba->SetState(GOOMBA_STATE_DIE_FLY);
+							SetState(FIRE_BALL_EXPLODE);
+						}
 					}
-				}
-				else if (goomba->id_goomba == GOOMBA_RED)
-				{
-					if (goomba->GetState() != GOOMBA_RED_STATE_NO_WING_DIE)
+					else if (goomba->id_goomba == GOOMBA_RED)
 					{
-						goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
-						goomba->hasWing = false;
-						SetState(FIRE_BALL_EXPLODE);
+						if (goomba->GetState() != GOOMBA_RED_STATE_NO_WING_DIE)
+						{
+							goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
+							goomba->hasWing = false;
+							SetState(FIRE_BALL_EXPLODE);
+						}
 					}
 				}
 			}
@@ -125,12 +130,17 @@ void CWeapon::CheckCollision(vector<LPGAMEOBJECT>* coObjects)
 			koopas->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
 			{
-				if (koopas->id_koopa == KOOPA_RED)
-					koopas->SetState(KOOPA_RED_STATE_DIE_UP);
-				else if (koopas->id_koopa == KOOPA_GREEN)
-					koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
-				koopas->hitByWeapon = true;
-				SetState(FIRE_BALL_EXPLODE);
+				if (!koopas->hitByWeapon)
+				{
+					koopas->hitByWeapon = true;
+					koopas->makeEffect = true;
+					koopas->hasWing = false;
+					if (koopas->id_koopa == KOOPA_RED)
+						koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+					else if (koopas->id_koopa == KOOPA_GREEN)
+						koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
+					SetState(FIRE_BALL_EXPLODE);
+				}
 			}
 		}
 		else if (dynamic_cast<CFloor*>(e))
@@ -149,6 +159,26 @@ void CWeapon::CheckCollision(vector<LPGAMEOBJECT>* coObjects)
 			{
 				SetState(FIRE_BALL_EXPLODE); 
 			} 
+		}
+		else if (dynamic_cast<CGiantPiranhaPlant*>(e))
+		{
+			CGiantPiranhaPlant* plant = dynamic_cast<CGiantPiranhaPlant*>(e); 
+			plant->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
+			{
+				plant->isdone = true;
+				SetState(FIRE_BALL_EXPLODE);
+			}
+		}
+		else if (dynamic_cast<CGiantPiranhaPlantBite*>(e))
+		{
+			CGiantPiranhaPlantBite* plantbite = dynamic_cast<CGiantPiranhaPlantBite*>(e);
+			plantbite->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_weapon, t_weapon, r_weapon, b_weapon))
+			{
+				plantbite->isdone = true;
+				SetState(FIRE_BALL_EXPLODE);
+			}
 		}
 	}
 }

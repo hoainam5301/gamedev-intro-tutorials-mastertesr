@@ -11,7 +11,7 @@
 
 #define KOOPAS_BBOX_WIDTH 17
 #define KOOPAS_BBOX_HEIGHT 27
-#define KOOPAS_BBOX_HEIGHT_DIE 16
+#define KOOPAS_BBOX_HEIGHT_DIE 14
 
 #define TIME_TO_READY_REVIVE 8000
 #define TIME_REVIVE 10000
@@ -31,6 +31,7 @@
 #define KOOPA_RED_STATE_DIE_AND_MOVE_UP	 7
 #define KOOPA_RED_STATE_HOLDING		 	 8
 #define KOOPA_RED_STATE_HOLDING_UP       9
+#define KOOPA_RED_STATE_HAS_WING_WALKING_LEFT 22
 
 #define KOOPA_GREEN_STATE_WALKING_LEFT	 10
 #define KOOPA_GREEN_STATE_WALKING_RIGHT  11
@@ -56,10 +57,12 @@ public:
 	vector <LPGAMEOBJECT> listEffect;
 	ULONGLONG timeToRevive;
 	ULONGLONG timeToFly;
+	ULONGLONG timeRenderAniDie;
 	bool hitByTail;
 	bool hasWing;
 	bool hitByWeapon;
 	int startx, widthtogo;
+	float startX, startY;
 	CKoopas(CMario* mario,int id_Koopa,int hasWing);
 	int last_state;
 	CMario* Mario;

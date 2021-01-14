@@ -14,12 +14,10 @@ void CMonneyEffect::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		CGameObject::Update(dt);
 		if (start_y == 0)
 			start_y = y;
-		//DebugOut(L"gia tri start y %f \n", start_y);
-		//DebugOut(L"gia tri y %f \n", y);
 		if (coinFormBrick)
 			vy = -MOVING_SPEED_FORM_BRICK;
 		else
-			vy = -MOVE_SPEED;
+			vy = -MOVE_SPEED_UP;
 		if (start_y - y > DISTANCE_MOVE)
 			isdone = true;		// da xuat hien hieu ung tien va bay len xong roi
 		x += dx;
@@ -61,6 +59,8 @@ void CMonneyEffect::SetState(int State)
 	case MAKE_4000:
 		break;
 	case MAKE_8000:
+		break;
+	case MAKE_ONE_UP:
 		break;
 	}
 }

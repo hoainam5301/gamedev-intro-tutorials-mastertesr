@@ -22,6 +22,8 @@
 #include "StatusBar.h"
 #include "Pipe.h"
 #include "Grid.h"
+#include "MovingWood.h"
+#include "BoomerangBrother.h"
 
 
 class CPlayScene: public CScene
@@ -42,6 +44,7 @@ protected:
 	vector<LPGAMEOBJECT> listObjIdle;
 	vector<LPGAMEOBJECT> listObjMove;
 	vector<LPGAMEOBJECT> listCoin;    //Coin xoay o dam may
+	vector<LPGAMEOBJECT> leafTree;
 
 
 
@@ -73,7 +76,8 @@ protected:
 		return a;
 	}
 	
-	
+	string listTextEndGame = "YOU GOT A CARD";
+	string lisstTextClear = "COURSE CLEAR ";
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -87,15 +91,19 @@ protected:
 	
 public: 
 	CPlayScene(int id, LPCWSTR filePath);
-
+	LPSPRITE text;
 	virtual void Load();
 	virtual void Update(ULONGLONG dt);
 	virtual void Render();
 	virtual void Unload();
 	void SetCamSpeedY(ULONGLONG dt);
 	void InsertObjToGrid();
+	void MakeItemEndGame();
+	void RenderTextEndGame();
 	//int GetLeverPlayer();
+	bool hasMakeRandomItemsEndGame;
 	float camY;
+	float camX;
 	CMario * GetPlayer() { return player; } 
 	CItems* GetItems()	 { return items; }
 	

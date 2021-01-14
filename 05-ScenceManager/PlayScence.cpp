@@ -45,6 +45,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_PIRANHA_BITE 11
 #define OBJECT_TYPE_MOONEY_EFFECT 12
 #define OBJECT_TYPE_PIPE		13
+#define OBJECT_TYPE_MOVING_WOOD 14
+#define OBJECT_TYPE_BOOMERANG_BROTHER 15
 
 
 #define MAX_SCENE_LINE 1024
@@ -212,9 +214,23 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CItems(x, y);
 		//items = (CItems*)obj;
 	}break;
+	case OBJECT_TYPE_BOOMERANG_BROTHER:
+	{
+		obj = new CBoomerangBrother(player);
+		listObjMove.push_back(obj);
+	}
+	break;
 	case OBJECT_TYPE_MOONEY_EFFECT:
 	{
 		obj = new CMonneyEffect(); 
+		listObjMove.push_back(obj);
+		break;
+	}
+	case OBJECT_TYPE_MOVING_WOOD:
+	{
+		float width = atof(tokens[4].c_str());
+		int height = atof(tokens[5].c_str());
+		obj = new CMovingWood(width,height,player);
 		listObjMove.push_back(obj);
 		break;
 	}
@@ -261,13 +277,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_PIRANHA_BITE:
 	{
-		obj = new CGiantPiranhaPlantBite(); 
+		obj = new CGiantPiranhaPlantBite(player); 
 		listObjMove.push_back(obj);
 		break;
 	}
 	case OBJECT_TYPE_FLOOR:
 	{
-		int width = atof(tokens[4].c_str());
+		float width = atof(tokens[4].c_str());
 		int height = atof(tokens[5].c_str());
 		obj = new CFloor(width, height);
 		if (obj)
@@ -445,6 +461,10 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 			{
 				camSpeedY = player->vy;
 			}
+			else if (player->isFalling)
+			{
+				camY = player->y-20;
+			}
 		}
 
 	SetCam:
@@ -452,7 +472,7 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 		if (camY <= 0 || camY > 200)
 			return;
 	}
-	CGame::GetInstance()->SetCamPosY(camY);
+	CGame::GetInstance()->SetCamPosY(round(camY));
 }	
 
 void CPlayScene::Update(ULONGLONG dt)
@@ -463,7 +483,7 @@ void CPlayScene::Update(ULONGLONG dt)
 	InsertObjToGrid();
 	
 	vector<LPGAMEOBJECT> coObjects;
-	player->Update(dt, &objects,&listObjIdle);
+	player->Update(dt, &objects/*,&listObjIdle*/);
 	/*for (int i = 0; i < listObjIdle.size(); i++)
 		listObjIdle[i]->Update(dt);*/
 	for (size_t i = 0; i < objects.size(); i++)
@@ -483,7 +503,10 @@ void CPlayScene::Update(ULONGLONG dt)
 			if (gach->bottom_coll == 1 && gach->created_item == 0 && gach->bouncing == 1)
 			{
 				gach->created_item = 1;
-				listitems.push_back(MadeItems(gach->x, gach->y));
+				if(player->level==MARIO_LEVEL_BIG)
+					leafTree.push_back(MadeItems(gach->x, gach->y));
+				else 
+					listitems.push_back(MadeItems(gach->x, gach->y));
 			}
 			else if (gach->collWithKoopa && gach->created_item==0)
 			{
@@ -492,7 +515,8 @@ void CPlayScene::Update(ULONGLONG dt)
 				item->SetPosition(gach->x, gach->y);
 				item->id_items = Tree_Leaf;
 				item->SetState(Tree_Leaf);				
-				listitems.push_back(item);
+				//listitems.push_back(item);
+				leafTree.push_back(item);
 			}
 		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_TIEN) 
@@ -503,6 +527,8 @@ void CPlayScene::Update(ULONGLONG dt)
 			{
 				coin = new CCoin();
 				gach->created_item = 1;
+				player->dola++;
+				player->score += 100;
 				coin->SetPosition(gach->x+3, gach->y);
 				coin->SetState(COIN_STATE_CREATED);
 			}
@@ -528,9 +554,9 @@ void CPlayScene::Update(ULONGLONG dt)
 			{
 				gach->created_item=1;
 				CItems* item = new CItems(gach->x, gach->y);
-				item->id_items = SWITCH_P_ON;
-				item->SetState(SWITCH_P_ON);
-				item->SetPosition(gach->x, gach->y - 16);
+				item->id_items = GREEN_MUSHROOM;
+				item->SetState(GREEN_MUSHROOM);
+				item->SetPosition(gach->x, gach->y);
 				listitems.push_back(item);
 			}
 		}
@@ -552,7 +578,8 @@ void CPlayScene::Update(ULONGLONG dt)
 	{
 		listCoin[i]->Update(dt, &coObjects);
 	}
-
+	/*if (player->x > 2256)
+		MakeItemEndGame();*/
 	for (int i = 0; i < listitems.size(); i++)
 	{
 		if (listitems[i]->GetState() == SWITCH_P_OFF)
@@ -607,7 +634,7 @@ void CPlayScene::Update(ULONGLONG dt)
 			itemfly->SetState(START_FLY_UP);
 			itemfly->SetPosition(item->x, item->y);
 			listitems.push_back(itemfly);
-			item->makeItemFly = false;
+			item->makeItemFly = false;			
 		}
 	}
 	if (GetTickCount64() - timeTranformation > 5000 && timeTranformation!=0)
@@ -657,19 +684,19 @@ void CPlayScene::Update(ULONGLONG dt)
 		//}
 		listcoin.clear();
 	}
-	/*for (int i = 0; i < listcoin.size(); i++)
-	{
-		listcoin[i]->Update(dt, &coObjects);
-	}*/
 
-	if (player->x > 2256 && !player->endGame)
+	//item end game can nghi cach lam lai 
+	if (!player->inMapTwo)  // chia cat 2 map
 	{
-		CItems* item = new CItems(2689, 338);
-		item->id_items = ITEMS_END_GAME;
-		item->SetState(ITEMS_END_GAME);
-		item->SetPosition(2689, 338);
-		listitems.push_back(item);
-		player->endGame = true;
+		if (player->x > 2256 && !hasMakeRandomItemsEndGame)
+		{
+			CItems* item = new CItems(2689, 338);
+			item->id_items = ITEMS_END_GAME;
+			item->SetState(ITEMS_END_GAME);
+			item->SetPosition(2689, 338);
+			listitems.push_back(item);
+			hasMakeRandomItemsEndGame = true;
+		}
 	}
 
 	if (player->use_Weapon && !player->hasFight)
@@ -695,6 +722,7 @@ void CPlayScene::Update(ULONGLONG dt)
 	player->Collision_items(&listitems);
 	player->Collision_coin(&listcoin);
 	player->Collision_coin(&listCoin);
+	player->Collision_items(&leafTree);
 	if (listweapon.size() != 0)
 	{
 		if (listweapon.size() >= 2)
@@ -706,8 +734,12 @@ void CPlayScene::Update(ULONGLONG dt)
 	}
 	for (int i = 0; i < listitems.size(); i++)
 		listitems[i]->Update(dt, &coObjects);
+	for (int i = 0; i < listcoin.size(); i++)
+		listcoin[i]->Update(dt, &coObjects);
 
-	
+	for (int i = 0; i < leafTree.size(); i++)
+		leafTree[i]->Update(dt, &coObjects);
+
 	if (listweapon.size() != 0)
 	{
 		for (int i = 0; i < listweapon.size(); i++)
@@ -726,13 +758,25 @@ void CPlayScene::Update(ULONGLONG dt)
 	
 	// Update camera to follow mario
 	float cx, cy;
-	cx = player->x - (SCREEN_WIDTH / 4);
-	
-	if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2816)
+	if (!player->inMapTwo)
 	{
 		cx = player->x - (SCREEN_WIDTH / 4);
-		CGame::GetInstance()->cam_x = cx;
-	}	
+		if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2832)
+		{
+			cx = player->x - (SCREEN_WIDTH / 4);
+			CGame::GetInstance()->cam_x = round(cx);
+		}
+	}
+	else
+	{	
+
+		camX += 0.03 * dt;
+		/*if (camX > 0.1)
+			camX = 0.1;*/
+		//DebugOut(L"gia tri cua camX %f \n", camX);
+		//CGame::GetInstance()->SetCamPosX(1550.0);
+		CGame::GetInstance()->SetCamPosX(round(camX));
+	}
 	SetCamSpeedY(dt);
 	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
 	
@@ -742,10 +786,11 @@ void CPlayScene::Update(ULONGLONG dt)
 void CPlayScene::Render()
 {	
 	map->Draw();	
-	for (int i = 0; i < listcoin.size(); i++)
+	//RenderTextEndGame();
+	/*for (int i = 0; i < listcoin.size(); i++)
 	{
 		listcoin[i]->Render();
-	}
+	}*/
 
 	for (int i = 0; i < listCoin.size(); i++)
 	{
@@ -757,12 +802,15 @@ void CPlayScene::Render()
 		if(!listweapon[i]->isExplode)
 			listweapon[i]->Render();
 	}
-
+	for (int i = 0; i < listcoin.size(); i++)
+		listcoin[i]->Render();
 	for (int i = 0; i < listitems.size(); i++)
 		listitems[i]->Render();
 
 	for (int i = objects.size()-1; i>=0; i--)
 		objects[i]->Render();
+	for (int i = 0; i < leafTree.size(); i++)
+		leafTree[i]->Render();
 
 	if (tail != NULL)
 		tail->Render();
@@ -800,6 +848,54 @@ void CPlayScene::InsertObjToGrid()
 	for(UINT i = 0; i < listAllObjMove.size(); i++)
 	{
 		objects.push_back(listAllObjMove[i]);
+	}
+}
+void CPlayScene::MakeItemEndGame()
+{
+	if (!player->inMapTwo)  // chia cat 2 map
+	{
+		CItems* item = new CItems(2689, 338);
+		item->id_items = ITEMS_END_GAME;
+		item->SetState(ITEMS_END_GAME);
+		item->SetPosition(2689, 338);
+		listitems.push_back(item);
+	}
+}
+void CPlayScene::RenderTextEndGame()
+{
+	for (int i = 0; i < lisstTextClear.size(); i++)
+	{
+		if (lisstTextClear[i] == ' ')
+			continue;
+		int numb;
+		for (int j = 0; j < 26; j++)
+		{
+			numb = 65 + j;
+			if (lisstTextClear[i] == numb)
+			{
+				text = CSprites::GetInstance()->Get(2100 + (j));
+				break;
+			}
+		}
+		text->Draw(2650 + (i * 8) + X, 260);
+	}
+
+	for (int i = 0; i < listTextEndGame.size(); i++)
+	{
+		if (listTextEndGame[i] == ' ')
+			continue;
+		int numb;
+		for (int j = 0; j < 26; j++)
+		{
+
+			numb = 65 + j;
+			if (listTextEndGame[i] == numb)
+			{
+				text = CSprites::GetInstance()->Get(2100 + (j));
+				break;
+			}
+		}
+		text->Draw(2644 + (i * 8) + X,280 );
 	}
 }
 /*
@@ -929,6 +1025,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
  	switch (KeyCode)
 	{
 	case DIK_S:
+		mario->isStandOnMovingWood = false;
 		if (mario->isFalling)
 		{
 			if (mario->level == MARIO_RACCOON && mario->isJumping && !mario->isFlying)
@@ -951,17 +1048,43 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			if (mario->level == MARIO_LEVEL_BIG)
 			{
-				if (mario->nx > 0)
-					mario->SetState(MARIO_BIG_STATE_JUMP_RIGHT);
+				if (mario->isMaxSpeed && !mario->isFlying)
+				{
+					//DebugOut(L"huong nx %d \n", mario->nx);
+					if (mario->nx > 0)
+						mario->SetState(MARIO_BIG_STATE_JUMP_RIGHT_WHEN_MAX_SPEED);
+					else
+						mario->SetState(MARIO_BIG_STATE_JUMP_LEFT_WHEN_MAX_SPEED);
+					mario->isFlying = true;
+					mario->isSitting = false;
+				}
 				else
-					mario->SetState(MARIO_BIG_STATE_JUMP_LEFT);
+				{
+					if (mario->nx > 0)
+						mario->SetState(MARIO_BIG_STATE_JUMP_RIGHT);
+					else
+						mario->SetState(MARIO_BIG_STATE_JUMP_LEFT);
+				}
 			}
 			else if (mario->level == MARIO_LEVEL_SMALL)
 			{
-				if (mario->nx > 0)
-					mario->SetState(MARIO_SMALL_STATE_JUMP_RIGHT);
+				if (mario->isMaxSpeed && !mario->isFlying)
+				{
+					//DebugOut(L"huong nx %d \n", mario->nx);
+					if (mario->nx > 0)
+						mario->SetState(MARIO_SMALL_STATE_JUMP_RIGHT_WHEN_MAX_SPEED);
+					else
+						mario->SetState(MARIO_SMALL_STATE_JUMP_LEFT_WHEN_MAX_SPEED);
+					mario->isFlying = true;
+					mario->isSitting = false;
+				}
 				else
-					mario->SetState(MARIO_SMALL_STATE_JUMP_LEFT);
+				{
+					if (mario->nx > 0)
+						mario->SetState(MARIO_SMALL_STATE_JUMP_RIGHT);
+					else
+						mario->SetState(MARIO_SMALL_STATE_JUMP_LEFT);
+				}
 			}
 			else if (mario->level == MARIO_RACCOON)
 			{
@@ -985,10 +1108,26 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			}
 			else if (mario->level == MARIO_FIRE)
 			{
-				if (mario->nx > 0)
-					mario->SetState(MARIO_FIRE_STATE_JUMP_RIGHT);
+				if (mario->isMaxSpeed && !mario->isFlying)
+				{
+					//DebugOut(L"huong nx %d \n", mario->nx);
+					if (mario->nx > 0)
+						mario->SetState(MARIO_FIRE_STATE_JUMP_RIGHT_WHEN_MAX_SPEED);
+					else
+						mario->SetState(MARIO_FIRE_STATE_JUMP_LEFT_WHEN_MAX_SPEED);
+					mario->isFlying = true;
+					mario->isSitting = false;
+				}
 				else
-					mario->SetState(MARIO_FIRE_STATE_JUMP_LEFT);
+				{
+					if (mario->nx > 0)
+					{
+						mario->SetState(MARIO_FIRE_STATE_JUMP_RIGHT);
+						//DebugOut(L"bbbbbb");
+					}
+					else
+						mario->SetState(MARIO_FIRE_STATE_JUMP_LEFT);
+				}
 			}
   		mario->vy = -MARIO_JUMP_SPEED_Y;		
 		}
@@ -1029,9 +1168,19 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_4:
 		mario->level = MARIO_FIRE;
+		break;
 	case DIK_9:
-		mario->SetLevel(MARIO_RACCOON);
-		mario->SetPosition(2256, 80);
+		//mario->SetLevel(MARIO_RACCOON);
+		//mario->SetPosition(2256, 80);
+		CGame::GetInstance()->SwitchScene(2);
+		//DebugOut(L"gai tri X cua portal truoc do  %f  \n", mario->posXOfPortal);
+		//DebugOut(L"gai tri Y cua portal truoc do  %f  \n", mario->posYOfPortal);
+		mario->SetPosition(mario->posXOfPortal, mario->posYOfPortal);
+		mario->SetLevel(MARIO_LEVEL_SMALL);
+		mario->vx = 0;
+		mario->vy = 0;
+		//DebugOut(L"gai tri X cua mario truoc do  %f  \n", mario->posXOfPortal);
+		//DebugOut(L"gai tri Y cua mario truoc do  %f  \n", mario->posYOfPortal);
 		break;
 	case DIK_A:
 		
@@ -1272,7 +1421,10 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				else if (mario->level == MARIO_FIRE)
 				{
 					if (mario->nx > 0)
+					{
 						mario->state = MARIO_FIRE_STATE_JUMP_RIGHT;
+						//DebugOut(L"ccccc");
+					}
 					else
 						mario->state = MARIO_FIRE_STATE_JUMP_LEFT;
 				}

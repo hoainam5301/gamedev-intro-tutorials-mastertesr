@@ -10,11 +10,12 @@ CGiantPiranhaPlant::CGiantPiranhaPlant(CMario* mario) : CGameObject()
 
 void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (Mario->standOnPipe)
-		return;
+	/*if (Mario->standOnPipe)
+		return;*/
 	CGameObject::Update(dt, coObjects);
 	y += dy;
 	if (start_y == 0) start_y = y;
+	if (start_x == 0) start_x = x;
 	
 	////y += dy;
 	if (y > start_y - GIANT_BOX_HEIGHT && y < start_y)
@@ -23,6 +24,12 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (id_giantpiranha == GIANT_PIRANHA_RED)
 	{
+		if ((Mario->y < y && y == start_y && Mario->leftOfMario>(start_x-8) && Mario->leftOfMario < (start_x+24)) ||
+			(Mario->leftOfMario > (start_x-25) && Mario->leftOfMario < (start_x+30) && y == start_y))
+		{
+			timewaittoshoot = GetTickCount64();
+			goto Continue;
+		}
 		if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP)
 		{
 			fight = false;
@@ -70,6 +77,12 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else if (id_giantpiranha == GIANT_PIRANHA_GREEN)
 	{
+		if ((Mario->y < y && y == start_y && Mario->leftOfMario>(start_x - 8) && Mario->leftOfMario < (start_x + 24)) ||
+			(Mario->leftOfMario > (start_x - 25) && Mario->leftOfMario < (start_x + 30) && y == start_y))
+		{
+			timewaittoshoot = GetTickCount64();
+			goto Continue;
+		}
 		if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP_GREEN)
 		{
 			fight = false;
@@ -140,6 +153,7 @@ void CGiantPiranhaPlant::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			y = start_y - GIANT_GREEN_BOX_HEIGHT;
 		}
 	}
+	Continue:
 	for (int i = 0; i < listFireBall.size(); i++)
 	{
 		listFireBall[i]->Update(dt, coObjects);

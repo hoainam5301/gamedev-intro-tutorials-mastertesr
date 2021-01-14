@@ -7,10 +7,10 @@
 class CFloor : public CGameObject
 {
 	int height;
-	int width;
+	float width;
 public:
 
-	CFloor(int width, int height);
+	CFloor(float width, int height);
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
 };

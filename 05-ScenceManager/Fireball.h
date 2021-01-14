@@ -5,7 +5,8 @@
 #define BONUS_POS_X 10
 #define BONUS_POS_XY 6
 
-#define MOVE_SPEED 0.1f
+#define MOVE_SPEED_X 0.1f
+#define MOVE_SPEED_Y 0.08f
 
 #define WIDTH_HEIGHT_FIREBALL 8
 

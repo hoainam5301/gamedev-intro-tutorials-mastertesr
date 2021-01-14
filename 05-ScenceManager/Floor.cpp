@@ -1,6 +1,6 @@
 #include "Floor.h"
 
-CFloor::CFloor(int width, int height)
+CFloor::CFloor(float width, int height)
 {
 	this->width = width;
 	this->height = height; 

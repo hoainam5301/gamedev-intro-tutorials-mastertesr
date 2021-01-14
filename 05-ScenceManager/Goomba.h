@@ -41,6 +41,8 @@ public:
 	CMario* Mario;
 	ULONGLONG readyToFlyHigh;
 	int countFly;
+	bool hitByWeapon;
+	bool hitByTail;
 	vector <LPGAMEOBJECT> listEffect;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);

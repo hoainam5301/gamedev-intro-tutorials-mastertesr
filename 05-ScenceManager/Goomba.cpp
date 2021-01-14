@@ -1,5 +1,6 @@
 #include "Goomba.h"
 #include "ColorBox.h"
+#include "Koopas.h"
 #include "MonneyEffect.h"
 
 CGoomba::CGoomba(CMario* mario)
@@ -101,16 +102,19 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 		}
 	}
-	else if (id_goomba == GOOMBA_NORMAL)
+	else if (id_goomba == GOOMBA_NORMAL && !hitByTail)
 	{
-		if(GetState()!=GOOMBA_STATE_DIE && GetState()!=GOOMBA_STATE_DIE_FLY)
-			SetState(GOOMBA_STATE_WALKING);
+		if (GetState() != GOOMBA_STATE_DIE && GetState() != GOOMBA_STATE_DIE_FLY)
+		{
+			SetState(GOOMBA_STATE_WALKING);	
+		}
 	}
 	if (makeEffect)
 	{
 		CMonneyEffect* monneyeffect = new CMonneyEffect();
 		monneyeffect->SetPosition(x, y);
 		monneyeffect->SetState(MAKE_100); 
+		Mario->score += 100;
 		makeEffect = false;
 		listEffect.push_back(monneyeffect);
 	}
@@ -165,10 +169,31 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 					if (e->nx != 0)
 						x += dx;
 				}
-				else if (e->nx != 0)
+				else if (dynamic_cast<CGoomba*>(e->obj))
+				{
+					CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+					if (goomba->id_goomba == GOOMBA_RED && e->ny!=0)
+						y -= 1;
+					else
+					{
+						if (id_goomba == GOOMBA_NORMAL)
+						{
+							this->nx = -this->nx;
+							SetSpeed();
+							SetState(GOOMBA_STATE_WALKING);
+							if (goomba->id_goomba != GOOMBA_RED)
+							{
+								goomba->nx = -goomba->nx;
+								goomba->SetSpeed();
+								goomba->SetState(GOOMBA_STATE_WALKING);
+							}
+						}
+					}
+				}
+				else if (e->nx != 0 && !dynamic_cast<CKoopas*>(e->obj))
 				{
 					this->nx = -this->nx;
-					//SetSpeed();
+					SetSpeed();
 					SetState(GOOMBA_STATE_WALKING);
 				}
 			}
@@ -204,8 +229,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 						}
 					}
 					else
-						SetState(GOOMBA_STATE_WALKING);
-
+						SetState(GOOMBA_RED_STATE_NO_WING_WALK);
 				}
 			}
 		}
@@ -217,19 +241,21 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			if(id_goomba==GOOMBA_NORMAL)
 				isdone = true;
-			else if (id_goomba == GOOMBA_RED)
+			/*else if (id_goomba == GOOMBA_RED)
 			{
-				if (!hasWing)
+				if (!hasWing && (state==GOOMBA_RED_STATE_NO_WING_DIE || state==GOOMBA_RED_STATE_NO_WING_DIE_FLY) )
 					isdone = true;
-			}
+			}*/
 		}
 	}
+	//if(id_goomba==GOOMBA_NORMAL)
+	//DebugOut(L"gia tri state %d \n", this->nx);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
 void CGoomba::Render()
 {	
-	if (state == GOOMBA_STATE_DIE||state==GOOMBA_RED_STATE_NO_WING_DIE||state==GOOMBA_STATE_DIE_FLY)
+	if (state == GOOMBA_STATE_DIE||state==GOOMBA_RED_STATE_NO_WING_DIE||state==GOOMBA_STATE_DIE_FLY||state==GOOMBA_RED_STATE_NO_WING_DIE_FLY)
 	{
 		if(timeRenderAniDie==0)
 			timeRenderAniDie = GetTickCount64();
@@ -244,7 +270,7 @@ void CGoomba::Render()
 	{
 		listEffect[i]->Render();
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CGoomba::SetSpeed()
@@ -275,8 +301,14 @@ void CGoomba::SetState(int state)
 			SetSpeed();
 			break;
 		case GOOMBA_STATE_DIE_FLY:
-			vx = -vx;
-			vy = -GOOMBA_FLY_HIGH_SPEED;
+			if (hitByTail)
+			{
+				SetDirection();
+				SetSpeed();
+			}
+			else		
+				vx = -vx;
+			vy = -(GOOMBA_FLY_HIGH_SPEED);
 			break;
 		case GOOMBA_RED_STATE_NO_WING_DIE:
 			vx = 0;

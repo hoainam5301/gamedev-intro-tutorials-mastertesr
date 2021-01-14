@@ -41,8 +41,19 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			CGoomba* goomba = dynamic_cast<CGoomba*>(e);
 			goomba->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
-			{
-				goomba->SetState(GOOMBA_STATE_DIE_FLY);
+			{				
+				goomba->hitByTail = true;				
+				if (goomba->id_goomba == GOOMBA_NORMAL)
+				{
+					goomba->makeEffect = true;
+					goomba->SetState(GOOMBA_STATE_DIE_FLY);
+				}
+				else if (goomba->id_goomba == GOOMBA_RED);
+				{
+					goomba->makeEffect = true;
+					goomba->hasWing = false;
+					goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
+				}
 			}
 		}
 		else if (dynamic_cast<CKoopas*>(e))
@@ -51,14 +62,20 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			koopas->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
 			{
+				//koopas->makeEffect =true;
 				if (koopas->id_koopa == KOOPA_RED)
+				{
 					koopas->SetState(KOOPA_RED_STATE_DIE_UP);
+					
+				}
 				else if (koopas->id_koopa == KOOPA_GREEN)
 				{
 					koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
 					koopas->hasWing = false;
+					
 				}
 				koopas->hitByTail = true;
+				
 			}
 		}
 		else if (dynamic_cast<CBrick*>(e))
@@ -77,7 +94,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 
 void CRaccoonTail::Render()
 {
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CRaccoonTail::GetBoundingBox(float& l, float& t, float& r, float& b)

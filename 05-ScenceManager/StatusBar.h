@@ -19,7 +19,8 @@
 class StatusBar
 {
 	//vector<LPSPRITE> pMeter;
-	LPSPRITE number;	
+	LPSPRITE number;
+	LPSPRITE blackBackRound;
 	float posX;
 	float posY;
 	int score;
@@ -33,6 +34,7 @@ class StatusBar
 	void DrawAllNumber();
 	void DrawPMeter();
 public:
+	int countItemsEndGame;
 	void Update(ULONGLONG dt, float camX, float camY);
 	void Render();
 	CMario* Mario;

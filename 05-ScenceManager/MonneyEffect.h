@@ -9,9 +9,10 @@
 #define MAKE_2000 5
 #define MAKE_4000 6
 #define MAKE_8000 7
+#define MAKE_ONE_UP 8
 
 #define MOVING_SPEED_FORM_BRICK 0.001f
-#define MOVE_SPEED 0.1f
+#define MOVE_SPEED_UP 0.1f
 #define DISTANCE_MOVE 40
 
 class CMonneyEffect : public CGameObject

@@ -125,6 +125,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animations.cpp" />
+    <ClCompile Include="Boomerang.cpp" />
+    <ClCompile Include="BoomerangBrother.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrokenBrick.cpp" />
     <ClCompile Include="Coin.cpp" />
@@ -137,6 +139,7 @@
     <ClCompile Include="Items.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="MonneyEffect.cpp" />
+    <ClCompile Include="MovingWood.cpp" />
     <ClCompile Include="PieceBrick.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Portal.cpp" />
@@ -159,6 +162,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animations.h" />
+    <ClInclude Include="Boomerang.h" />
+    <ClInclude Include="BoomerangBrother.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrokenBrick.h" />
     <ClInclude Include="Coin.h" />
@@ -171,6 +176,7 @@
     <ClInclude Include="Items.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="MonneyEffect.h" />
+    <ClInclude Include="MovingWood.h" />
     <ClInclude Include="PieceBrick.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="Portal.h" />

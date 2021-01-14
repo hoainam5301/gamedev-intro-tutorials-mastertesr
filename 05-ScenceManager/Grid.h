@@ -2,8 +2,8 @@
 #include "GameObject.h"
 #include "Game.h"
 
-#define CELL_WIDTH 260
-#define CELL_HEIGHT 260
+#define CELL_WIDTH 250
+#define CELL_HEIGHT 250
 
 #define MAP_WIDTH 3328
 #define MAP_HEIGHT  1000

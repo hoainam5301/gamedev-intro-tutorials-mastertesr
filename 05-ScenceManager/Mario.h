@@ -6,7 +6,7 @@
 #define MARIO_WALKING_ACC		0.0002f
 #define MARIO_RUNNING_SPEED		0.2f
 #define MARIO_SUB_WALKING_ACC	0.00075f
-#define MARIO_SUB_RUNNING_ACC	0.0012f
+#define MARIO_SUB_RUNNING_ACC	0.005f
 #define MARIO_SUB_RUNNING_MAX_ACC 0.00855f
 #define MARIO_MIN_SPEED_TO_STOP 0.06f
 #define MARIO_MOVING_IN_PIPE_SPEED 0.01f
@@ -88,7 +88,6 @@
 #define MARIO_RACCOON_STATE_HOLDING_TURTLE_IDLE_RIGHT	57
 #define MARIO_RACCOON_STATE_HOLDING_TURTLE_JUMP_RIGHT	58
 #define MARIO_RACCOON_STATE_HOLDING_TURTLE_RUNNING_RIGHT	59
-#define MARIO_RACCOON_STATE_MOVE_IN_PIPE		105
 
 #define MARIO_RACCOON_STATE_IDLE_LEFT			60
 #define MARIO_RACCOON_STATE_WALK_LEFT			61
@@ -140,11 +139,16 @@
 
 //#define MARIO_RUNNING_RIGHT					4
 //#define MARIO_RUNNING_LEFT					31
-
 #define MARIO_ANI_DIE				104
-#define MARIO_ANI_DIE				104
+#define MARIO_RACCOON_STATE_MOVE_IN_PIPE		105
 
-#define MARIO_STATE_IN_WORD_MAP		106
+#define MARIO_STATE_IN_WORD_MAP		112
+#define MARIO_BIG_STATE_JUMP_RIGHT_WHEN_MAX_SPEED	106
+#define MARIO_BIG_STATE_JUMP_LEFT_WHEN_MAX_SPEED	107
+#define MARIO_SMALL_STATE_JUMP_RIGHT_WHEN_MAX_SPEED	108
+#define MARIO_SMALL_STATE_JUMP_LEFT_WHEN_MAX_SPEED	109
+#define MARIO_FIRE_STATE_JUMP_RIGHT_WHEN_MAX_SPEED	110
+#define MARIO_FIRE_STATE_JUMP_LEFT_WHEN_MAX_SPEED	111
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -197,12 +201,14 @@ private:
 	
 public: 
 	//ULONGLONG Start_on_Key;
+	bool isStandOnMovingWood;
 	bool is_Grounded;
 	bool isMaxSpeed;
 	bool Firstspaceup;
 	bool canNotWalking;
 	//bool gravity_raccon;
 	ULONGLONG timestartfly;
+	ULONGLONG timeRenderAni;
 	int level;	
 	bool isJumping, isSitting;// isFalling;
 	bool isFlying,isRunning;
@@ -231,7 +237,8 @@ public:
 	float posXOfNextPortalGoLeft=0;
 	float posYOfNextPortalGoUp=0;
 	float posYOfNextPortalGoDown=0;
-	float posXOfPortal=0;			//luu gia tri x cua cong khi khi len xuong
+	float posXOfPortal=0;//luu gia tri x cua cong khi khi len xuong
+	float posYOfPortal=0;	
 	bool isAutoGoRight;
 	bool isAutoGoLeft;
 	bool isAutoGoTop;
@@ -242,6 +249,7 @@ public:
 	int sceneIdGoToRight;
 	int sceneIdGoToUp;
 	int sceneIdGoToDown;
+	bool isStandOnPortal;
 	
 	int lastnx;
 	float last_vx;
@@ -249,13 +257,15 @@ public:
 	bool isFalling;
 	bool hasFight;
 	float mDy = 0;				//xac dinh mario roi
-	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL,vector<LPGAMEOBJECT>*colliable_objidle=NULL);
+	void Update(ULONGLONG dt, vector<LPGAMEOBJECT> *colliable_objects = NULL/*,vector<LPGAMEOBJECT>*colliable_objidle=NULL*/);
 	void Render();
 
 	int score;
 	int dola;
 	int timeLife=300;
 	bool endGame;
+
+	bool inMapTwo = false;
 
 
 	void UpdateInScenceMap(ULONGLONG dt);

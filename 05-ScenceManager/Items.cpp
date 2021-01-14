@@ -34,21 +34,21 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		if (spawn) {
 
 			if (this->y >= Start_x - DISTANCE_LEAF_MOVE_UP)
-				vy = -MOVE_UPSPEED;
+				vy = -2.5f;
 			else spawn = false;
 		}
 		else
 		{
 			if (x <= Start_y )
 			{
-				vy = MOVE_UPSPEED;
-				vx = LEAF_MOVE_SPEED * pow(DISTANCE_LEAF_CHANGE_DIC, vy);
+				vy =0.7;
+				vx = LEAF_MOVE_SPEED * pow(DISTANCE_LEAF_CHANGE_DIC, MOVE_UPSPEED);
 				SetState(Tree_Leaf_move_right);
 			}
 			if (x >= maxRight)
 			{
-				vy = MOVE_UPSPEED;
-				vx = -LEAF_MOVE_SPEED * pow(DISTANCE_LEAF_CHANGE_DIC, vy);
+				vy = 0.7;
+				vx = -LEAF_MOVE_SPEED * pow(DISTANCE_LEAF_CHANGE_DIC, MOVE_UPSPEED);
 				SetState(Tree_Leaf_move_left);
 			}
 		}
@@ -59,7 +59,7 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			monneyeffect->SetState(MAKE_1000);
 			makeEffect = false;
 			listEffect.push_back(monneyeffect);
-		}
+		}		
 		x += vx;
 		y += vy;
 	}	
@@ -70,12 +70,26 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			 if (spawn) {
 
 				 if (this->y >= Start_x - DISTANCE_MOVE_UP)
-					 vy = -MOVE_UP_SPEED;
+					 vy = -MOVE_ITEM_UP_SPEED;
 				 else spawn = false;
 			 }
 			 else
 			 {
-				 vx = MOVE_SPEED * change_direction;
+				 vx = MOVING_SPEED * change_direction;
+				 vy = GRAVITY;
+			 }
+		 }
+		 else  if ( id_items == GREEN_MUSHROOM)
+		 {
+			 if (spawn) {
+
+				 if (this->y >= Start_y - DISTANCE_MOVE_UP)
+					 vy = -MOVE_ITEM_UP_SPEED;
+				 else spawn = false;
+			 }
+			 else
+			 {
+				 vx = MOVING_SPEED * change_direction;
 				 vy = GRAVITY;
 			 }
 		 }
@@ -84,7 +98,7 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			 if (spawn) {
 
 				 if (this->y >= Start_x - DISTANCE_MOVE_UP)
-					 vy = -MOVE_UP_SPEED;
+					 vy = -MOVE_ITEM_UP_SPEED;
 				 else spawn = false;
 			 }
 			 else
@@ -97,7 +111,7 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 }
 		 else if (id_items == START_FLY_UP)
 		 {
-			 vy = -MOVE_SPEED;
+			 vy = -MOVING_SPEED;
 		 }
 		 if (makeEffect)
 		 {
@@ -106,6 +120,14 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			 monneyeffect->SetState(MAKE_1000);
 			 makeEffect = false;
 			 listEffect.push_back(monneyeffect);
+		 }
+		 if (makeLife)
+		 {
+			 CMonneyEffect* lifeeffect = new CMonneyEffect();
+			 lifeeffect->SetPosition(x, y);
+			 lifeeffect->SetState(MAKE_ONE_UP);
+			 makeLife = false;
+			 listEffect.push_back(lifeeffect);
 		 }
 		 CGameObject::Update(dt);
 		 vector<LPCOLLISIONEVENT> coEvents;
@@ -172,7 +194,7 @@ void CItems::Render()
 	{
 		listEffect[i]->Render();
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CItems::SetState(int state)
@@ -197,6 +219,8 @@ void CItems::SetState(int state)
 	case ITEMS_END_GAME:
 		break;
 	case START_FLY_UP:
+		break;
+	case GREEN_MUSHROOM:
 		break;
 	}
 }

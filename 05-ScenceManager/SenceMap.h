@@ -2,12 +2,14 @@
 
 
 #include "Scence.h"
+#include "Textures.h"
 //#include "TileMap.h"
 #include "Mario.h"
 #include "Portal.h"
 #include "Floor.h"
 #include "ShakeTree.h"
 #include "GameObject.h"
+#include "StatusBar.h"
 
 
 
@@ -17,6 +19,7 @@ class CSenceMap : public CScene
 public:
 	CMario* player;
 	TileMap* wordmap;
+	StatusBar* statusBar;
 	int word_id;
 	CPortal* current_portal;
 	vector<LPGAMEOBJECT> objects;

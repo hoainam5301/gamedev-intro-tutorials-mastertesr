@@ -5,6 +5,7 @@ StatusBar::StatusBar(CMario* mario)
 {
 	Mario = mario;
 	time = 999;
+	blackBackRound = CSprites::GetInstance()->Get(2066);
 }
 
 void StatusBar::DrawNumber(float x, float y, string stringnumb,int maxsize)
@@ -27,9 +28,26 @@ void StatusBar::DrawNumber(float x, float y, string stringnumb,int maxsize)
 		number->Draw(x + (i * 8)+X, y);
 	}
 }
+
 void StatusBar::DrawBoard()
 {
 	CSprites::GetInstance()->Get(2000)->Draw(posX+3,posY+233);
+	CSprites::GetInstance()->Get(2062)->Draw(posX+ 200, posY + 233);
+	if (countItemsEndGame == 1)
+	{
+		CSprites::GetInstance()->Get(2065)->Draw(posX + 204, posY + 239);
+	}
+	else if (countItemsEndGame == 2)
+	{
+		CSprites::GetInstance()->Get(2065)->Draw(posX + 204, posY + 239);
+		CSprites::GetInstance()->Get(2065)->Draw(posX + 204+24, posY + 239);
+	}
+	else if (countItemsEndGame == 3)
+	{
+		CSprites::GetInstance()->Get(2065)->Draw(posX + 204, posY + 239);
+		CSprites::GetInstance()->Get(2065)->Draw(posX + 204 + 24, posY + 239);
+		CSprites::GetInstance()->Get(2065)->Draw(posX + 204 + 24 +24, posY + 239);
+	}
 }
 void StatusBar::DrawPMeter()
 {
@@ -86,7 +104,9 @@ void StatusBar::Update(ULONGLONG dt, float camX, float camY)
 
 void StatusBar::Render()
 {
+	blackBackRound->Draw(posX, posY + 230);
 	DrawBoard();
 	DrawAllNumber();
 	DrawPMeter();
+
 }
