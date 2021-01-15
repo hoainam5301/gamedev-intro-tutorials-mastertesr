@@ -172,11 +172,11 @@ void CSenceMap::_ParseSection_OBJECTS(string line)
 	switch (object_type)
 	{
 		case OBJECT_TYPE_MARIO:
-		if (player != NULL)
+		/*if (player != NULL)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
-		}
+		}*/
 		player = CMario::GetInstance();
 		statusBar = new StatusBar(player);
 		player->SetPosition(x, y);
@@ -449,7 +449,7 @@ void CSenceMap::Unload()
 		delete mapPortals[i];*/
 	mapPortals.clear();
 	objects.clear();
-	player = NULL;
+//	player = NULL;
 }
 
 void CMapSceneKeyHandler::OnKeyUp(int keycode)

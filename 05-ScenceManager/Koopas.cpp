@@ -129,20 +129,25 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
 		{			
-			checkBox->SetPosition(x +17, y);	
+			//checkBox->SetPosition(x +17, y);	
+			checkBox->SetPosition(x + 5, y);
 			if (checkBox->makeKoopaReturn)
 			{
 				SetState(KOOPA_RED_STATE_WALKING_LEFT);
-				checkBox->SetPosition(x - 25, y);
+				//checkBox->SetPosition(x - 25, y);
+				checkBox->SetPosition(x - 15, y);
 			}
 		}
 		else if (GetState() == KOOPA_RED_STATE_WALKING_LEFT)
 		{
-			checkBox->SetPosition(x - 17, y);
+			//checkBox->SetPosition(x - 17, y);
+			checkBox->SetPosition(x - 10, y);
 			if (checkBox->makeKoopaReturn)
 			{
 				SetState(KOOPA_RED_STATE_WALKING_RIGHT);
-				checkBox->SetPosition(x + 25, y);
+				//checkBox->SetPosition(x + 25, y);
+				checkBox->SetPosition(x + 5, y);
+
 			}
 		}	
 		if (checkBox != NULL)
@@ -435,11 +440,14 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 					if (!brokenbrick->tranformation)
 					{
 						//DebugOut(L"aaaaaa \n");
-						if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+						if (e->nx != 0)
 						{
-							brokenbrick->isDestroyed = true;
-							brokenbrick->SetState(STATE_DESTROYED);
-							vx = -vx;
+							if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+							{
+								brokenbrick->isDestroyed = true;
+								brokenbrick->SetState(STATE_DESTROYED);
+								vx = -vx;
+							}
 						}
 					}
 				}

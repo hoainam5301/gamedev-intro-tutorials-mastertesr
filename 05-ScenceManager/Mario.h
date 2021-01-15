@@ -207,6 +207,7 @@ public:
 	bool Firstspaceup;
 	bool canNotWalking;
 	//bool gravity_raccon;
+	ULONGLONG readySwitchOutGame;
 	ULONGLONG timestartfly;
 	ULONGLONG timeRenderAni;
 	int level;	

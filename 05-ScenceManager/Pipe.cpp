@@ -17,8 +17,11 @@ void CPipe::Render()
 		ani = LONG_PIPE_GOTO_HIDDEN_MAP;
 	else if (pipeType == PIPE_IN_HIDDEN_MAP)
 		ani = PIPE_IN_HIDDEN_MAP;
+	else if (pipeType == PIPE_LONG_LONG)
+		ani = PIPE_LONG_LONG;
 	else
 		ani = PIPE_WITH_LONG_ANI;
+	
 
 	animation_set->at(ani)->Render(x, y);
 	RenderBoundingBox();

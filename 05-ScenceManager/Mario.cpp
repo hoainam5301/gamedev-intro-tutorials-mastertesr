@@ -39,6 +39,7 @@ CMario::CMario(float x, float y) : CGameObject()
 
 void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGAMEOBJECT>* listObjIdle*/)
 {
+	//DebugOut(L"gia tri ainmatuo %d \n",this->SetAnimationSet)
 #pragma region Update Mario
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
@@ -62,51 +63,81 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 		else if (topOfMario >= startOfLongPipeY)
 		{
 			turnOffLight = true;
-			inHiddenArea = true;
+			
 			if (waitGetOutOfPipe == 0)
 				waitGetOutOfPipe = GetTickCount64();
 			if (GetTickCount64() - waitGetOutOfPipe >= MARIO_TIME_GO_IN_PIPE /*&& waitGetOutOfPipe != 0*/)
 			{
 				getDownInPipe = false;
-				SetPosition(2100, 479);
-				turnOffLight = false;
-				waitGetOutOfPipe = 0;
-				countRender = 0;
+				if (!inMapTwo)
+				{
+					inHiddenArea = true;
+					SetPosition(2100, 479);
+					turnOffLight = false;
+					waitGetOutOfPipe = 0;
+					countRender = 0;
+				}
+				else
+				{
+					float l, t, r, b;
+					SetPosition(2193, 384);
+					GetBoundingBox(l,t,r,b);
+					waitGetOutOfPipe = 0;
+					countRender = 0;
+					getUpInPipe = true;
+				}
+				
 			}
 		}
 	}	
 	if (getUpInPipe)
 	{
-
-		if (topOfMario > atEndOfPipeY && atEndOfPipeY != 0)
+		if (!inMapTwo)
 		{
-			vy = -0.01;
-			SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
-			waitGetOutOfPipe = GetTickCount64();
-		}
-		else if (topOfMario <= atEndOfPipeY)
-		{
-			inHiddenArea = false;
-			turnOffLight = true;
-			countRender = 0;
-			vy = 0;
-			if (GetTickCount64() - waitGetOutOfPipe >= MARIO_TIME_GO_IN_PIPE)
+			if (topOfMario > atEndOfPipeY && atEndOfPipeY != 0)
 			{
-				SetPosition(2320, 384);
-				atEndOfPipeY = 0;//khong bi phai set vi tri lien tuc nhieu lan
-				turnOffLight = false;
-				waitGetOutOfPipe = 0;
+				vy = -0.01;
+				SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+				waitGetOutOfPipe = GetTickCount64();
+			}
+			else if (topOfMario <= atEndOfPipeY)
+			{
+				inHiddenArea = false;
+				turnOffLight = true;
+				countRender = 0;
+				vy = 0;
+				if (GetTickCount64() - waitGetOutOfPipe >= MARIO_TIME_GO_IN_PIPE)
+				{
+					SetPosition(2320, 384);
+					atEndOfPipeY = 0;//khong bi phai set vi tri lien tuc nhieu lan
+					turnOffLight = false;
+					waitGetOutOfPipe = 0;
+				}
+			}
+			else if (topOfMario > topOfPipeOut)
+			{
+				vy = -0.01;
+				SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+			}
+			else if (topOfMario <= topOfPipeOut)
+			{
+				getUpInPipe = false;
+				SetState(MARIO_STATE_IDLE);
 			}
 		}
-		else if (topOfMario > topOfPipeOut)
+		else
 		{
-			vy = -0.01;
-			SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
-		}
-		else if (topOfMario <= topOfPipeOut)
-		{
-			getUpInPipe = false;
-			SetState(MARIO_STATE_IDLE);
+			topOfPipeOut = 357;
+			if (topOfMario > topOfPipeOut)
+			{
+				vy = -0.01;
+				SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+			}
+			else if (topOfMario <= topOfPipeOut)
+			{
+				getUpInPipe = false;
+				SetState(MARIO_STATE_IDLE);
+			}
 		}
 	}
 	if (level == MARIO_RACCOON && timeRenderAni !=0
@@ -720,6 +751,14 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 						isSitting = false;
 						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
 					}
+					else if (pipe->pipeType == PIPE_LONG_LONG)
+					{
+						startOfLongPipeY = pipe->y;
+						getDownInPipe = true;
+						vy = MARIO_MOVING_IN_PIPE_SPEED;
+						isSitting = false;
+						SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
+					}
 				}
 				else if (e->ny < 0)
 				{
@@ -777,6 +816,11 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 						brokenbrick->isDestroyed = true;
 						brokenbrick->SetState(STATE_DESTROYED);
 					}
+					else if (e->nx != 0)
+					{
+						vx = 0;
+
+					}
 				}
 				/*else
 				{
@@ -790,6 +834,14 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 					brokenbrick->isDestroyed = true;
 					brokenbrick->isdone = true;
 				}*/				
+			}
+			else if (dynamic_cast<CPortal*>(e->obj))
+			{
+				CPortal* portal = dynamic_cast<CPortal*>(e->obj);
+				//sceneIdPresent = portal->sceneid;
+				vx = 0;
+				if(readySwitchOutGame==0)
+					readySwitchOutGame = GetTickCount64();
 			}
 		}
 		
@@ -1022,6 +1074,7 @@ void CMario::UpdateInScenceMap(ULONGLONG dt)
 
 void CMario::Render()
 {
+	//this->SetAnimationSet(CAnimationSets::GetInstance()->Get(1));
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	//DebugOut(L"stateeee %d \n", state);

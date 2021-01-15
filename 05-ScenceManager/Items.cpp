@@ -111,7 +111,7 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 }
 		 else if (id_items == START_FLY_UP)
 		 {
-			 vy = -MOVING_SPEED;
+			 vy = -MOVING_SPEED*3;
 		 }
 		 if (makeEffect)
 		 {

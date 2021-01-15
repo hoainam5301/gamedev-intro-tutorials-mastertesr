@@ -185,11 +185,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
-		if (player != NULL)
+		/*if (player != NULL)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
-		}		
+		}*/		
 		/*obj=CMario::GetInstance();
 		player = dynamic_cast<CMario*> (obj);
 		player = static_cast<CMario*>(obj);*/
@@ -312,6 +312,22 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		listObjIdle.push_back(obj);
 		break;
 	}
+	case OBJECT_TYPE_PORTAL:
+	{
+		int id = atof(tokens[1].c_str());
+		float x = atof(tokens[2].c_str());
+		float y = atof(tokens[3].c_str());
+
+		int isPortal = atof(tokens[4].c_str());
+		int l = atof(tokens[5].c_str());
+
+		int t = atoi(tokens[6].c_str());
+		int r = atoi(tokens[7].c_str());
+		int b = atoi(tokens[8].c_str());
+		int state = atoi(tokens[9].c_str());
+		obj = new CPortal(id, x, y, isPortal, l, t, r, b, state);
+		listObjIdle.push_back(obj);
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -400,7 +416,7 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 	float camSpeedY = 0.0f;
 	if (camY == 0)
 		camY = 200;
-	if (player->inHiddenArea)
+	if (player->inHiddenArea && !player->inMapTwo)
 	{
 		camY = 400;
 	}
@@ -495,10 +511,21 @@ void CPlayScene::Update(ULONGLONG dt)
 	InsertObjToGrid();
 	
 	vector<LPGAMEOBJECT> coObjects;
-	player->Update(dt, &objects/*,&listObjIdle*/);
 	/*for (int i = 0; i < listObjIdle.size(); i++)
 		listObjIdle[i]->Update(dt);*/
-	
+	if (player->endGame && GetTickCount64() - player->readySwitchOutGame > 4000 && player->readySwitchOutGame!=0)
+	{
+		
+		CGame::GetInstance()->SwitchScene(2);
+		player->SetPosition(player->posXOfPortal, player->posYOfPortal);
+		player->SetLevel(MARIO_LEVEL_SMALL);
+		player->endGame = false;
+		player->vx = 0;
+		player->vy = 0;
+		return;
+	}
+	player->Update(dt, &objects/*,&listObjIdle*/);
+
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -773,25 +800,25 @@ void CPlayScene::Update(ULONGLONG dt)
 	
 	// Update camera to follow mario
 	float cx, cy;
-	if (!player->inMapTwo)
-	{
+	/*if (!player->inMapTwo)
+	{*/
 		cx = player->x - (SCREEN_WIDTH / 4);
 		if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2832)
 		{
 			cx = player->x - (SCREEN_WIDTH / 4);
 			CGame::GetInstance()->cam_x = round(cx);
 		}
-	}
-	else
-	{	
+	//}
+	//else
+	//{	
 
-		camX += 0.03 * dt;
-		/*if (camX > 0.1)
-			camX = 0.1;*/
-		//DebugOut(L"gia tri cua camX %f \n", camX);
-		//CGame::GetInstance()->SetCamPosX(1550.0);
-		CGame::GetInstance()->SetCamPosX(round(camX));
-	}
+	//	camX += 0.03 * dt;
+	//	/*if (camX > 0.1)
+	//		camX = 0.1;*/
+	//	//DebugOut(L"gia tri cua camX %f \n", camX);
+	//	//CGame::GetInstance()->SetCamPosX(1550.0);
+	//	CGame::GetInstance()->SetCamPosX(round(camX));
+	//}
 	SetCamSpeedY(dt);
 	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
 	
@@ -801,13 +828,12 @@ void CPlayScene::Update(ULONGLONG dt)
 void CPlayScene::Render()
 {	
 	map->Draw();
-	if(player->endGame)
-		RenderTextEndGame();
 	/*for (int i = 0; i < listcoin.size(); i++)
 	{
 		listcoin[i]->Render();
 	}*/
-
+	if (player->endGame && GetTickCount64() - player->readySwitchOutGame > 1000 && player->readySwitchOutGame != 0 && GetTickCount64()-player->readySwitchOutGame<4000)
+		RenderTextEndGame();
 	for (int i = 0; i < listCoin.size(); i++)
 	{
 		listCoin[i]->Render();
@@ -916,6 +942,7 @@ void CPlayScene::RenderTextEndGame()
 
 	CSprites::GetInstance()->Get(2067)->Draw(2777, 260);
 	CSprites::GetInstance()->Get(2065)->Draw(2781, 266);
+	
 }
 /*
 	Unload current scene
@@ -924,14 +951,21 @@ void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
-
+	listAllObjIdle.clear();
+	listAllObjMove.clear();
 	listObjIdle.clear();
 	listObjMove.clear();
+	listCoin.clear();
+	listcoin.clear();
+	leafTree.clear();
+	listitems.clear();
+	listweapon.clear();
+
 	objects.clear();
 
 	gridObjIdle = NULL;
 	gridObjMove = NULL;
-	player = NULL;
+	//player = NULL;
 
 }
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
