@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Mario.h"
+#include "CheckBoxKoopas.h"
 
 
 #define KOOPAS_WALKING_SPEED 0.03f
@@ -58,10 +59,13 @@ public:
 	ULONGLONG timeToRevive;
 	ULONGLONG timeToFly;
 	ULONGLONG timeRenderAniDie;
+	CCheckBoxKoopas* checkBox= new CCheckBoxKoopas();
+	bool hasCreatCheckBox;
 	bool hitByTail;
 	bool hasWing;
 	bool hitByWeapon;
 	int startx, widthtogo;
+	int firstStartX;
 	float startX, startY;
 	CKoopas(CMario* mario,int id_Koopa,int hasWing);
 	int last_state;

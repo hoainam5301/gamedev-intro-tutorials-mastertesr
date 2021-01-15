@@ -7,6 +7,9 @@
 #include "Goomba.h"
 #include "GiantPiranhaPlant.h"
 #include "GiantPiranhaPlantBite.h"
+#include "Coin.h"
+#include "CheckBoxKoopas.h"
+
 
 
 CKoopas::CKoopas(CMario* mario,int id_Koopa,int haswing)
@@ -14,6 +17,7 @@ CKoopas::CKoopas(CMario* mario,int id_Koopa,int haswing)
 	Mario = mario;
 	id_koopa = id_Koopa;
 	hasWing = haswing;
+	CCheckBoxKoopas* checkBox = NULL;
 	if (id_koopa == KOOPA_RED)
 	{
 		if(hasWing)
@@ -123,6 +127,46 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				y = startY;
 			}
 		}
+		if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
+		{			
+			checkBox->SetPosition(x +17, y);	
+			if (checkBox->makeKoopaReturn)
+			{
+				SetState(KOOPA_RED_STATE_WALKING_LEFT);
+				checkBox->SetPosition(x - 25, y);
+			}
+		}
+		else if (GetState() == KOOPA_RED_STATE_WALKING_LEFT)
+		{
+			checkBox->SetPosition(x - 17, y);
+			if (checkBox->makeKoopaReturn)
+			{
+				SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+				checkBox->SetPosition(x + 25, y);
+			}
+		}	
+		if (checkBox != NULL)
+			checkBox->Update(dt, coObjects);
+		/*if (checkBox->y - checkBox->startY > 0.5)
+			checkBox->makeKoopaReturn = true;*/
+		/*if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
+		{
+			if (checkBox->makeKoopaReturn)
+			{
+				SetState(KOOPA_RED_STATE_WALKING_LEFT);
+				checkBox->SetPosition(x - 25, y);
+			}
+		}
+		else if (GetState() == KOOPA_RED_STATE_WALKING_LEFT)
+		{
+			if (checkBox->makeKoopaReturn)
+			{
+				
+				SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+				checkBox->SetPosition(x + 25, y);
+			}
+		}*/
+
 		if (!Mario->isHolding && (last_state == KOOPA_RED_STATE_HOLDING || last_state == KOOPA_RED_STATE_HOLDING_UP))//de khi tha mai rua ra thi mai rua bi da
 		{
 			nx = Mario->nx;
@@ -386,25 +430,16 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (dynamic_cast<CBrokenBrick*>(e->obj))
 				{
+					
 					CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);
-					if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-					{						
-						brokenbrick->isDestroyed = true;
-						brokenbrick->SetState(STATE_DESTROYED);
-						vx = -vx;
-					}
-					else if (e->ny < 0 && GetState() != KOOPA_RED_STATE_DIE_AND_MOVE && GetState() != KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+					if (!brokenbrick->tranformation)
 					{
-						if (x <= brokenbrick->x)
+						//DebugOut(L"aaaaaa \n");
+						if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
 						{
-							x = brokenbrick->x;
-							SetState(KOOPA_RED_STATE_WALKING_RIGHT);
-
-						}
-						else if (x >= brokenbrick->x + KOOPAS_BBOX_WIDTH+10  - KOOPAS_BBOX_WIDTH)
-						{
-							x = brokenbrick->x + KOOPAS_BBOX_WIDTH +10 - KOOPAS_BBOX_WIDTH;
-							SetState(KOOPA_RED_STATE_WALKING_LEFT);
+							brokenbrick->isDestroyed = true;
+							brokenbrick->SetState(STATE_DESTROYED);
+							vx = -vx;
 						}
 					}
 				}
@@ -412,9 +447,13 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (e->nx != 0)
 					{
-						vx = -vx;
+						if (GetState() == KOOPA_RED_STATE_WALKING_LEFT)
+							SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+						else if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
+							SetState(KOOPA_RED_STATE_WALKING_LEFT);
 						if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-						{
+						{	
+							vx = -vx;
 							CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 							brick->collWithKoopa = true;
 						}
@@ -600,6 +639,8 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	CheckCollisionWithBrick(coObjects);
+	//DebugOut(L"gia tri x cua mario %d \n", firstStartX);
+	//DebugOut(L" gia tri widh to go %d \n", widthtogo);
 }
 
 void CKoopas::CheckCollisionWithBrick(vector<LPGAMEOBJECT>* coObjects)
@@ -634,6 +675,8 @@ void CKoopas::Render()
 	}
 	else
 		animation_set->at(state)->Render(x, y);
+	if(checkBox!=NULL)
+		checkBox->Render();
 	for (int i = 0; i < listEffect.size(); i++)
 	{
 		listEffect[i]->Render();
@@ -662,12 +705,10 @@ void CKoopas::SetState(int State)
 			vy = -0.05;		
 		if (hitByTail)
 		{
-			DebugOut(L"aaaaaaa \n");
-			
-			
+
 			vy = -KOOPAS_MOVING_SPEED*2;
 			hitByTail = false;
-			makeEffect = true;
+			//makeEffect = true;
 		}
 		if (hitByWeapon)
 		{
@@ -680,6 +721,7 @@ void CKoopas::SetState(int State)
 	case KOOPA_RED_STATE_WALKING_RIGHT:
 		/*if (last_state == KOOPA_RED_STATE_REVIVE || last_state == KOOPA_RED_STATE_REVIVE_UP)
 			y -= KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_DIE;*/
+		DebugOut(L"aaaaa \n");
 		vx = KOOPAS_WALKING_SPEED;
 		last_state = KOOPA_RED_STATE_WALKING_RIGHT;
 		break;
@@ -737,7 +779,7 @@ void CKoopas::SetState(int State)
 			vy = -KOOPAS_MOVING_SPEED;
 		if (hitByTail )
 		{
-			makeEffect = true;
+			//makeEffect = true;
 			hitByTail = false;
 			vy = -KOOPAS_MOVING_SPEED*2;
 		}

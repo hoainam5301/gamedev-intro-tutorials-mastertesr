@@ -479,6 +479,18 @@ void CPlayScene::Update(ULONGLONG dt)
 {
 	gridObjIdle->MakeObjOutOfCam(listObjIdle);
 	gridObjMove->MakeObjOutOfCam(listObjMove);
+	if (GetTickCount64() - timeTranformation > 5000)
+	{
+		for (int i = 0; i < listObjMove.size(); i++)
+		{
+			if (dynamic_cast<CBrokenBrick*>(listObjMove[i]) && !listObjMove[i]->isdone)
+			{
+				CBrokenBrick* broken = dynamic_cast<CBrokenBrick*>(listObjMove[i]);
+				broken->tranformation = false;
+			}
+		}
+	}
+
 
 	InsertObjToGrid();
 	
@@ -486,6 +498,7 @@ void CPlayScene::Update(ULONGLONG dt)
 	player->Update(dt, &objects/*,&listObjIdle*/);
 	/*for (int i = 0; i < listObjIdle.size(); i++)
 		listObjIdle[i]->Update(dt);*/
+	
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -605,6 +618,7 @@ void CPlayScene::Update(ULONGLONG dt)
 						}						
 					}
 				}
+				
 				//for (int j = 0; j < listCoin.size(); j++)
 				//{
 				//	LPGAMEOBJECT Coin = listCoin[j];
@@ -637,6 +651,7 @@ void CPlayScene::Update(ULONGLONG dt)
 			item->makeItemFly = false;			
 		}
 	}
+
 	if (GetTickCount64() - timeTranformation > 5000 && timeTranformation!=0)
 	{
 		for (int i = 0; i < objects.size(); i++)
@@ -785,8 +800,9 @@ void CPlayScene::Update(ULONGLONG dt)
 
 void CPlayScene::Render()
 {	
-	map->Draw();	
-	//RenderTextEndGame();
+	map->Draw();
+	if(player->endGame)
+		RenderTextEndGame();
 	/*for (int i = 0; i < listcoin.size(); i++)
 	{
 		listcoin[i]->Render();
@@ -897,6 +913,9 @@ void CPlayScene::RenderTextEndGame()
 		}
 		text->Draw(2644 + (i * 8) + X,280 );
 	}
+
+	CSprites::GetInstance()->Get(2067)->Draw(2777, 260);
+	CSprites::GetInstance()->Get(2065)->Draw(2781, 266);
 }
 /*
 	Unload current scene

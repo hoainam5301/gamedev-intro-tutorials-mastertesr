@@ -372,6 +372,10 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 							y += dy;
 						}
 					}
+					else if (e->ny > 0)
+					{
+						y -= 1;
+					}
 					else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx != 0 && (koopas->GetState() == KOOPA_RED_STATE_DIE || koopas->GetState() == KOOPA_RED_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
 					{
 						if (koopas->last_state == KOOPA_RED_STATE_DIE)
@@ -747,30 +751,40 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 			else if (dynamic_cast<CBrokenBrick*>(e->obj))
 			{
 				CBrokenBrick* brokenbrick = dynamic_cast<CBrokenBrick*>(e->obj);	
-				if (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState() == STATE_COIN_NO_ROTATE)
+				if (!brokenbrick->tranformation)
 				{
-					brokenbrick->isDestroyed = true;
-					brokenbrick->isdone = true;				
-					//y += dy;
+					if (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState() == STATE_COIN_NO_ROTATE)
+					{
+						brokenbrick->isDestroyed = true;
+						brokenbrick->isdone = true;
+						//y += dy;
+					}
+					else if (e->ny < 0 && (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState() == STATE_COIN_NO_ROTATE))
+					{
+						brokenbrick->isDestroyed = true;
+						brokenbrick->isdone = true;
+						x += dx;
+						y += dy;
+					}
+					else if (e->ny < 0 && brokenbrick->GetState() == STATE_BRICK_NORMAL)
+					{
+						isFalling = false;
+						inHighArea = false;
+						//	isStandOnMovingWood = false;
+					}
+					else if (e->ny > 0)
+					{
+						brokenbrick->isDestroyed = true;
+						brokenbrick->SetState(STATE_DESTROYED);
+					}
 				}
-				else if (e->ny < 0 && (brokenbrick->GetState() == STATE_COIN_ROTATE || brokenbrick->GetState()==STATE_COIN_NO_ROTATE))
+				/*else
 				{
-					brokenbrick->isDestroyed = true;
-					brokenbrick->isdone = true;
-					x += dx;
-					y += dy;
-				}
-				else if (e->ny < 0 && brokenbrick->GetState()==STATE_BRICK_NORMAL)
-				{
-					isFalling = false;	
-					inHighArea = false;
-				//	isStandOnMovingWood = false;
-				}
-				else if (e->ny > 0)
-				{
-					brokenbrick->isDestroyed = true;
-					brokenbrick->SetState(STATE_DESTROYED);
-				}
+					if (e->nx != 0)
+						x += dx * 2;
+					else if (e->ny != 0)
+						y += dy * 2;
+				}*/
 				/*else if(brokenbrick->GetState() != STATE_BRICK_NORMAL)
 				{
 					brokenbrick->isDestroyed = true;
@@ -1051,6 +1065,7 @@ void CMario::Collision_items(vector<LPGAMEOBJECT>* coObjects)
 			else if (e->id_items == SWITCH_P_ON)
 			{
 				e->SetState(SWITCH_P_OFF);
+				//DebugOut(L"bbbbbbba \n");
 			}
 			else if (e->id_items == ITEMS_END_GAME)
 			{

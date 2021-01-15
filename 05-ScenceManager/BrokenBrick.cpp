@@ -22,7 +22,7 @@ void CBrokenBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CBrokenBrick::Render()
 {
-	//RenderBoundingBox();
+	
 	if (!isDestroyed && !tranformation)
 		animation_set->at(state)->Render(x, y);
 	for (LPGAMEOBJECT piece : listPiece)
@@ -33,17 +33,12 @@ void CBrokenBrick::Render()
 }
 void CBrokenBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
-	if (isDestroyed /*|| tranformation*/)  // can xu li viec tranfomation khi mat bbox lam cho ko them vao grid lai dc dan den viec tien ko chuyen
+	if (isDestroyed || tranformation)  // can xu li viec tranfomation khi mat bbox lam cho ko them vao grid lai dc dan den viec tien ko chuyen
 		return;								//lai thanh gach duoc
 	l = x;								//tranformation thi ko mat bbox, vao xet ko va cham trong koopas va mario khi dang tranformat
 	t = y;
-	r = l + WIDTH_HEIGHT_BROKENBRICK;
+	r = l + WIDTH_BROKENBRICK;
 	b = t + WIDTH_HEIGHT_BROKENBRICK;
-	if (tranformation)
-	{
-		r = l + 1;
-		b =t+ 1;
-	}
 }
 void CBrokenBrick::SetState(int State)
 {

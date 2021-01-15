@@ -41,20 +41,14 @@ protected:
 	CGrid* gridObjIdle;
 	vector<LPGAMEOBJECT> listAllObjMove;
 	vector<LPGAMEOBJECT> listAllObjIdle;
-	vector<LPGAMEOBJECT> listObjIdle;
+	vector<LPGAMEOBJECT> listObjIdle;	//list obj dung yen
 	vector<LPGAMEOBJECT> listObjMove;
 	vector<LPGAMEOBJECT> listCoin;    //Coin xoay o dam may
-	vector<LPGAMEOBJECT> leafTree;
+	vector<LPGAMEOBJECT> leafTree;		//tach biet leaftree voi ca items khac de khoi bi loi ve sau gach
 
-
-
-	//CGiantPiranhaPlant* flower;
-	// A play scene has to have player, right? 
-	// *gachthuong;
-	//CBrick* gachthuong;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> listitems;
-	vector<LPGAMEOBJECT> listweapon;
+	vector<LPGAMEOBJECT> listweapon;	//dan
 	vector<LPGAMEOBJECT> listcoin;  //coin do tranformation 
 
 	ULONGLONG timeTranformation;
@@ -91,7 +85,7 @@ protected:
 	
 public: 
 	CPlayScene(int id, LPCWSTR filePath);
-	LPSPRITE text;
+	LPSPRITE text;	
 	virtual void Load();
 	virtual void Update(ULONGLONG dt);
 	virtual void Render();
