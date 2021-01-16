@@ -517,11 +517,16 @@ void CPlayScene::Update(ULONGLONG dt)
 	{
 		
 		CGame::GetInstance()->SwitchScene(2);
+		player->inSelectMap = true;
 		player->SetPosition(player->posXOfPortal, player->posYOfPortal);
 		player->SetLevel(MARIO_LEVEL_SMALL);
+		hasMakeRandomItemsEndGame = false;
+		player->readySwitchOutGame = 0;
 		player->endGame = false;
+		CGame::GetInstance()->SetCamPos(0,0);
 		player->vx = 0;
 		player->vy = 0;
+		
 		return;
 	}
 	player->Update(dt, &objects/*,&listObjIdle*/);
@@ -740,6 +745,18 @@ void CPlayScene::Update(ULONGLONG dt)
 			hasMakeRandomItemsEndGame = true;
 		}
 	}
+	else
+	{
+		if (player->x > 2193 && !hasMakeRandomItemsEndGame)
+		{
+			CItems* item = new CItems(2449, 338);
+			item->id_items = ITEMS_END_GAME;
+			item->SetState(ITEMS_END_GAME);
+			item->SetPosition(2449, 338);
+			listitems.push_back(item);
+			hasMakeRandomItemsEndGame = true;
+		}
+	}
 
 	if (player->use_Weapon && !player->hasFight)
 	{
@@ -799,26 +816,45 @@ void CPlayScene::Update(ULONGLONG dt)
 	if (player == NULL) return;
 	
 	// Update camera to follow mario
-	float cx, cy;
-	/*if (!player->inMapTwo)
-	{*/
+	
+	if (!player->inMapTwo)
+	{
 		cx = player->x - (SCREEN_WIDTH / 4);
 		if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2832)
 		{
 			cx = player->x - (SCREEN_WIDTH / 4);
 			CGame::GetInstance()->cam_x = round(cx);
 		}
-	//}
-	//else
-	//{	
+	}
+	else
+	{	
 
-	//	camX += 0.03 * dt;
-	//	/*if (camX > 0.1)
-	//		camX = 0.1;*/
-	//	//DebugOut(L"gia tri cua camX %f \n", camX);
-	//	//CGame::GetInstance()->SetCamPosX(1550.0);
-	//	CGame::GetInstance()->SetCamPosX(round(camX));
-	//}
+		camX += 0.03 * dt;
+		if(player->x==2193)
+			camX = player->x - (SCREEN_WIDTH / 4);
+		/*if (camX > 0.1)
+			camX = 0.1;*/
+		if (camX > 1778 && camX<1800)
+			camX = 1778.0f;
+		else if (camX > 1800)
+		{
+			camX = player->x - (SCREEN_WIDTH / 4);
+			
+			if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2528)
+			{				
+				camX = player->x - (SCREEN_WIDTH / 4);
+				if (camX < 2048)
+					camX = 2048;
+				
+				//CGame::GetInstance()->cam_x = round();
+			}
+			if (camX > 2290)
+				camX = 2290;
+		}
+		//DebugOut(L"gia tri cua camX %f \n", camX);
+		//CGame::GetInstance()->SetCamPosX(1550.0);
+		CGame::GetInstance()->SetCamPosX(round(camX));
+	}
 	SetCamSpeedY(dt);
 	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
 	
@@ -827,52 +863,55 @@ void CPlayScene::Update(ULONGLONG dt)
 
 void CPlayScene::Render()
 {	
-	map->Draw();
-	/*for (int i = 0; i < listcoin.size(); i++)
+	if (!player->inSelectMap)
 	{
-		listcoin[i]->Render();
-	}*/
-	if (player->endGame && GetTickCount64() - player->readySwitchOutGame > 1000 && player->readySwitchOutGame != 0 && GetTickCount64()-player->readySwitchOutGame<4000)
-		RenderTextEndGame();
-	for (int i = 0; i < listCoin.size(); i++)
-	{
-		listCoin[i]->Render();
-	}
-
-	for (int i = 0; i < listweapon.size(); i++)
-	{
-		if(!listweapon[i]->isExplode)
-			listweapon[i]->Render();
-	}
-	for (int i = 0; i < listcoin.size(); i++)
-		listcoin[i]->Render();
-	for (int i = 0; i < listitems.size(); i++)
-		listitems[i]->Render();
-
-	for (int i = objects.size()-1; i>=0; i--)
-		objects[i]->Render();
-	for (int i = 0; i < leafTree.size(); i++)
-		leafTree[i]->Render();
-
-	if (tail != NULL)
-		tail->Render();
-	if (coin != NULL)
-		coin->Render();
-
-	if (player->turnOffLight)
-	{
-		if (GetTickCount64() - player->waitGetOutOfPipe < 200 && player->countRender<6)
+		map->Draw();
+		/*for (int i = 0; i < listcoin.size(); i++)
 		{
-			CAnimations::GetInstance()->Get(774)->Render(1000, 0, 200);
-			player->countRender++;
+			listcoin[i]->Render();
+		}*/
+		if (player->endGame && GetTickCount64() - player->readySwitchOutGame > 1000 && player->readySwitchOutGame != 0 && GetTickCount64() - player->readySwitchOutGame < 4000)
+			RenderTextEndGame();
+		for (int i = 0; i < listCoin.size(); i++)
+		{
+			listCoin[i]->Render();
 		}
+
+		for (int i = 0; i < listweapon.size(); i++)
+		{
+			if (!listweapon[i]->isExplode)
+				listweapon[i]->Render();
+		}
+		for (int i = 0; i < listcoin.size(); i++)
+			listcoin[i]->Render();
+		for (int i = 0; i < listitems.size(); i++)
+			listitems[i]->Render();
+
+		for (int i = objects.size() - 1; i >= 0; i--)
+			objects[i]->Render();
+		for (int i = 0; i < leafTree.size(); i++)
+			leafTree[i]->Render();
+
+		if (tail != NULL)
+			tail->Render();
+		if (coin != NULL)
+			coin->Render();
+
+		if (player->turnOffLight)
+		{
+			if (GetTickCount64() - player->waitGetOutOfPipe < 200 && player->countRender < 6)
+			{
+				CAnimations::GetInstance()->Get(774)->Render(1000, 0, 200);
+				player->countRender++;
+			}
+		}
+
+		player->Render();
+		for (int i = 0; i < listObjIdle.size(); i++)
+			listObjIdle[i]->Render();
+
+		statusBar->Render();
 	}
-
-	player->Render();
-	for (int i = 0; i < listObjIdle.size(); i++)
-		listObjIdle[i]->Render();
-
-	statusBar->Render();
 }
 
 void CPlayScene::InsertObjToGrid()
@@ -905,43 +944,86 @@ void CPlayScene::MakeItemEndGame()
 }
 void CPlayScene::RenderTextEndGame()
 {
-	for (int i = 0; i < lisstTextClear.size(); i++)
+	if (!player->inMapTwo)
 	{
-		if (lisstTextClear[i] == ' ')
-			continue;
-		int numb;
-		for (int j = 0; j < 26; j++)
+		for (int i = 0; i < lisstTextClear.size(); i++)
 		{
-			numb = 65 + j;
-			if (lisstTextClear[i] == numb)
+			if (lisstTextClear[i] == ' ')
+				continue;
+			int numb;
+			for (int j = 0; j < 26; j++)
 			{
-				text = CSprites::GetInstance()->Get(2100 + (j));
-				break;
+				numb = 65 + j;
+				if (lisstTextClear[i] == numb)
+				{
+					text = CSprites::GetInstance()->Get(2100 + (j));
+					break;
+				}
 			}
+			text->Draw(2650 + (i * 8) + X, 260);
 		}
-		text->Draw(2650 + (i * 8) + X, 260);
-	}
 
-	for (int i = 0; i < listTextEndGame.size(); i++)
+		for (int i = 0; i < listTextEndGame.size(); i++)
+		{
+			if (listTextEndGame[i] == ' ')
+				continue;
+			int numb;
+			for (int j = 0; j < 26; j++)
+			{
+
+				numb = 65 + j;
+				if (listTextEndGame[i] == numb)
+				{
+					text = CSprites::GetInstance()->Get(2100 + (j));
+					break;
+				}
+			}
+			text->Draw(2644 + (i * 8) + X, 280);
+		}
+
+		CSprites::GetInstance()->Get(2067)->Draw(2777, 260);
+		CSprites::GetInstance()->Get(2065)->Draw(2781, 266);
+	}
+	else
 	{
-		if (listTextEndGame[i] == ' ')
-			continue;
-		int numb;
-		for (int j = 0; j < 26; j++)
+		for (int i = 0; i < lisstTextClear.size(); i++)
 		{
-
-			numb = 65 + j;
-			if (listTextEndGame[i] == numb)
+			if (lisstTextClear[i] == ' ')
+				continue;
+			int numb;
+			for (int j = 0; j < 26; j++)
 			{
-				text = CSprites::GetInstance()->Get(2100 + (j));
-				break;
+				numb = 65 + j;
+				if (lisstTextClear[i] == numb)
+				{
+					text = CSprites::GetInstance()->Get(2100 + (j));
+					break;
+				}
 			}
+			text->Draw(2410 + (i * 8) + X, 260);
 		}
-		text->Draw(2644 + (i * 8) + X,280 );
-	}
 
-	CSprites::GetInstance()->Get(2067)->Draw(2777, 260);
-	CSprites::GetInstance()->Get(2065)->Draw(2781, 266);
+		for (int i = 0; i < listTextEndGame.size(); i++)
+		{
+			if (listTextEndGame[i] == ' ')
+				continue;
+			int numb;
+			for (int j = 0; j < 26; j++)
+			{
+
+				numb = 65 + j;
+				if (listTextEndGame[i] == numb)
+				{
+					text = CSprites::GetInstance()->Get(2100 + (j));
+					break;
+				}
+			}
+			text->Draw(2404 + (i * 8) + X, 280);
+		}
+
+		CSprites::GetInstance()->Get(2067)->Draw(2537, 260);
+		CSprites::GetInstance()->Get(2065)->Draw(2541, 266);
+	}
 	
 }
 /*

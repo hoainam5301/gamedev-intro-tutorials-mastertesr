@@ -251,6 +251,9 @@ public:
 	int sceneIdGoToUp;
 	int sceneIdGoToDown;
 	bool isStandOnPortal;
+
+	bool inSelectMap;
+	bool inIntroScene=true;
 	
 	int lastnx;
 	float last_vx;

@@ -96,6 +96,7 @@ public:
 	void RenderTextEndGame();
 	//int GetLeverPlayer();
 	bool hasMakeRandomItemsEndGame;
+	float cx, cy;
 	float camY;
 	float camX;
 	CMario * GetPlayer() { return player; } 

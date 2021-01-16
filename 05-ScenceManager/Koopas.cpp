@@ -127,6 +127,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				y = startY;
 			}
 		}
+		//DebugOut(L"aaaaa %d \n", checkBox->makeKoopaReturn);
 		if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
 		{			
 			//checkBox->SetPosition(x +17, y);	

@@ -1,7 +1,8 @@
 [SETTINGS]
-start	2	
+start	3	
 #scene list
 [SCENES]
 1	scene-test.txt	0
 2	wordmap.txt	1
 4	scene1.txt	0
+3	IntroScene.txt	1

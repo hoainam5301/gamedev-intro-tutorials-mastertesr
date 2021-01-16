@@ -145,6 +145,7 @@
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />
+    <ClCompile Include="SelectArrow.cpp" />
     <ClCompile Include="SenceMap.cpp" />
     <ClCompile Include="ShakeTree.cpp" />
     <ClCompile Include="StatusBar.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="RaccoonTail.h" />
+    <ClInclude Include="SelectArrow.h" />
     <ClInclude Include="SenceMap.h" />
     <ClInclude Include="ShakeTree.h" />
     <ClInclude Include="StatusBar.h" />

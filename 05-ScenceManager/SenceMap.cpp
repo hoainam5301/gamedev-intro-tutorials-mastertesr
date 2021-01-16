@@ -14,10 +14,12 @@ using namespace std;
 #define SCENE_SECTION_TILEMAP 7
 
 
+
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_SHAKE_TREE 1
 #define OBJECT_TYPE_FLOOR 2
 #define OBJECT_TYPE_PORTAL 3
+#define OBJECT_TYPE_ARROW 4
 
 #define MAX_SCENE_LINE 1024
 
@@ -186,6 +188,9 @@ void CSenceMap::_ParseSection_OBJECTS(string line)
 		case OBJECT_TYPE_SHAKE_TREE:
 			obj = new CShakeTree();
 			break;
+		case OBJECT_TYPE_ARROW:
+			obj = new  CSelectArrow(player);
+			break;
 		case OBJECT_TYPE_FLOOR:
 		{
 			float width = atof(tokens[4].c_str());
@@ -288,9 +293,9 @@ void CSenceMap::Update(ULONGLONG dt)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
 	if (player->isAutoGoRight)
 	{
+		player->inSelectMap = true;
 		for (int i = 0; i < mapPortals.size(); i++)
 		{
 			LPGAMEOBJECT p = mapPortals[i];
@@ -321,6 +326,7 @@ void CSenceMap::Update(ULONGLONG dt)
 	}
 	else if (player->isAutoGoTop)
 	{
+		player->inSelectMap = true;
 		for (int i = 0; i < mapPortals.size(); i++)
 		{
 			LPGAMEOBJECT p = mapPortals[i];
@@ -351,6 +357,7 @@ void CSenceMap::Update(ULONGLONG dt)
 	}
 	else if (player->isAutoGoLeft)
 	{
+		player->inSelectMap = true;
 		for (int i = 0; i < mapPortals.size(); i++)
 		{
 			LPGAMEOBJECT p = mapPortals[i];
@@ -381,6 +388,7 @@ void CSenceMap::Update(ULONGLONG dt)
 	}
 	else if (player->isAutoGoDown)
 	{
+		player->inSelectMap = true;
 		for (int i = 0; i < mapPortals.size(); i++)
 		{
 			LPGAMEOBJECT p = mapPortals[i];
@@ -436,8 +444,11 @@ void CSenceMap::Render()
 	wordmap->Draw();
 	for (int i = objects.size() - 1; i >= 0; i--)
 		objects[i]->Render();
-	player->Render();
-	statusBar->Render();
+	if (!player->inIntroScene)
+	{
+		player->Render();
+		statusBar->Render();
+	}
 }
 
 void CSenceMap::Unload()
@@ -467,13 +478,22 @@ void CMapSceneKeyHandler::OnKeyDown(int keycode)
 	if (mario->isGoTo)
 		return;
 	switch (keycode) {
-	case DIK_C:
-		mario->SetState(MARIO_STATE_IDLE);
-		if (mario->isStandOnPortal && mario->vx == 0)
+	case DIK_S:
+		if (!mario->inIntroScene)
 		{
-			if (mario->sceneIdPresent == 4)
-				mario->inMapTwo = true;
-			CGame::GetInstance()->SwitchScene(mario->sceneIdPresent);
+			mario->SetState(MARIO_STATE_IDLE);
+			if (mario->isStandOnPortal && mario->vx == 0)
+			{
+				if (mario->sceneIdPresent == 4)
+					mario->inMapTwo = true;
+				CGame::GetInstance()->SwitchScene(mario->sceneIdPresent);
+				mario->inSelectMap = false;
+			}
+		}
+		else
+		{
+			CGame::GetInstance()->SwitchScene(2);
+			mario->inIntroScene = false;
 		}
 		break;
 	case DIK_LEFT:
