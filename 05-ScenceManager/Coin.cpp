@@ -92,7 +92,7 @@ void CCoin::Render()
 	{
 		listEffect[i]->Render();
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CCoin::SetState(int state)

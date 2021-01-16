@@ -194,7 +194,7 @@ void CItems::Render()
 	{
 		listEffect[i]->Render();
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CItems::SetState(int state)

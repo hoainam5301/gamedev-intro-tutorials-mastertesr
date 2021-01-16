@@ -270,7 +270,7 @@ void CGoomba::Render()
 	{
 		listEffect[i]->Render();
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CGoomba::SetSpeed()

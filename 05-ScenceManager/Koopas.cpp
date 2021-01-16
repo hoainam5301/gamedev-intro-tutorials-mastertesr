@@ -128,31 +128,34 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 		//DebugOut(L"aaaaa %d \n", checkBox->makeKoopaReturn);
-		if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
-		{			
-			//checkBox->SetPosition(x +17, y);	
-			checkBox->SetPosition(x + 5, y);
-			if (checkBox->makeKoopaReturn)
-			{
-				SetState(KOOPA_RED_STATE_WALKING_LEFT);
-				//checkBox->SetPosition(x - 25, y);
-				checkBox->SetPosition(x - 15, y);
-			}
-		}
-		else if (GetState() == KOOPA_RED_STATE_WALKING_LEFT)
+		if (!hasWing)
 		{
-			//checkBox->SetPosition(x - 17, y);
-			checkBox->SetPosition(x - 10, y);
-			if (checkBox->makeKoopaReturn)
+			if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
 			{
-				SetState(KOOPA_RED_STATE_WALKING_RIGHT);
-				//checkBox->SetPosition(x + 25, y);
+				//checkBox->SetPosition(x +17, y);	
 				checkBox->SetPosition(x + 5, y);
-
+				if (checkBox->makeKoopaReturn)
+				{
+					SetState(KOOPA_RED_STATE_WALKING_LEFT);
+					//checkBox->SetPosition(x - 25, y);
+					checkBox->SetPosition(x - 15, y);
+				}
 			}
-		}	
-		if (checkBox != NULL)
-			checkBox->Update(dt, coObjects);
+			else if (GetState() == KOOPA_RED_STATE_WALKING_LEFT)
+			{
+				//checkBox->SetPosition(x - 17, y);
+				checkBox->SetPosition(x - 10, y);
+				if (checkBox->makeKoopaReturn)
+				{
+					SetState(KOOPA_RED_STATE_WALKING_RIGHT);
+					//checkBox->SetPosition(x + 25, y);
+					checkBox->SetPosition(x + 5, y);
+
+				}
+			}
+			if (checkBox != NULL)
+				checkBox->Update(dt, coObjects);
+		}
 		/*if (checkBox->y - checkBox->startY > 0.5)
 			checkBox->makeKoopaReturn = true;*/
 		/*if (GetState() == KOOPA_RED_STATE_WALKING_RIGHT)
@@ -378,6 +381,7 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (dynamic_cast<CKoopas*>(e->obj))
 				{
 					CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
+					
 					if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
 					{
 						if (koopas->id_koopa == KOOPA_RED)
@@ -415,6 +419,11 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 								else if (koopas->GetState() == KOOPA_GREEN_STATE_WALKING_LEFT)
 									koopas->SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
 							}
+						}
+						if (e->ny != 0)
+						{
+							y -= 1;
+							koopas->y -= 1;
 						}
 					}
 				}
@@ -691,7 +700,7 @@ void CKoopas::Render()
 		listEffect[i]->Render();
 	}
 	
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CKoopas::SetState(int State)
@@ -730,7 +739,7 @@ void CKoopas::SetState(int State)
 	case KOOPA_RED_STATE_WALKING_RIGHT:
 		/*if (last_state == KOOPA_RED_STATE_REVIVE || last_state == KOOPA_RED_STATE_REVIVE_UP)
 			y -= KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_DIE;*/
-		DebugOut(L"aaaaa \n");
+		//DebugOut(L"aaaaa \n");
 		vx = KOOPAS_WALKING_SPEED;
 		last_state = KOOPA_RED_STATE_WALKING_RIGHT;
 		break;

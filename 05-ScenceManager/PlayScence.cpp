@@ -564,6 +564,45 @@ void CPlayScene::Update(ULONGLONG dt)
 				leafTree.push_back(item);
 			}
 		}
+		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_NHIEU_TIEN)
+		{
+			CBrick* gach = dynamic_cast<CBrick*>(a);
+
+			if (gach->created_item == 0 && gach->bottom_coll == 1 && gach->bouncing == 1)
+			{
+				coin = new CCoin();
+				if (gach->countMoneyHasMake >= 10)
+				{
+					gach->created_item = 1;
+					gach->move = false;
+				}
+				else
+				{
+					gach->bottom_coll = 0;
+					gach->created_item = 0;
+					gach->move = false;
+					gach->bouncing = 0;
+				}
+				//gach->created_item = 1;
+				player->dola++;
+				player->score += 100;
+				coin->SetPosition(gach->x + 3, gach->y);
+				coin->SetState(COIN_STATE_CREATED);
+			}
+		}
+		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_LEAF_TREA)
+		{
+			CBrick* gach = dynamic_cast<CBrick*>(a);
+			if (gach->created_item == 0 && gach->bottom_coll == 1 && gach->bouncing == 1)
+			{
+				gach->created_item = 1;
+				CItems* item = new CItems(gach->y, gach->x);
+				item->id_items = Tree_Leaf;
+				item->SetState(Tree_Leaf);
+				item->SetPosition(gach->x, gach->y - 16);
+				leafTree.push_back(item);
+			}
+		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_RA_TIEN) 
 		{
 			CBrick* gach = dynamic_cast<CBrick*>(a);
@@ -589,7 +628,17 @@ void CPlayScene::Update(ULONGLONG dt)
 				item->SetState(SWITCH_P_ON);
 				item->SetPosition(gach->x, gach->y - 16);
 				listitems.push_back(item);
-			}							
+			}	
+			else if (gach->created_item == 0 && gach->bottom_coll == 1 && gach->bouncing == 1)
+			{
+					gach->created_item = 1;
+					CItems* item = new CItems(gach->x, gach->y);
+					item->id_items = SWITCH_P_ON;
+					item->SetState(SWITCH_P_ON);
+					item->SetPosition(gach->x, gach->y - 16);
+					listitems.push_back(item);
+			}
+			
 		}
 		else if (dynamic_cast<CBrick*>(a) && a->id_brick_items == ID_GACH_BONUS)
 		{
@@ -680,7 +729,8 @@ void CPlayScene::Update(ULONGLONG dt)
 			itemfly->SetState(START_FLY_UP);
 			itemfly->SetPosition(item->x, item->y);
 			listitems.push_back(itemfly);
-			item->makeItemFly = false;			
+			item->makeItemFly = false;	
+			statusBar->countItemsEndGame++;
 		}
 	}
 

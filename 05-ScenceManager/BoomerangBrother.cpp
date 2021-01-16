@@ -1,4 +1,5 @@
 #include "BoomerangBrother.h"
+#include "MonneyEffect.h"
 #include "Boomerang.h"
 
 CBoomerangBrother::CBoomerangBrother(CMario* mario) : CGameObject()
@@ -71,15 +72,38 @@ void CBoomerangBrother::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 
 		}
 	}
+	if (makeEffect)
+	{
+		CMonneyEffect* monneyeffect = new CMonneyEffect();
+		monneyeffect->SetPosition(x, y);
+		monneyeffect->SetState(MAKE_1000);
+		Mario->score += 1000;
+		makeEffect = false;
+		listEffect.push_back(monneyeffect);
+	}
+	for (int i = 0; i < listEffect.size(); i++)
+	{
+		listEffect[i]->Update(dt, coObjects);
+		if (listEffect[i]->isdone)
+		{			
+			isdone = true;			
+		}
+	}
 }
 void CBoomerangBrother::Render()
 {
-	animation_set->at(state)->Render(x, y);
+	if(!isKill)
+		animation_set->at(state)->Render(x, y);
+
 	for (int i = 0; i < listBoomerang.size(); i++)
 	{
 		listBoomerang[i]->Render();
 	}
-	RenderBoundingBox();
+	for (int i = 0; i < listEffect.size(); i++)
+	{
+		listEffect[i]->Render();
+	}
+	//RenderBoundingBox();
 }
 
 void CBoomerangBrother::SetState(int state)

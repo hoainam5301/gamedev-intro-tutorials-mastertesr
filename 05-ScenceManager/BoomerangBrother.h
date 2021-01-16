@@ -15,6 +15,7 @@ class CBoomerangBrother : public CGameObject
 public:
 	int countBoomerang;
 	int countBoomerangComeBack;
+	bool isKill;
 	float startX;
 	ULONGLONG timereadyToThrow;
 	vector <LPGAMEOBJECT> listBoomerang;

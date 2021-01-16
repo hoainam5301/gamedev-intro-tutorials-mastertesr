@@ -486,6 +486,7 @@ void CMapSceneKeyHandler::OnKeyDown(int keycode)
 			{
 				if (mario->sceneIdPresent == 4)
 					mario->inMapTwo = true;
+				mario->SetLevel(MARIO_RACCOON);
 				CGame::GetInstance()->SwitchScene(mario->sceneIdPresent);
 				mario->inSelectMap = false;
 			}

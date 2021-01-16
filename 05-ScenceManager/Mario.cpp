@@ -662,20 +662,65 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 				}
 
 			}
+			else if (dynamic_cast<CBoomerangBrother*>(e->obj))
+			{
+				CBoomerangBrother* brother = dynamic_cast<CBoomerangBrother*>(e->obj);
+				if (e->ny < 0)
+				{
+					brother->isKill = true;
+					brother->makeEffect = true;
+					vy = -MARIO_JUMP_DEFLECT_SPEED;
+					isJumping = true;						
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == 0)
+					{						
+						if (level > MARIO_LEVEL_BIG)
+						{
+							level = MARIO_LEVEL_BIG;
+							StartUntouchable();
+						}
+						else if (level == MARIO_LEVEL_BIG)
+						{
+							level = MARIO_LEVEL_SMALL;
+							StartUntouchable();
+						}
+						else
+						{
+							SetState(MARIO_ANI_DIE);
+							return;
+						}							
+					}
+				}
+			}
 			else if (dynamic_cast<CBrick*>(e->obj))
 			{				
 			CBrick* Brick = dynamic_cast<CBrick*>(e->obj);
 			
 				if (e->ny > 0 )
 				{
-					Brick->bottom_coll = 1;
-				//	DebugOut(L"NNNNNNNNNNNNNNNNNNNNNNNNNNNNN\n");
+					if(Brick->id_brick_items!=ID_GACH_RA_NHIEU_TIEN)
+						Brick->bottom_coll = 1;	
+					if(Brick->countMoneyHasMake < 10 && Brick->id_brick_items==ID_GACH_RA_NHIEU_TIEN)
+					{
+						Brick->countMoneyHasMake++;
+						Brick->bottom_coll = 1;
+					}
+					else if (Brick->id_brick_items == ID_GACH_SWITCH_P)
+					{
+						Brick->bottom_coll = 1;
+					}
+					/*else if(Brick)
+					{
+						Brick->bottom_coll = 1;
+					}*/
+
 				}
 				else if (e->ny < 0)
 				{
 					isFalling = false;	
-					inHighArea = false;
-					//isStandOnMovingWood = false;
+					inHighArea = false;					
 				}
 				else if (e->nx != 0)
 					vx = 0;
@@ -1079,7 +1124,7 @@ void CMario::Render()
 	if (untouchable) alpha = 128;
 	//DebugOut(L"stateeee %d \n", state);
 	animation_set->at(state)->Render(x, y, alpha);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 

@@ -1,5 +1,6 @@
 #include "RaccoonTail.h"
 #include "BrokenBrick.h"
+#include "BoomerangBrother.h"
 #include "Goomba.h"
 #include "Koopas.h"
 #include "Brick.h"
@@ -34,6 +35,16 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			{
 				brokenbrick->isDestroyed = true;
 				brokenbrick->SetState(STATE_DESTROYED);
+			}
+		}
+		else if (dynamic_cast<CBoomerangBrother*>(e))
+		{
+			CBoomerangBrother* brother = dynamic_cast<CBoomerangBrother*>(e);
+			brother->GetBoundingBox(l_ene, t_ene, r_ene, b_ene);
+			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
+			{
+				//brother->makeEffect = true;
+				brother->isKill = true;
 			}
 		}
 		else if (dynamic_cast<CGoomba*>(e))
@@ -94,7 +105,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 
 void CRaccoonTail::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CRaccoonTail::GetBoundingBox(float& l, float& t, float& r, float& b)

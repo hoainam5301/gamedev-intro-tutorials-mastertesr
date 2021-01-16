@@ -27,7 +27,8 @@ void CBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			this->y = height;
 			vy = 0;
-			bouncing = 1;
+			//if(id_brick_items!=ID_GACH_RA_NHIEU_TIEN)
+				bouncing = 1;
 		}
 	}
 }
@@ -39,7 +40,7 @@ void CBrick::Render()
 	{
 		if (id_brick_items == ID_GACH_RA_ITEMS || id_brick_items == ID_GACH_RA_TIEN)
 			animation_set->at(QUESTION_BRICK)->Render(x, y);
-		else if (id_brick_items == ID_GACH_SWITCH_P || id_brick_items == ID_GACH_BONUS)
+		else if (id_brick_items == ID_GACH_SWITCH_P || id_brick_items == ID_GACH_BONUS ||id_brick_items==ID_GACH_RA_LEAF_TREA||id_brick_items==ID_GACH_RA_NHIEU_TIEN)
 			animation_set->at(BRICK_MAKE_LIFE)->Render(x, y);
 	}
 	else
