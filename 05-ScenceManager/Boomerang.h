@@ -9,8 +9,8 @@ class CBoomerang : public CGameObject
 {
 public:
 	CMario* Mario;
-	float startX;
-	float startY;
+	float startX=0;
+	float startY=0;
 	CBoomerang(int nx, CMario* mario,CBoomerangBrother* brother);
 	CBoomerangBrother* Brother;
 	void Collision_Mario(CMario* mario);

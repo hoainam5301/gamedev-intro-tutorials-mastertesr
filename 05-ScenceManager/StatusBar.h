@@ -11,7 +11,7 @@
 #define SPEED_X_TIRER_5 0.1625f
 #define SPEED_X_TIRER_6 0.175f
 #define SPEED_X_TIRER_7 0.1875f
-#define SPEED_X_TIRER_8 0.2f
+#define SPEED_X_TIRER_8 0.23f
 
 #define Y 233.0f
 #define X 3.0f

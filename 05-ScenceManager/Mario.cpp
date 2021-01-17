@@ -96,7 +96,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 		{
 			if (topOfMario > atEndOfPipeY && atEndOfPipeY != 0)
 			{
-				vy = -0.01;
+				vy = -0.01f;
 				SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
 				waitGetOutOfPipe = GetTickCount64();
 			}
@@ -116,7 +116,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 			}
 			else if (topOfMario > topOfPipeOut)
 			{
-				vy = -0.01;
+				vy = -0.01f;
 				SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
 			}
 			else if (topOfMario <= topOfPipeOut)
@@ -130,7 +130,7 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 			topOfPipeOut = 357;
 			if (topOfMario > topOfPipeOut)
 			{
-				vy = -0.01;
+				vy = -0.01f;
 				SetState(MARIO_RACCOON_STATE_MOVE_IN_PIPE);
 			}
 			else if (topOfMario <= topOfPipeOut)
@@ -840,14 +840,16 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 				if (e->ny < 0)
 				{
 					y += wood->dy;
-					//vy = 0.1;
 					isStandOnMovingWood = true;
 					wood->isFallingDown = true;
-					//x += wood->dx*2;
-					//y += wood->dy;
-				if (wood->readyToFallingDown == 0)
-						wood->readyToFallingDown = GetTickCount64();
-					//DebugOut(L"gia tri  %d \n", isStandOnMovingWood);
+					if (wood->readyToFallingDown == 0)
+						wood->readyToFallingDown = GetTickCount64();					
+				}
+				else if (e->nx != 0)
+				{
+					vx=MARIO_WALKING_SPEED;
+					x -= dx;
+					/*x += wood->dx;*/
 				}
 			}
 			else if (dynamic_cast<CBrokenBrick*>(e->obj))
@@ -2289,7 +2291,7 @@ void CMario::SetState(int State)
 			timeRenderAni = GetTickCount64();
 		//ResetAni();
 		//isWaitingForAni = true;
-		vy = (float)vy/1.2;//-MARIO_GRAVITY * dt / 2;
+		vy = (float)vy/1.2f;//-MARIO_GRAVITY * dt / 2;
 		
 		break;
 	case MARIO_RACCOON_STATE_FALLING_ROCK_TAIL_LEFT:	
@@ -2316,7 +2318,7 @@ void CMario::SetState(int State)
 		vy = -(MARIO_GRAVITY + 0.002f * 4) * dt;
 		if (vy <= -0.1)
 		{
-			vy = -0.1;
+			vy = -0.1f;
 		}
 		break;
 	case MARIO_RACCOON_STATE_KEEP_FLYING_LEFT:
@@ -2332,7 +2334,7 @@ void CMario::SetState(int State)
 		vy = -(MARIO_GRAVITY + 0.002f * 4) * dt;
 		if (vy <= -0.1)
 		{
-			vy = -0.1;
+			vy = -0.1f;
 		}
 		
 		break;
@@ -2408,7 +2410,7 @@ void CMario::SubRunningAcc()
 {
 	if (vx > 0) {
 		if (vx < 0.1f)
-			vx -= 0.003*dt;
+			vx -= 0.003f*dt;
 		else 
 			vx -= MARIO_SUB_RUNNING_ACC * dt;
 		last_vx = vx;
@@ -2417,7 +2419,7 @@ void CMario::SubRunningAcc()
 	}
 	else if (vx < 0) {
 		if (vx > -0.1f)
-			vx += 0.003*dt;
+			vx += 0.003f*dt;
 		else			
 			vx += MARIO_SUB_RUNNING_ACC * dt;
 		last_vx = vx;

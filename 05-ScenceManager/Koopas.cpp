@@ -116,14 +116,14 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (hasWing)
 		{
-			vx = 0;
+			vx = 0.0f;
 			if(y==startY)
-				vy = 0.05;
+				vy = 0.05f;
 			if (y > startY + 50)
-				vy = -0.05;
+				vy = -0.05f;
 			if (y < startY)
 			{
-				vy = 0;
+				vy = 0.0f;
 				y = startY;
 			}
 		}
@@ -252,6 +252,16 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		makeEffect = false;
 		listEffect.push_back(monneyeffect);
 	}
+	if (hitEffect)
+	{
+		CMonneyEffect* hiteffect = new CMonneyEffect();
+		hiteffect->SetPosition(x, y + 16);
+		hiteffect->SetState(HIT_EFFECT);
+		//isKill = true;
+		//Mario->score += 100;
+		hitEffect = false;
+		listHitEffect.push_back(hiteffect);
+	}
 
 	CGameObject::Update(dt);
 	if ((id_koopa == KOOPA_RED && !hasWing) || id_koopa==KOOPA_GREEN )
@@ -334,12 +344,14 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 						if (goomba->id_goomba == GOOMBA_NORMAL)
 						{
 							goomba->hitByWeapon = true;
+							goomba->hitEffect = true;
 							goomba->SetState(GOOMBA_STATE_DIE_FLY);
 						}
 						else if (goomba->id_goomba == GOOMBA_RED)
 						{
 							goomba->hasWing = false;
 							goomba->hitByWeapon = true;
+							goomba->hitEffect = true;
 							goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
 						}
 					}
@@ -372,8 +384,11 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 										goomba->SetState(GOOMBA_RED_STATE_HAS_WING_WALK);
 									}
 								}
-								else
-									goomba->SetState(GOOMBA_RED_STATE_NO_WING_WALK);
+								/*else
+								{
+									if(!hitByWeapon)
+										goomba->SetState(GOOMBA_RED_STATE_NO_WING_WALK);
+								}*/
 							}
 						}
 						
@@ -394,12 +409,14 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							koopas->hasWing = false;
 							koopas->hitByWeapon = true;
+							koopas->hitEffect = true;
 							koopas->SetState(KOOPA_RED_STATE_DIE_UP);
 						}
 						else if (koopas->id_koopa == KOOPA_GREEN)
 						{
 							koopas->hasWing = false;
 							koopas->hitByWeapon = true;
+							koopas->hitEffect = true;
 							koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
 						}
 					}
@@ -517,11 +534,13 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							if (goomba->id_goomba == GOOMBA_NORMAL)
 							{
+								goomba->hitEffect = true;
 								goomba->SetState(GOOMBA_STATE_DIE_FLY);
 							}
 							else if (goomba->id_goomba == GOOMBA_RED)
 							{
 								goomba->hasWing = false;
+								goomba->hitEffect = true;
 								goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
 							}
 						}
@@ -572,12 +591,14 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							koopas->hasWing = false;
 							koopas->hitByWeapon = true;
+							koopas->hitEffect = true;
 							koopas->SetState(KOOPA_RED_STATE_DIE_UP);
 						}
 						else if (koopas->id_koopa == KOOPA_GREEN)
 						{
 							koopas->hasWing = false;
 							koopas->hitByWeapon = true;
+							koopas->hitEffect = true;
 							koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
 						}
 						if (e->ny != 0)
@@ -667,6 +688,10 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		listEffect[i]->Update(dt, coObjects);
 	}
+	for (int i = 0; i < listHitEffect.size(); i++)
+	{
+		listHitEffect[i]->Update(dt, coObjects);
+	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	CheckCollisionWithBrick(coObjects);
 	//DebugOut(L"gia tri x cua mario %d \n", firstStartX);
@@ -711,7 +736,10 @@ void CKoopas::Render()
 	{
 		listEffect[i]->Render();
 	}
-	
+	for (int i = 0; i < listHitEffect.size(); i++)
+	{
+		listHitEffect[i]->Render();
+	}
 	//RenderBoundingBox();
 }
 
@@ -721,18 +749,18 @@ void CKoopas::SetState(int State)
 	switch (State)
 	{
 	case KOOPA_RED_STATE_DIE:
-		vx = 0;
-		vy = 0;
+		vx = 0.0f;
+		vy = 0.0f;
 		timeToRevive = GetTickCount64();
 		last_state = KOOPA_RED_STATE_DIE;
 		break;
 	case KOOPA_RED_STATE_DIE_UP:
 		if (Mario->nx > 0)
-			vx = 0.05;
+			vx = 0.05f;
 		else
-			vx = -0.05;
+			vx = -0.05f;
 		if (last_state != KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-			vy = -0.05;		
+			vy = -0.05f;		
 		if (hitByTail)
 		{
 
@@ -790,15 +818,15 @@ void CKoopas::SetState(int State)
 		last_state = KOOPA_GREEN_STATE_WALKING_LEFT;
 		break;
 	case KOOPA_GREEN_STATE_DIE:
-		vx = 0;
-		vy = 0;
+		vx = 0.0f;
+		vy = 0.0f;
 		timeToRevive = GetTickCount64();
 		last_state = KOOPA_GREEN_STATE_DIE;
 		break;
 	case KOOPA_GREEN_STATE_DIE_AND_MOVE:
 		hitByTail = false;
 		last_state = KOOPA_GREEN_STATE_DIE_AND_MOVE;
-		vx = 0.1 * nx;
+		vx = 0.1f * nx;
 		break;
 	case KOOPA_GREEN_STATE_DIE_UP:
 		if (Mario->nx > 0)

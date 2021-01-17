@@ -1,6 +1,7 @@
 #include "RaccoonTail.h"
 #include "BrokenBrick.h"
 #include "BoomerangBrother.h"
+#include "MonneyEffect.h"
 #include "Goomba.h"
 #include "Koopas.h"
 #include "Brick.h"
@@ -16,6 +17,18 @@ void CRaccoonTail::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	//
 	// TO-DO: make sure Koopas can interact with the world and to each of them too!
 	// 
+	/*if (hitEffect)
+	{
+		CMonneyEffect* hiteffect = new CMonneyEffect();
+		hiteffect->SetPosition(x+15, y);
+		hiteffect->SetState(HIT_EFFECT);
+		hitEffect = false;
+		listEffect.push_back(hiteffect);		
+	}
+	for (int i = 0; i < listEffect.size(); i++)
+	{
+		listEffect[i]->Update(dt, coObjects);
+	}*/
 	CGameObject::Update(dt);
 	Collision_ENEMY(coObjects);	
 }
@@ -57,11 +70,13 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 				if (goomba->id_goomba == GOOMBA_NORMAL)
 				{
 					goomba->makeEffect = true;
+					goomba->hitEffect = true;
 					goomba->SetState(GOOMBA_STATE_DIE_FLY);
 				}
 				else if (goomba->id_goomba == 2)
 				{
 					goomba->makeEffect = true;
+					goomba->hitEffect = true;
 					goomba->hasWing = false;
 					goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
 				}
@@ -76,15 +91,17 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 				//koopas->makeEffect =true;
 				if (koopas->id_koopa == KOOPA_RED)
 				{
+					koopas->hitEffect = true;
 					koopas->SetState(KOOPA_RED_STATE_DIE_UP);
 					
 				}
 				else if (koopas->id_koopa == KOOPA_GREEN)
 				{
+					koopas->hitEffect = true;
 					koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
-					koopas->hasWing = false;
-					
+					koopas->hasWing = false;					
 				}
+				
 				koopas->hitByTail = true;
 				
 			}
@@ -97,7 +114,8 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			{				
 				brick->hitByTail = true;
 				//brick->bouncing = 1;
-				brick->bottom_coll = 1;				
+				brick->bottom_coll = 1;	
+				hitEffect = true;
 			}
 		}
 	}
@@ -105,6 +123,10 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 
 void CRaccoonTail::Render()
 {
+	/*for (int i = 0; i < listEffect.size(); i++)
+	{
+		listEffect[i]->Render();
+	}*/
 	//RenderBoundingBox();
 }
 

@@ -96,7 +96,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		else 
 		{
-			if (GetState() != GOOMBA_RED_STATE_NO_WING_DIE && GetState() != GOOMBA_RED_STATE_NO_WING_DIE_FLY)
+			if (GetState() != GOOMBA_RED_STATE_NO_WING_DIE && GetState() != GOOMBA_RED_STATE_NO_WING_DIE_FLY && !hitByWeapon)
 			{
 				SetState(GOOMBA_RED_STATE_NO_WING_WALK);
 			}
@@ -118,6 +118,16 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 		Mario->score += 100;
 		makeEffect = false;
 		listEffect.push_back(monneyeffect);
+	}
+	if (hitEffect )
+	{
+		CMonneyEffect* hiteffect = new CMonneyEffect();
+		hiteffect->SetPosition(x, y+16);
+		hiteffect->SetState(HIT_EFFECT);
+		//isKill = true;
+		//Mario->score += 100;
+		hitEffect = false;
+		listHitEffect.push_back(hiteffect);
 	}
 	
 	CGameObject::Update(dt);
@@ -252,6 +262,10 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 			}*/
 		}
 	}
+	for (int i = 0; i < listHitEffect.size(); i++)
+	{
+		listHitEffect[i]->Update(dt, coObjects);		
+	}
 	//if(id_goomba==GOOMBA_NORMAL)
 	//DebugOut(L"gia tri state %d \n", this->nx);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -259,7 +273,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CGoomba::Render()
 {	
-	DebugOut(L"gia tri state %d \n", state);
+	//DebugOut(L"gia tri state %d \n", state);
 	if (state == GOOMBA_STATE_DIE||state==GOOMBA_RED_STATE_NO_WING_DIE||state==GOOMBA_STATE_DIE_FLY||state==GOOMBA_RED_STATE_NO_WING_DIE_FLY)
 	{
 		if(timeRenderAniDie==0)
@@ -274,6 +288,10 @@ void CGoomba::Render()
 	for (int i = 0; i < listEffect.size(); i++)
 	{
 		listEffect[i]->Render();
+	}
+	for (int i = 0; i < listHitEffect.size(); i++)
+	{
+		listHitEffect[i]->Render();
 	}
 	//RenderBoundingBox();
 }

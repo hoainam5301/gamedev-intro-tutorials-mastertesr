@@ -9,7 +9,7 @@ CMonneyEffect::CMonneyEffect()
 }
 void CMonneyEffect::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isdone)
+	if (!isdone && state!=HIT_EFFECT)
 	{
 		CGameObject::Update(dt);
 		if (start_y == 0)
@@ -23,6 +23,12 @@ void CMonneyEffect::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		x += dx;
 		y += dy;		
 	}
+	else if(!isdone)
+	{
+		vx = 0;
+		vy = 0;
+		CGameObject::Update(dt);
+	}
 }
 
 void CMonneyEffect::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -35,8 +41,18 @@ void CMonneyEffect::GetBoundingBox(float& left, float& top, float& right, float&
 
 void CMonneyEffect::Render()
 {
-	if(!isdone)
-		animation_set->at(state)->Render(x, y);	
+	if (state != HIT_EFFECT)
+	{
+		if (!isdone)
+			animation_set->at(state)->Render(x, y);
+	}
+	else
+	{
+		if (GetTickCount64() - timeRenderHitEffect < 25)
+			animation_set->at(state)->Render(x, y);
+		else
+			isdone = true;
+	}
 }
 
 void CMonneyEffect::SetState(int State)
@@ -61,6 +77,9 @@ void CMonneyEffect::SetState(int State)
 	case MAKE_8000:
 		break;
 	case MAKE_ONE_UP:
+		break;
+	case HIT_EFFECT:
+		timeRenderHitEffect = GetTickCount64();
 		break;
 	}
 }

@@ -10,6 +10,7 @@
 #define MAKE_4000 6
 #define MAKE_8000 7
 #define MAKE_ONE_UP 8
+#define HIT_EFFECT 9
 
 #define MOVING_SPEED_FORM_BRICK 0.001f
 #define MOVE_SPEED_UP 0.1f
@@ -20,6 +21,7 @@ class CMonneyEffect : public CGameObject
 public:
 	CMonneyEffect();
 	float start_y;
+	ULONGLONG timeRenderHitEffect;
 	bool coinFormBrick;  //do tien o cuc gach tao ra hieu ung thi di chuyen nhanh hon
 	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();

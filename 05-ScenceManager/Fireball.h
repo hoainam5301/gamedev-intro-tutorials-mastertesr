@@ -14,9 +14,10 @@
 class CFireball : public CGameObject
 {
 public:
-	bool isbottom;
-	bool istop;
-	bool hasCollion;
+	bool isbottom=false;
+	bool istop=false;
+	bool hasCollion=false;
+	ULONGLONG timeRenderFireExplore=0;
 	CMario* Mario;
 	CFireball(D3DXVECTOR2 position, int nx,CMario* mario);
 	void Collision_Mario(CMario* mario);

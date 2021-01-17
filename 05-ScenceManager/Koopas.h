@@ -56,6 +56,7 @@ public:
 	virtual void Render();
 	void CheckCollisionWithBrick(vector<LPGAMEOBJECT>* coObjects);
 	vector <LPGAMEOBJECT> listEffect;
+	vector <LPGAMEOBJECT> listHitEffect;
 	ULONGLONG timeToRevive;
 	ULONGLONG timeToFly;
 	ULONGLONG timeRenderAniDie;

@@ -88,6 +88,7 @@ void CFireball::Collision_Mario(CMario* mario)
 				//return;
 			}
 			hasCollion = true;
+			timeRenderFireExplore = GetTickCount64();
 		}
 	}
 }
@@ -105,8 +106,16 @@ void CFireball::GetBoundingBox(float& left, float& top, float& right, float& bot
 
 
 void CFireball::Render()
-{	if(!isdone)
-		animation_set->at(0)->Render(x, y);	
+{	
+	if (!isdone && !hasCollion)
+		animation_set->at(0)->Render(x, y);
+	else if (hasCollion && !isdone)
+	{
+		if (GetTickCount64() - timeRenderFireExplore < 25)
+			animation_set->at(1)->Render(x, y);
+		else
+			isdone = true;
+	}
 	//RenderBoundingBox();
 }
 

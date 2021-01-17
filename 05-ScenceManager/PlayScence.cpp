@@ -70,6 +70,7 @@ void CPlayScene::_ParseSection_TileMap(string line)
 	
 	gridObjMove = new CGrid();
 	gridObjMove->Resize();						///toi dayyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+	
 
 	//int texID = atoi(tokens[0].c_str());
 	map = new TileMap(ID, file_texture.c_str(), file_path.c_str(), row_on_textures, col_on_textures, row_on_tile_map, col_on_tile_map,  tile_width, tile_height);
@@ -231,7 +232,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		float width = atof(tokens[4].c_str());
 		int height = atoi(tokens[5].c_str());
 		obj = new CMovingWood(width,height,player);
-		listObjMove.push_back(obj);
+		listMovingWood.push_back(obj);
 		break;
 	}
 	case OBJECT_TYPE_WEAPON:
@@ -332,7 +333,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
 	}
-
 
 	if (obj)
 	{
@@ -493,7 +493,7 @@ void CPlayScene::SetCamSpeedY(ULONGLONG dt)
 
 void CPlayScene::Update(ULONGLONG dt)
 {
-	gridObjIdle->MakeObjOutOfCam(listObjIdle);
+	gridObjIdle->MakeObjOutOfCam(listMovingWood);
 	gridObjMove->MakeObjOutOfCam(listObjMove);
 	if (GetTickCount64() - timeTranformation > 5000)
 	{
@@ -901,7 +901,7 @@ void CPlayScene::Update(ULONGLONG dt)
 			if (camX > 2290)
 				camX = 2290;
 		}
-		DebugOut(L"gia tri cua camX %f \n", camX);
+		//DebugOut(L"gia tri cua camX %f \n", camX);
 		CGame::GetInstance()->SetCamPosX(1550.0);
 		CGame::GetInstance()->SetCamPosX(round(camX));
 		/*cx = player->x - (SCREEN_WIDTH / 4);
@@ -911,10 +911,18 @@ void CPlayScene::Update(ULONGLONG dt)
 			CGame::GetInstance()->cam_x = round(cx);
 		}*/
 	}
+	if (player->inMapTwo)
+	{
+		if (player->leftOfMario < CGame::GetInstance()->GetCamPosX())
+		{
+			player->vx = MARIO_WALKING_SPEED/2;
+		}
+	}
 	SetCamSpeedY(dt);
 	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
 	
 	gridObjMove->ResetGrid(listObjMove);
+	gridObjIdle->ResetGrid(listMovingWood);
 }
 
 void CPlayScene::Render()
@@ -979,6 +987,11 @@ void CPlayScene::InsertObjToGrid()
 	for (UINT i = 0; i < listObjIdle.size(); i++)
 	{
 		objects.push_back(listObjIdle[i]);
+	}
+	gridObjIdle->GetGrid(listAllObjIdle);
+	for (UINT i = 0; i < listAllObjIdle.size(); i++)
+	{
+		objects.push_back(listAllObjIdle[i]);
 	}
 	
 	gridObjMove->GetGrid(listAllObjMove);	
@@ -1093,6 +1106,7 @@ void CPlayScene::Unload()
 	listAllObjMove.clear();
 	listObjIdle.clear();
 	listObjMove.clear();
+	listMovingWood.clear();
 	listCoin.clear();
 	listcoin.clear();
 	leafTree.clear();

@@ -22,12 +22,12 @@
 class CBrick : public CGameObject
 {
 public:
-	int bottom_coll, created_item, bouncing;    //vachamday,taoitemroi,
-	bool collWithKoopa;
-	bool move;
-	int width, height;
-	bool hitByTail;	
-	int countMoneyHasMake;
+	int bottom_coll=0, created_item=0, bouncing=0;    //vachamday,taoitemroi,
+	bool collWithKoopa= false ;
+	bool move=false;
+	int width=0, height=0;
+	bool hitByTail=false;	
+	int countMoneyHasMake=0;
 	CBrick(float width, float height);
 	virtual void Render();
 	virtual void Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects);

@@ -43,6 +43,7 @@ protected:
 	vector<LPGAMEOBJECT> listAllObjIdle;
 	vector<LPGAMEOBJECT> listObjIdle;	//list obj dung yen
 	vector<LPGAMEOBJECT> listObjMove;
+	vector<LPGAMEOBJECT> listMovingWood;
 	vector<LPGAMEOBJECT> listCoin;    //Coin xoay o dam may
 	vector<LPGAMEOBJECT> leafTree;		//tach biet leaftree voi ca items khac de khoi bi loi ve sau gach
 
