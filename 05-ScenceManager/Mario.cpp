@@ -566,6 +566,24 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 					else if (e->ny > 0 && koopas->hasWing)
 					{
 						y -= 1;
+						if (untouchable == 0)
+						{
+							if (level > MARIO_LEVEL_BIG)
+							{
+								level = MARIO_LEVEL_BIG;
+								StartUntouchable();
+							}
+							else if (level == MARIO_LEVEL_BIG)
+							{
+								level = MARIO_LEVEL_SMALL;
+								StartUntouchable();
+							}
+							else
+							{
+								SetState(MARIO_ANI_DIE);
+								return;
+							}
+						}
 					}
 					else if (CGame::GetInstance()->IsKeyDown(DIK_A) && e->nx != 0 && (koopas->GetState() == KOOPA_GREEN_STATE_DIE || koopas->GetState() == KOOPA_GREEN_STATE_DIE_UP))// xac dinh dang nhan giu phim A va cham vs koopas 
 					{

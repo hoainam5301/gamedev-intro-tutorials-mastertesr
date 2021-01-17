@@ -3,6 +3,7 @@
 #include "ColorBox.h"
 #include "Math.h"
 #include "MonneyEffect.h"
+#include "Koopas.h"
 
 #define GRAVITY 0.3f
 #define Item_move 62 // quang duong item di chuyen khi troi len
@@ -129,6 +130,7 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 			 makeLife = false;
 			 listEffect.push_back(lifeeffect);
 		 }
+		
 		 CGameObject::Update(dt);
 		 vector<LPCOLLISIONEVENT> coEvents;
 		 vector<LPCOLLISIONEVENT> coEventsResult;
@@ -152,6 +154,10 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 	// block every object first!				
 		 	y += min_ty * dy + ny * 0.5f;
 		 	x += min_tx * dx + nx * 0.5f;
+			if (id_items == SWITCH_P_ON)
+			{
+				SetPosition(Start_x, Start_y - 16);
+			}
 		 	
 		 /*	if (nx != 0)
 		 	{
@@ -175,6 +181,10 @@ void CItems::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		 			if(e->nx!=0)
 		 				change_direction *= -1;
 		 		}
+				/*else if (dynamic_cast<CKoopas*>(e->obj) && id_items == SWITCH_P_ON)
+				{
+					SetPosition(Start_x, Start_y);
+				}*/
 
 		 	}
 		 }

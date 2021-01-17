@@ -59,7 +59,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 					goomba->makeEffect = true;
 					goomba->SetState(GOOMBA_STATE_DIE_FLY);
 				}
-				else if (goomba->id_goomba == GOOMBA_RED);
+				else if (goomba->id_goomba == 2)
 				{
 					goomba->makeEffect = true;
 					goomba->hasWing = false;

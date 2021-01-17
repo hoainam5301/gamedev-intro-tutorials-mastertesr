@@ -109,11 +109,12 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 			SetState(GOOMBA_STATE_WALKING);	
 		}
 	}
-	if (makeEffect)
+	if (makeEffect && !isKill)
 	{
 		CMonneyEffect* monneyeffect = new CMonneyEffect();
 		monneyeffect->SetPosition(x, y);
-		monneyeffect->SetState(MAKE_100); 
+		monneyeffect->SetState(MAKE_100);
+		isKill = true;
 		Mario->score += 100;
 		makeEffect = false;
 		listEffect.push_back(monneyeffect);
@@ -190,7 +191,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 						}
 					}
 				}
-				else if (e->nx != 0 && !dynamic_cast<CKoopas*>(e->obj))
+				else if (e->nx != 0 && !dynamic_cast<CKoopas*>(e->obj) && !hitByTail && !hitByWeapon)
 				{
 					this->nx = -this->nx;
 					SetSpeed();
@@ -204,7 +205,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 					if (e->nx != 0)
 						x += dx;
 				}
-				else if (e->nx != 0)
+				else if (e->nx != 0 /*&& !dynamic_cast<CKoopas*>(e->obj)*/)
 				{
 					this->nx = -this->nx;
 					//SetSpeed();
@@ -229,7 +230,10 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 						}
 					}
 					else
-						SetState(GOOMBA_RED_STATE_NO_WING_WALK);
+					{
+						if(!hitByWeapon)
+							SetState(GOOMBA_RED_STATE_NO_WING_WALK);
+					}
 				}
 			}
 		}
@@ -255,6 +259,7 @@ void CGoomba::Update(ULONGLONG dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CGoomba::Render()
 {	
+	DebugOut(L"gia tri state %d \n", state);
 	if (state == GOOMBA_STATE_DIE||state==GOOMBA_RED_STATE_NO_WING_DIE||state==GOOMBA_STATE_DIE_FLY||state==GOOMBA_RED_STATE_NO_WING_DIE_FLY)
 	{
 		if(timeRenderAniDie==0)

@@ -37,6 +37,7 @@ class CGoomba : public CGameObject
 public: 
 	bool hasWing=true;
 	bool isGrounded;
+	bool isKill;
 	ULONGLONG sulkyMario;  //doi mario bo ko them duoi nua
 	CMario* Mario;
 	ULONGLONG readyToFlyHigh;

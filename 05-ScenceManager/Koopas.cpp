@@ -329,23 +329,23 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (dynamic_cast<CGoomba*>(e->obj))
 				{
 					CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+					if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
+					{
+						if (goomba->id_goomba == GOOMBA_NORMAL)
+						{
+							goomba->hitByWeapon = true;
+							goomba->SetState(GOOMBA_STATE_DIE_FLY);
+						}
+						else if (goomba->id_goomba == GOOMBA_RED)
+						{
+							goomba->hasWing = false;
+							goomba->hitByWeapon = true;
+							goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
+						}
+					}
 					if (e->nx != 0)
 					{
-						if (GetState() == KOOPA_RED_STATE_DIE_AND_MOVE || GetState() == KOOPA_RED_STATE_DIE_AND_MOVE_UP)
-						{
-							if (goomba->id_goomba == GOOMBA_NORMAL)
-							{		
-								goomba->hitByWeapon = true;
-								goomba->SetState(GOOMBA_STATE_DIE_FLY);
-							}
-							else if (goomba->id_goomba == GOOMBA_RED)
-							{
-								goomba->hasWing = false;
-								goomba->hitByWeapon = true;
-								goomba->SetState(GOOMBA_RED_STATE_NO_WING_DIE_FLY);
-							}
-						}
-						else
+						if (GetState() != KOOPA_RED_STATE_DIE_AND_MOVE || GetState() != KOOPA_RED_STATE_DIE_AND_MOVE_UP)
 						{
 							goomba->vx = -goomba->vx;
 							if (goomba->id_goomba == GOOMBA_NORMAL && !goomba->hitByWeapon)
@@ -373,9 +373,15 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 									}
 								}
 								else
-									goomba->SetState(GOOMBA_RED_STATE_NO_WING_WALK);							
+									goomba->SetState(GOOMBA_RED_STATE_NO_WING_WALK);
 							}
 						}
+						
+					}
+					else if (e->ny != 0)
+					{
+						goomba->y -= 1;
+						y -= 1;
 					}
 				}
 				else if (dynamic_cast<CKoopas*>(e->obj))
@@ -419,12 +425,12 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 								else if (koopas->GetState() == KOOPA_GREEN_STATE_WALKING_LEFT)
 									koopas->SetState(KOOPA_GREEN_STATE_WALKING_RIGHT);
 							}
-						}
-						if (e->ny != 0)
-						{
-							y -= 1;
-							koopas->y -= 1;
-						}
+						}						
+					}
+					if (e->ny != 0)
+					{
+						y -= 1;
+						koopas->y -= 1;
 					}
 				}
 				else if (dynamic_cast<CGiantPiranhaPlant*>(e->obj))
@@ -551,10 +557,10 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 						}
 					}
-					else if (e->ny > 0)
+					else if (e->ny != 0)
 					{
-						if (goomba->id_goomba == GOOMBA_RED)
-							y -= dy * 2;
+						y -= 1;
+						goomba->y -= 1;
 					}
 				}
 				else if (dynamic_cast<CKoopas*>(e->obj))
@@ -574,10 +580,16 @@ void CKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 							koopas->hitByWeapon = true;
 							koopas->SetState(KOOPA_GREEN_STATE_DIE_UP);
 						}
+						if (e->ny != 0)
+						{
+							y -= 1;
+							koopas->y -= 1;
+						}
 					}
 					else if ((GetState() == KOOPA_GREEN_STATE_HAS_WING_FLY_LEFT || GetState() == KOOPA_GREEN_STATE_HAS_WING_FLY_RIGHT) && e->ny != 0)
 					{
 						koopas->y-=1;
+						y -= 1;
 					}
 					else
 					{

@@ -901,9 +901,15 @@ void CPlayScene::Update(ULONGLONG dt)
 			if (camX > 2290)
 				camX = 2290;
 		}
-		//DebugOut(L"gia tri cua camX %f \n", camX);
-		//CGame::GetInstance()->SetCamPosX(1550.0);
+		DebugOut(L"gia tri cua camX %f \n", camX);
+		CGame::GetInstance()->SetCamPosX(1550.0);
 		CGame::GetInstance()->SetCamPosX(round(camX));
+		/*cx = player->x - (SCREEN_WIDTH / 4);
+		if (player->x > (SCREEN_WIDTH / 4) && player->x + (SCREEN_WIDTH / 4) < 2832)
+		{
+			cx = player->x - (SCREEN_WIDTH / 4);
+			CGame::GetInstance()->cam_x = round(cx);
+		}*/
 	}
 	SetCamSpeedY(dt);
 	statusBar->Update(dt, CGame::GetInstance()->cam_x, CGame::GetInstance()->cam_y);
