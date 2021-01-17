@@ -229,7 +229,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_MOVING_WOOD:
 	{
 		float width = atof(tokens[4].c_str());
-		int height = atof(tokens[5].c_str());
+		int height = atoi(tokens[5].c_str());
 		obj = new CMovingWood(width,height,player);
 		listObjMove.push_back(obj);
 		break;
@@ -284,7 +284,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_FLOOR:
 	{
 		float width = atof(tokens[4].c_str());
-		int height = atof(tokens[5].c_str());
+		int height = atoi(tokens[5].c_str());
 		obj = new CFloor(width, height);
 		if (obj)
 		{
@@ -730,7 +730,7 @@ void CPlayScene::Update(ULONGLONG dt)
 			itemfly->SetPosition(item->x, item->y);
 			listitems.push_back(itemfly);
 			item->makeItemFly = false;	
-			statusBar->countItemsEndGame++;
+			player->countItemsEndGame++;
 		}
 	}
 

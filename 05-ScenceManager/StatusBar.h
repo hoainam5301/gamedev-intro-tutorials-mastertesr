@@ -34,7 +34,7 @@ class StatusBar
 	void DrawAllNumber();
 	void DrawPMeter();
 public:
-	int countItemsEndGame;
+	int countItemsEndGame=0;
 	void Update(ULONGLONG dt, float camX, float camY);
 	void Render();
 	CMario* Mario;

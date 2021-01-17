@@ -3,8 +3,16 @@
 
 StatusBar::StatusBar(CMario* mario)
 {
+	number = CSprites::GetInstance()->Get(2010);
 	Mario = mario;
-	time = 999;
+	this->posX = 0;
+	this-> posY = 0;
+	this-> score = 0;
+	this-> money = 0;
+	this-> word = 0;
+	this-> life = 0;	
+	this-> second = 0;
+	this->time = 999;
 	blackBackRound = CSprites::GetInstance()->Get(2066);
 }
 
@@ -92,6 +100,7 @@ void StatusBar::Update(ULONGLONG dt, float camX, float camY)
 	posY = camY;
 	score = Mario->score;
 	money = Mario->dola;
+	countItemsEndGame = Mario->countItemsEndGame;
 	word = 1;
 	life = 4;
 	second++;
@@ -108,5 +117,10 @@ void StatusBar::Render()
 	DrawBoard();
 	DrawAllNumber();
 	DrawPMeter();
+
+}
+
+StatusBar::~StatusBar()
+{
 
 }

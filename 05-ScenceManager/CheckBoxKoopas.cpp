@@ -6,8 +6,7 @@
 CCheckBoxKoopas::CCheckBoxKoopas()
 {
 	
-	/*this->width = width;
-	this->height = height;*/
+	
 }
 
 void CCheckBoxKoopas::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)

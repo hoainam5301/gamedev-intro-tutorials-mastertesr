@@ -19,21 +19,21 @@ void CCoin::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (spawn)
 		{
-			if (y >= start_y - DISTANCE_MOVE_UP)
-				vy = -MOVE_SPEED;
+			if (y >= start_y - DISTANCE_MOVE_UP_COIN)
+				vy = -MOVE_SPEED_COIN;
 			else spawn = false;
 		}
 		else
 		{
-			if (start_y - y > DISTANCE_MOVE_DOWN)
+			if (start_y - y > DISTANCE_MOVE_DOWN_COIN)
 			{
-				vy = MOVE_SPEED;
+				vy = MOVE_SPEED_COIN;
 
 			}
 			else
 			{
 				vy = 0;
-				y = start_y - DISTANCE_MOVE_DOWN;
+				y = start_y - DISTANCE_MOVE_DOWN_COIN;
 				if (!hasCreatMoneyEffect)
 				{
 					makeEffect = true;

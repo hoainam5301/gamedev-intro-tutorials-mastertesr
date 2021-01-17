@@ -12,7 +12,7 @@ void CPieceBrick::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 
-	vy += GRAVITY * dt;
+	vy += GRAVITY_PIECE * dt;
 
 	x += dx;
 	y += dy;

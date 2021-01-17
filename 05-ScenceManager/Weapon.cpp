@@ -11,6 +11,7 @@
 
 CWeapon::CWeapon(float start_x, float start_y,int marionx)
 {
+	this->isWaitingForAni = false;
 	this->start_x = start_x;
 	this->start_y = start_y;
 	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(9));
@@ -28,9 +29,9 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == FIRE_BALL_MOVE)
 	{
 		if (nx > 0)
-			vx = MOVING_SPEED;
+			vx = MOVING_SPEED_WEAPON;
 		else
-			vx = -MOVING_SPEED;
+			vx = -MOVING_SPEED_WEAPON;
 
 
 		vy += (MARIO_GRAVITY * dt);
@@ -73,7 +74,7 @@ void CWeapon::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		CheckCollision(coObjects);
 		if (ny< 0)
 		{
-			vy = -MOVING_SPEED;
+			vy = -MOVING_SPEED_WEAPON;
 		}
 
 

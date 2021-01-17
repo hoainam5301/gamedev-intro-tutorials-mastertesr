@@ -4,6 +4,8 @@
 
 CGiantPiranhaPlantBite::CGiantPiranhaPlantBite(CMario* mario) : CGameObject()
 {
+	this->start_x = 0;
+	this->start_y = 0;
 	Mario = mario;
 }
 
@@ -27,11 +29,11 @@ void CGiantPiranhaPlantBite::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObject
 		return;
 	}
 	
-	if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP)
+	if (moveup && GetTickCount64() - timewaittoshoot > TIME_MOVE_UP_BITE)
 	{
 		SetState(GIANT_STATE_MOVE_UP);
 	}
-	else if (GetTickCount64() - timewaittoshoot > TIME_MOVE_DOWN && !moveup)
+	else if (GetTickCount64() - timewaittoshoot > TIME_MOVE_DOWN_BITE && !moveup)
 	{
 		timewaittoshoot = GetTickCount64();
 		SetState(GIANT_STATE_MOVE_DOWN);
@@ -59,11 +61,11 @@ void CGiantPiranhaPlantBite::SetState(int state)
 	switch (state)
 	{
 	case GIANT_STATE_MOVE_UP:
-		vy = -MOVE_SPEED;
+		vy = -MOVE_SPEED_BITE;
 		moveup = false;
 		break;
 	case GIANT_STATE_MOVE_DOWN:
-		vy = MOVE_SPEED;
+		vy = MOVE_SPEED_BITE;
 		moveup = true;
 		break;	
 	}

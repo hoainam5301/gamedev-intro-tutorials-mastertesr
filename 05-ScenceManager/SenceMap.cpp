@@ -380,7 +380,7 @@ void CSenceMap::Update(ULONGLONG dt)
 							player->posYOfPortal = Portal->y;*/
 						}
 					}
-					player->vx = -0.1;
+					player->vx = -0.1f;
 					player->isGoTo = true;
 				}
 			}
@@ -411,7 +411,7 @@ void CSenceMap::Update(ULONGLONG dt)
 						//	player->posYOfPortal= Portal->y;
 						}
 					}
-					player->vy = 0.1;
+					player->vy = 0.1f;
 					player->isGoTo = true;
 				}
 			}

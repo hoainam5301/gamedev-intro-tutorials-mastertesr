@@ -4,13 +4,13 @@
 
 #define GIANT_BBOX_WIDTH 16
 #define GIANT_BBOX_HEIGHT 24
-#define MOVE_SPEED 0.15f
+#define MOVE_SPEED_BITE 0.15f
 
 #define GIANT_STATE_MOVE_UP 0
 #define GIANT_STATE_MOVE_DOWN 1
 
-#define TIME_MOVE_UP	1500
-#define TIME_MOVE_DOWN	3000
+#define TIME_MOVE_UP_BITE	1500
+#define TIME_MOVE_DOWN_BITE	3000
 
 
 class CGiantPiranhaPlantBite : public CGameObject

@@ -233,6 +233,7 @@ public:
 	ULONGLONG waitGetOutOfPipe;
 	bool turnOffLight;
 	int countRender=0;
+	int countItemsEndGame;
 
 	float posXOfNextPortalGoRight=0;
 	float posXOfNextPortalGoLeft=0;
