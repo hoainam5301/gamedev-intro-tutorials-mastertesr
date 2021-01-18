@@ -973,7 +973,7 @@ void CPlayScene::Render()
 		player->Render();
 		for (int i = 0; i < listObjIdle.size(); i++)
 			listObjIdle[i]->Render();
-
+		//CAnimations::GetInstance()->Get(794)->Render(60, 300);
 		statusBar->Render();
 	}
 }
@@ -1373,6 +1373,10 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_4:
 		mario->level = MARIO_FIRE;
+		break;
+	case DIK_8:
+		mario->SetPosition(1900,300);
+		mario->SetLevel(MARIO_RACCOON);
 		break;
 	case DIK_9:
 		//mario->SetLevel(MARIO_RACCOON);

@@ -685,8 +685,13 @@ void CMario::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects/*,vector <LPGA
 				CBoomerangBrother* brother = dynamic_cast<CBoomerangBrother*>(e->obj);
 				if (e->ny < 0)
 				{
-					brother->isKill = true;
+					//brother->isKill = true;
 					brother->makeEffect = true;
+					brother->died = true;
+					if (brother->nx > 0)
+						brother->SetState(BROTHER_STATE_DIE_RIGHT);
+					else
+						brother->SetState(BROTHER_STATE_DIE_LEFT);
 					vy = -MARIO_JUMP_DEFLECT_SPEED;
 					isJumping = true;						
 				}

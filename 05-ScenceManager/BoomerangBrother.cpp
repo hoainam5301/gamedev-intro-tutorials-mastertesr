@@ -1,40 +1,114 @@
 #include "BoomerangBrother.h"
-#include "MonneyEffect.h"
 #include "Boomerang.h"
+#include "MonneyEffect.h"
+
 
 CBoomerangBrother::CBoomerangBrother(CMario* mario) : CGameObject()
 {
 	Mario = mario;
-	SetState(BROTHER_STATE_MOVING);
+	GenerateRandomTurnToJump();
+	SetState(BROTHER_STATE_MOVE_LEFT);
+	this->SetAnimationSet(CAnimationSets::GetInstance()->Get(19));
 }
-
 
 void CBoomerangBrother::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
+	
 	CGameObject::Update(dt, coObjects);
-	if (startX == 0)
-		startX = x;
-	if (x <= startX)
-	{
-		x = startX;
-		vx = 0.02f;
+	vy += BROTHER_GRAVITY * dt;
+	
+	if (startX == 0)startX = x;
+	if (startY == 0)startY = y;
+
+	nx=GetPlayerDirection();
+	if (nx > 0)
+	{		
+		if (x > startX + DISTANCE_BROTHER_GO )
+		{
+			if (!died)
+			{
+				countToJump++;
+				SetState(BROTHER_STATE_IDLE_RIGHT);
+				x = startX + DISTANCE_BROTHER_GO;
+				
+			}			
+		}
+		else if(x<startX)
+		{
+			if (!died)
+			{
+				countToJump++;
+				SetState(BROTHER_STATE_IDLE_RIGHT);
+				x = startX;
+				
+			}
+		}
+		if (GetTickCount64() - timeToRelax > 250 && timeToRelax != 0 && !died)
+		{
+			SetState(BROTHER_STATE_MOVE_RIGHT);
+			timeToRelax = 0;
+		}
+
+		if (countToJump == randTurnToJump && isGrounded && !died)
+		{
+			SetState(BROTHER_STATE_JUMP_RIGHT);
+			countToJump = 0;
+		}
 	}
-	if (x > startX + DISTANCE_GO_AROUND)
-	{
-		x = startX + DISTANCE_GO_AROUND;
-		vx = -0.02f;
+	else
+	{		
+		
+		if (x > startX + DISTANCE_BROTHER_GO )
+		{
+			if (!died)
+			{
+				countToJump++;
+				x = startX + DISTANCE_BROTHER_GO;
+				SetState(BROTHER_STATE_IDLE_LEFT);
+			}
+		}
+		else if (x < startX)
+		{
+			if (!died)
+			{
+				countToJump++;
+				x = startX;
+				SetState(BROTHER_STATE_IDLE_LEFT);
+			}
+		}
+		if (GetTickCount64() - timeToRelax > 250 && timeToRelax != 0 && !died)
+		{
+			SetState(BROTHER_STATE_MOVE_LEFT);
+			timeToRelax = 0;
+		}
+
+		if (countToJump == randTurnToJump && !died && isGrounded)
+		{
+
+			SetState(BROTHER_STATE_JUMP_LEFT);
+			countToJump = 0;
+		}
+
 	}
-	y += dy;
-	x += dx;
-	if (countBoomerang < 2 )
+#pragma region Weapon Processing
+	if (countBoomerang < 2)
 	{
 		if (countBoomerang == 0)
 		{
-			SetState(BROTHER_STATE_READY_TO_FIGHT);
-			CBoomerang* boomerang = new CBoomerang(1, Mario, this);
-			boomerang->SetPosition(x + 10, y);
-			listBoomerang.push_back(boomerang);
+			if (nx > 0)
+			{
+				SetState(BROTHER_STATE_ATTACK_RIGHT);
+				CBoomerang* boomerang = new CBoomerang(1, Mario, this);
+				boomerang->SetPosition(x + 10, y);
+				listBoomerang.push_back(boomerang);
+			}
+			else
+			{
+				SetState(BROTHER_STATE_ATTACK_LEFT);
+				CBoomerang* boomerang = new CBoomerang(-1, Mario, this);
+				boomerang->SetPosition(x - 5, y);
+				listBoomerang.push_back(boomerang);
+			}			
 			countBoomerang++;
 			timereadyToThrow = GetTickCount64();
 			//SetState(BROTHER_STATE_MOVING);
@@ -43,19 +117,34 @@ void CBoomerangBrother::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (GetTickCount64() - timereadyToThrow > 700)
 			{
-				SetState(BROTHER_STATE_READY_TO_FIGHT);
-				CBoomerang* boomerang = new CBoomerang(1, Mario, this);
-				boomerang->SetPosition(x + 10, y);
+				if (nx > 0)
+				{
+					SetState(BROTHER_STATE_ATTACK_RIGHT);
+					CBoomerang* boomerang = new CBoomerang(1, Mario, this);
+					boomerang->SetPosition(x + 10, y);
+					listBoomerang.push_back(boomerang);
+				}
+				else
+				{
+					SetState(BROTHER_STATE_ATTACK_LEFT);
+					CBoomerang* boomerang = new CBoomerang(-1, Mario, this);
+					boomerang->SetPosition(x - 5, y);
+					listBoomerang.push_back(boomerang);
+				}
 				countBoomerang++;
-				listBoomerang.push_back(boomerang);
 			}
 			else
-				SetState(BROTHER_STATE_MOVING);
+			{
+				if (nx > 0)
+					SetState(BROTHER_STATE_MOVE_RIGHT);
+				else
+					SetState(BROTHER_STATE_MOVE_LEFT);
+			}
 		}
 		//SetState(BROTHER_STATE_MOVING);
 	}
 	if (GetTickCount64() - timereadyToThrow > 2200 && timereadyToThrow != 0)
-	{		
+	{
 		timereadyToThrow = 0;
 	}
 	for (int i = 0; i < listBoomerang.size(); i++)
@@ -85,15 +174,67 @@ void CBoomerangBrother::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		listEffect[i]->Update(dt, coObjects);
 		if (listEffect[i]->isdone)
-		{			
-			isdone = true;			
+		{
+			isdone = true;
 		}
 	}
+
+	for (UINT i = 0; i < listBoomerang.size(); i++)
+		listBoomerang[i]->Update(dt, coObjects);
+#pragma endregion
+
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	coEvents.clear();
+	CalcPotentialCollisions(coObjects, coEvents);
+
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+		isGrounded = false;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny = 0;
+		float rdx = 0;
+		float rdy = 0;
+
+		// TODO: This is a very ugly designed function!!!!
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		// block every object first!
+		if (!died)
+		{
+			x += min_tx * dx + nx * 0.4f;
+			y += min_ty * dy + ny * 0.1f;
+		}
+		if (died)
+		{
+			y += dy;
+		}
+		if (ny != 0 && !died)
+		{
+			vy = 0;
+			isGrounded = true;
+		}
+	}
+
+	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
+
 void CBoomerangBrother::Render()
 {
-	if(!isKill)
+	if (!died)
 		animation_set->at(state)->Render(x, y);
+	else
+	{
+		if(GetTickCount64()-timeRenderDie<500)
+			animation_set->at(state)->Render(x, y);
+		else
+			isdone = true;
+	}
 
 	for (int i = 0; i < listBoomerang.size(); i++)
 	{
@@ -106,26 +247,98 @@ void CBoomerangBrother::Render()
 	//RenderBoundingBox();
 }
 
+void CBoomerangBrother::GetBoundingBox(float& l, float& t, float& r, float& b)
+{	
+	l = x;
+	t = y;
+	r = l + BROTHER_BBOX_WIDTH;
+	b = t + BROTHER_BBOX_HEIGHT;
+}
+
 void CBoomerangBrother::SetState(int state)
 {
 	CGameObject::SetState(state);
+
 	switch (state)
 	{
-	case BROTHER_STATE_MOVING:
-		break;	
-	case BROTHER_STATE_READY_TO_FIGHT:
+	case BROTHER_STATE_JUMP_RIGHT:
+		vy = -BROTHER_JUMP_SPEED;
+		GenerateRandomTurnToJump();
+		break;
+	case BROTHER_STATE_JUMP_LEFT:
+		vy = -BROTHER_JUMP_SPEED;
+		GenerateRandomTurnToJump();
+		break;
+	case BROTHER_STATE_MOVE_RIGHT:
+		if (x == startX)
+			vx = BROTHER_SPEED_GO_AROUND;
+		else if (x == startX + DISTANCE_BROTHER_GO)
+			vx = -BROTHER_SPEED_GO_AROUND;
+		if (isHoldingBoomerang)
+			state = BROTHER_STATE_ATTACK_RIGHT;
+		break;
+	case BROTHER_STATE_MOVE_LEFT:
+		if (x == startX)
+			vx = BROTHER_SPEED_GO_AROUND;
+		else if (x == startX + DISTANCE_BROTHER_GO)
+			vx = -BROTHER_SPEED_GO_AROUND;
+		if (isHoldingBoomerang)
+			state = BROTHER_STATE_ATTACK_LEFT;
+		break;
+	case BROTHER_STATE_DIE_RIGHT:	
+		timeRenderDie = GetTickCount64();
+		break;
+	case BROTHER_STATE_DIE_LEFT:
+		timeRenderDie = GetTickCount64();
+		break;
+	case BROTHER_STATE_IDLE_RIGHT:
+		timeToRelax = GetTickCount64();
+		vx = 0;
+		break;
+	case BROTHER_STATE_IDLE_LEFT:
+		timeToRelax = GetTickCount64();
+		vx = 0;
+		break;
+	case BROTHER_STATE_ATTACK_RIGHT:
+		break;
+	case BROTHER_STATE_ATTACK_LEFT:
 		break;
 	}
 }
 
-void CBoomerangBrother::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CBoomerangBrother::CreateBoomerang()
 {
-
-	left = x;
-	top = y;
-	right = x + BROTHER_BBOX_WIDTH;
-	bottom = y + BROTHER_BBOX_HEIGHT;
-
+	
+	CBoomerang* boomerang = new CBoomerang(1,Mario,this);
+	
+	/*if (nx > 0)
+	{*/
+		boomerang->SetPosition(x + 5, y);
+		boomerang->nx = 1;
+		boomerang->SetState(BOOMERANG_STATE_MOVE_RIGHT);
+	/*}
+	else
+	{
+		boomerang->SetPosition(x - 10, y);
+		boomerang->nx = -1;
+		boomerang->SetState(BOOMERANG_STATE_MOVE_LEFT);
+	}*/
+	listBoomerang.push_back(boomerang);
 }
 
+void CBoomerangBrother::GenerateRandomTurnToJump()
+{
+	randTurnToJump = rand() % (6 - 5 + 1) + 5;
+}
 
+int CBoomerangBrother::GetPlayerDirection()
+{
+	if (Mario->leftOfMario >= this->x)
+		return 1;
+	else
+		return -1;
+}
+
+CBoomerangBrother::~CBoomerangBrother()
+{
+}

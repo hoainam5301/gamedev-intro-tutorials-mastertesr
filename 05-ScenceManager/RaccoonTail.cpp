@@ -57,7 +57,7 @@ void CRaccoonTail::Collision_ENEMY(vector<LPGAMEOBJECT>* coObjects)
 			if (CGameObject::CheckAABB(l_ene, t_ene, r_ene, b_ene, l_tail, t_tail, r_tail, b_tail))
 			{
 				//brother->makeEffect = true;
-				brother->isKill = true;
+				//brother->isKill = true;
 			}
 		}
 		else if (dynamic_cast<CGoomba*>(e))

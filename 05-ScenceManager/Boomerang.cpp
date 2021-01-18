@@ -1,8 +1,8 @@
- #include "Boomerang.h"
+#include "Boomerang.h"
 
 
 
-CBoomerang::CBoomerang(int nx, CMario* mario,CBoomerangBrother* brother)
+CBoomerang::CBoomerang(int nx, CMario* mario, CBoomerangBrother* brother)
 {
 	Mario = mario;
 	Brother = brother;
@@ -12,39 +12,70 @@ CBoomerang::CBoomerang(int nx, CMario* mario,CBoomerangBrother* brother)
 
 void CBoomerang::Update(ULONGLONG dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt);	
+	CGameObject::Update(dt);
 	if (startX == 0)
 		startX = x;
 	if (startY == 0)
 		startY = y;
-	vx = 0.1;
-	vy = -0.02;
-	if (x - startX > 100)
-	{		
-		vy = 0.1;
-	}
-	if (x - startX > 150)
+	if (nx > 0)
 	{
-		vx = -vx;
-		vy = 0.1;
-	}
-	if (y - startY>0  && y-startY<5)
-	{		
-		vy = 0.1;
-		vx = -vx;
-	}
+		vx = 0.05;
+		vy = -0.02;
+		if (x - startX > 100)
+		{
+			vy = 0.1;
+		}
+		if (x - startX > 150)
+		{
+			vx = -vx;
+			vy = 0.1;
+		}
+		if (y - startY > 0 && y - startY < 5)
+		{
+			vy = 0.1;
+			vx = -vx;
+		}
 
-	if (y - startY > 5)
-	{
-		//DebugOut(L"gia tri x %f \n", x);
-		vy = 0;
-		vx = -vx;
+		if (y - startY > 5)
+		{
+			//DebugOut(L"gia tri x %f \n", x);
+			vy = 0;
+			vx = -vx;
+		}
+		if (x < Brother->x)
+			isdone = true;
 	}
-	if (x < Brother->x)
-		isdone = true;
+	else
+	{
+		vx =- 0.05;
+		vy = -0.02; 
+		if ( startX -x > 100)
+		{
+			vy = 0.1;
+		}
+		if (startX -x> 150)
+		{
+			vx = -vx;
+			vy = 0.1;
+		}
+		if (y - startY > 0 && y - startY < 5)
+		{
+			vy = 0.1;
+			vx = -vx;
+		}
+
+		if (y - startY > 5)
+		{
+			//DebugOut(L"gia tri x %f \n", x);
+			vy = 0;
+			vx = -vx;
+		}
+		if (x > Brother->x)
+			isdone = true;
+	}
 	x += dx;
 	y += dy;
-	//Collision_Mario(Mario);
+	Collision_Mario(Mario);
 }
 
 void CBoomerang::Collision_Mario(CMario* mario)
@@ -54,8 +85,8 @@ void CBoomerang::Collision_Mario(CMario* mario)
 	mario->GetBoundingBox(l_mario, t_mario, r_mario, b_mario);
 	if (CGameObject::CheckAABB(l_ball, t_ball, r_ball, b_ball, l_mario, t_mario, r_mario, b_mario))
 	{
-		/*if (!hasCollion)
-		{*/
+		if (!hasCollision)
+		{
 			if (mario->level > MARIO_LEVEL_BIG)
 			{
 				mario->level = MARIO_LEVEL_BIG;
@@ -71,8 +102,8 @@ void CBoomerang::Collision_Mario(CMario* mario)
 				mario->SetState(MARIO_ANI_DIE);
 				//return;
 			}
-			//hasCollion = true;
-		//}
+			hasCollision = true;
+		}
 	}
 }
 
@@ -82,8 +113,8 @@ void CBoomerang::GetBoundingBox(float& left, float& top, float& right, float& bo
 	{
 		left = x;
 		top = y;
-		right = x + WIDTH_HEIGHT_BOOMERANG;
-		bottom = y + WIDTH_HEIGHT_BOOMERANG;
+		right = x + BOOMERANG_BOX_WIDTH_HEIGH;
+		bottom = y + BOOMERANG_BOX_WIDTH_HEIGH;
 	}
 }
 
@@ -91,8 +122,22 @@ void CBoomerang::GetBoundingBox(float& left, float& top, float& right, float& bo
 void CBoomerang::Render()
 {
 	if (!isdone)
-		animation_set->at(0)->Render(x, y);
+		animation_set->at(state)->Render(x, y);
 	//RenderBoundingBox();
+}
+
+void CBoomerang::SetState(int state)
+{
+	CGameObject::SetState(state);
+
+	switch (state)
+	{
+	case BOOMERANG_STATE_MOVE_RIGHT:
+		break;
+	case BOOMERANG_STATE_MOVE_LEFT:
+		break;
+	}
+
 }
 
 CBoomerang::~CBoomerang()
